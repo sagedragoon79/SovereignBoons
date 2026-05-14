@@ -1,6 +1,8 @@
 # Sovereign Boons — Implementation Plan
 
-Draft 1 — 2026-05-13 (pre-verification). Will be amended once `decompile_verification.md` lands at `C:\Users\saged\source\repos\Other\List of Power Spike Mods\decompile_verification.md`.
+Draft 2 — 2026-05-13 (post-verification). Verification report: `C:\Users\saged\source\repos\Other\List of Power Spike Mods\decompile_verification.md`. Full decompiles at `decompiled/`.
+
+**Verification status:** 17 of 20 source mods `verified`. 1 `needs-adaptation` (SeasonTweaker, see notes). 1 `blocked` (BasicWeaponEquipment, Il2Cpp). 1 N/A (UniverseLib — shared dep, not a mod).
 
 ## Goal
 
@@ -28,8 +30,8 @@ Tiny mods, single-purpose, low risk. Each is roughly 30–80 lines of C# includi
 1. **FFEnableAchievements** (Misc) — one-line direct field write. ~10 lines. _Smallest possible boon. Verifies the scaffold end-to-end._
 2. **Fast Villagers** (Workforce) — 2 Awake postfix patches, 3 prefs. ~50 lines.
 3. **Forced Child Labor** (Workforce) — 2 Awake postfix patches, 4 prefs. ~60 lines.
-4. **Tax Gold Gain** (Economy) — 1 AddGain prefix, 1 pref. ~30 lines. _Verify `ExpenseManager+Gain` struct layout (`tender`, `amount`) — pending decompile verification._
-5. **Faster Water Recharge** (Buildings) — 1 Well.Awake patch, 2 prefs. ~40 lines. _Verify Well field names._
+4. **Tax Gold Gain** (Economy) — 1 AddGain prefix, gate on `Gain.Type.TaxCollection`, 1 pref. ~30 lines. _Verified. `Gain` is `ExpenseManager.Gain` nested struct._
+5. **Faster Water Recharge** (Buildings) — 1 Well.Awake patch, 2 prefs (`maxWater`, `waterGainPerSecond` — both private). ~40 lines. _Verified._
 
 Phase 1 release: **5 boons, all default-off, fully KC-integrated.** This is shippable on its own.
 
@@ -45,8 +47,8 @@ Phase 2 release: **+4 boons (9 total).**
 
 ### Phase 3 — "Economy + movement" (target v0.4.0)
 
-10. **Traveling Merchant Plus** (Economy) — TradeWagon.Init + IsBuyingItem + TradeManager.MaxStock. 3 prefs + a "buy anything" toggle. ~100 lines. _Verify `TradeWagon.Init` signature and `TradeManager.MaxTradingPostStockCount` typeof (pending decompile)._
-11. **Rapid Roads** (Workforce) — 5 patches, hardcoded values — convert to prefs (road bonus, off-road penalty, ram/catapult off-road penalty, animal slow). ~120 lines. _Verify `AIGridNode.RecalculateRoadSpeedBonus`, `BatteringRam`/`Catapult` off-road getter names (pending decompile)._
+10. **Traveling Merchant Plus** (Economy) — `TradeWagon.Init(bool)` postfix + `TradeWagon.IsBuyingItem(Item)` prefix + `TradeManager.maxTradingPostStockCount` getter postfix. 3 prefs + "buy anything" toggle. ~100 lines. _Verified. Note camelCase getter._
+11. **Rapid Roads** (Workforce) — 5 patches (all verified, attributes recovered above). Convert hardcoded values to prefs. ~120 lines.
 
 ### Phase 4 — "Buildings deep cuts" (target v0.5.0)
 
@@ -56,8 +58,27 @@ Phase 2 release: **+4 boons (9 total).**
 
 ### Phase 5 — "Time + combat" (target v0.6.0)
 
-15. **Season Tweaker** (Weather) — Days_Per_Month scaling + crop-day scaling via dynamic Harmony patch on `CropFieldMaintenance.maintenanceLengthInDays`. ~150 lines. _Must run with MelonPriority(-1) so ConfigurableCropFields applies its values first, like the original. **Document the interop ordering note** in the boon's source-file header._
-16. **Basic Weapon Equipment** (Combat) — **Full re-implementation for Mono.** UI buttons (per-villager + town-center "arm all"), Villager.ChangeOccupation hook, ItemStats application. ~300 lines incl. UI. _Highest risk in the pack — re-derive everything from the Il2Cpp decompile._
+15. **Season Tweaker** (Weather) — Days_Per_Month scaling + crop-day scaling. Patch `AgricultureManager.maintenanceLengthInDays` (the source mod's `CropFieldMaintenance` target was wrong and silently no-ops in modern FF — **Sovereign Boons fixes this**). ~150 lines. _Must run with MelonPriority(-1) so ConfigurableCropFields applies its values first. **Document the interop ordering AND the fixed bug** in the boon's source-file header and README ship notes._
+16. **Basic Weapon Equipment** (Combat) — **Full re-implementation for Mono** (see `decompiled/BasicWeaponEquipment_REIMPL_NOTES.md`). UI buttons (per-villager + town-center "arm all"), `Villager.ChangeOccupation` postfix, `ItemStats` operator-composed buffs. Skip occupations Hunter/Guard/Child/Soldier (1/9/21/45 decoded). ~300 lines incl. UI. _Highest risk in the pack._
+
+## Verification-driven corrections (must apply during impl)
+
+These supersede the catalog. Bake them into each boon's source-file header:
+
+| Boon | Correction |
+|---|---|
+| **TaxGoldGain** | Gate prefix on `gain.type == ExpenseManager.Gain.Type.TaxCollection` (NOT `(int)gain.tender == 0`). The source mod multiplies every gold gain — Sovereign Boons should be narrower and more honest to its name. |
+| **TaxGoldGain** | `Gain` is `ExpenseManager.Gain` (nested struct). Fully qualify or `using static ExpenseManager`. |
+| **Storage Config** | Capacity field is `StorageBuilding._storageItemCountCapacity` (NOT `_maxStorage`). Public read: `storageItemCountCapacity` (returns base + bonus). |
+| **Traveling Merchant** | Stock cap target is `TradeManager.maxTradingPostStockCount` getter (camelCase — backing `_maxTradingPostStockCount = 100`). The source mod's class name `MaxTradingPostStockCount` is misleading. |
+| **Desirability** | `_strategicPlanningRadius` and `_strategicPlanningBonus` live on `Building` base class. Use `AccessTools.FieldRefAccess<Building, float>(...)` — NOT `<DecorativeBuilding, float>`. |
+| **Faster Water** | Private fields are `Well.maxWater` (int) and `Well.waterGainPerSecond` (float). Public read accessor is `maxWaterInStorage` — don't confuse the two. |
+| **Forced Child Labor** | `VillagerHealth.ageCutoffChild` and `ageCutoffAdolescent` are **static fields**. A single write in `OnInitializeMelon` (or `OnSceneWasInitialized("Map")`) is sufficient — the Awake postfix the source mod uses is redundant. Vanilla values: 15 and 25 (NOT the 10/16 the catalog estimated). |
+| **Rapid Roads** | Patch attributes (recovered): `Character.techOffroadSpeedBonus` (getter), `BatteringRam.movementSpeed` (getter), `Catapult.movementSpeed` (getter), `AggressiveAnimal.movementSpeed` (getter), `AIGridNode.RecalculateRoadSpeedBonus`. |
+| **Rapid Roads** | Bulk-patch opportunity: every `movementSpeed` getter belongs to an `IChangesMovementSpeed` implementer. Could iterate `AccessTools.GetTypesFromAssembly` and patch all concrete implementers at once. Keep the per-target version for v0.4 and revisit. |
+| **SeasonTweaker** | **The source mod's maintenance patch is currently a silent no-op against modern FF.** It looks for `"CropFieldMaintenance"` — real class is `CropfieldMaintenance` (lowercase f), and even that class doesn't own `maintenanceLengthInDays` (lives on `AgricultureManager`). **Sovereign Boons fixes a long-broken feature** by patching `AgricultureManager.maintenanceLengthInDays` getter (or writing `_maintenanceLengthInDays` field at ff_full.cs:18964) directly. Call this out in the README ship notes. |
+| **BasicWeaponEquipment** | Full Mono re-impl per `decompiled/BasicWeaponEquipment_REIMPL_NOTES.md`. `ItemStats` is a **struct with `+`/`-` operators** — compose buffs additively via operators rather than replacing `equipmentManager.baseItemStats` wholesale. Occupation skip IDs decoded: 1=Hunter, 9=Guard, 21=Child, 45=Soldier. |
+| **(creator boon, deferred)** | AnimalSpawner's `FishArea.maxFish` is a `{ get; private set; }` autoprop — needs reflection (`<maxFish>k__BackingField`). Not in scope for Sovereign Boons (→ SeedVault). |
 
 ## Cross-cutting concerns
 
@@ -93,7 +114,9 @@ Tag a release at the end of each phase. Phase-1 release goes to GitHub draft (no
 
 ## Pre-impl gates (must pass before Phase 1 starts)
 
-- [ ] `decompile_verification.md` complete (background agent in flight as of 2026-05-13).
+- [x] `decompile_verification.md` complete (2026-05-13).
+- [x] 21 full decompiles persisted at `decompiled/`.
+- [x] `BasicWeaponEquipment_REIMPL_NOTES.md` written for the Il2Cpp port.
 - [ ] User reviews catalog xlsx; cherries flagged with "x" in column A.
 - [ ] User picks names (or accepts working candidates above).
 - [ ] License posture decided per source author (see `source_mods.md`).
