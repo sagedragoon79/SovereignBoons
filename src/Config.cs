@@ -84,9 +84,9 @@ namespace SovereignBoons
         // Per-building add-on entries created dynamically in Boons.GreaterHalls.RegisterPrefs.
 
         // ----- Hallowed Reliquary (folded from VC_ModifyTemple by VC) -----
-        public static MelonPreferences_Entry<bool>  EnableHallowedReliquary        { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> HallowedReliquaryBonusMul      { get; private set; } = null!;
-        public static MelonPreferences_Entry<bool>  HallowedReliquaryForceWorkers  { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  EnableHallowedReliquary         { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> HallowedReliquaryBonusMul       { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  HallowedReliquaryUnchainRelics  { get; private set; } = null!;
 
         // ----- Bountiful Fields (folded from VC_ConfigurableCropFields by VC) -----
         public static MelonPreferences_Entry<bool>  EnableBountifulFields              { get; private set; } = null!;
@@ -263,14 +263,16 @@ namespace SovereignBoons
             // ===== Hallowed Reliquary =====
             EnableHallowedReliquary = _root.CreateEntry("EnableHallowedReliquary", false,
                 display_name: "Hallowed Reliquary — Enabled",
-                description: "Spirituality bonus per relic multiplier + ForceWorkers. " +
-                             "Folded from VC_ModifyTemple by VC (RelicAddons deferred to v0.4).");
+                description: "Spirituality bonus per relic multiplier + optional unchaining of " +
+                             "relic activation from priest count. Inspired by VC_ModifyTemple by VC.");
             HallowedReliquaryBonusMul = _root.CreateEntry("HallowedReliquaryBonusMul", 1.5f,
                 display_name: "Hallowed Reliquary — Bonus Multiplier",
                 description: "Multiplier on ReligionManager._spiritualityBonusPerRelic. Vanilla = 1.0. Range 0.5..3.0.");
-            HallowedReliquaryForceWorkers = _root.CreateEntry("HallowedReliquaryForceWorkers", true,
-                display_name: "Hallowed Reliquary — Force Workers Match Slots",
-                description: "If true, Temple maxWorkers is raised to match the relic slot count when below.");
+            HallowedReliquaryUnchainRelics = _root.CreateEntry("HallowedReliquaryUnchainRelics", true,
+                display_name: "Hallowed Reliquary — Unchain Relics from Priest Count",
+                description: "When true, a single priest in the Temple activates ALL assigned " +
+                             "relics. Vanilla deactivates relics if priest count is below the slot " +
+                             "count — flip this off to keep vanilla behavior.");
 
             // ===== Bountiful Fields =====
             EnableBountifulFields = _root.CreateEntry("EnableBountifulFields", false,

@@ -1,20 +1,25 @@
 // Folded from VC_ModifyTemple by VC (v1.4)
 // Original DLL: VC_ModifyTemple_FF.dll
 // Original prefs: RelicAddons (0..15), BonusMul (0.5..3.0), ForceWorkers (bool)
-// SB changes (v0.3 PARTIAL FOLD — see _research/IMPLEMENTATION_PLAN.md):
-//   - INCLUDED: BonusMul (spirituality bonus per relic) and ForceWorkers (match
-//     Temple maxWorkers to relic slot count).
-//   - DEFERRED to v0.4: RelicAddons (extra relic slots). The source mod's UI rewire
-//     depends on UniverseLib's UIFactory.CreateVerticalGroup, which we don't ship.
-//     Without the UI rewire, extra slots exist in game state but can't be assigned
-//     through the UI — confusing UX. v0.4 will ship a simpler UI extension.
+// SB changes:
+//   - REPLACED RelicAddons + ForceWorkers with a simpler decoupling boon:
+//     "Unchain Relics" prevents Temple.AdjustRelicsBasedOnPriestCount from
+//     deactivating relics when worker count is lower than slot count. With
+//     this on, a single priest activates ALL relics in the Temple — solves the
+//     same "I want my Temple stronger" need without needing the UniverseLib UI
+//     rewire the source mod did to add extra slots.
+//   - KEPT BonusMul (spirituality bonus per relic multiplier) unchanged.
 //
-// Verified targets (decompile_verification.md):
+// Verified targets:
 //   - ReligionManager._spiritualityBonusPerRelic (private float = 50f) at ff_full.cs:139799
-//   - Temple._maxRelicCount (private int) at ff_full.cs:356144 [reserved for v0.4]
-//   - Temple.maxWorkers / Resource.maxWorkers — settable via reflection
-//     on the property setter (the property is inherited).
+//   - Temple.AdjustRelicsBasedOnPriestCount (private void) at ff_full.cs:356722
+//     Vanilla logic: if relicSlots.Count > workersRO.Count → demote relics into
+//     disabledSlots. If <, promote back from disabled. We hijack to NEVER demote.
+//   - Temple.ActivateRelic / DeactivateRelic (private) at ff_full.cs:356586/356597
+//   - Temple's private List<Relic> relicSlots / disabledSlots
+//     at ff_full.cs:356148 / 356150
 
+using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using MelonLoader;
@@ -22,31 +27,21 @@ using MelonLoader;
 namespace SovereignBoons.Boons
 {
     /// <summary>
-    /// Spirituality bonus per relic multiplier + optional auto-match of Temple
-    /// maxWorkers to relic slot count. Extra relic slots themselves are
-    /// reserved for v0.4 once the UI rewire lands.
+    /// Spirituality bonus per relic multiplier + "Unchain Relics" (one priest
+    /// activates every assigned relic, regardless of worker count).
     /// </summary>
     internal static class HallowedReliquary
     {
+        // ---------- ReligionManager bonus multiplier ----------
+
         private static readonly AccessTools.FieldRef<ReligionManager, float>? _bonusPerRelicRef =
             AccessTools.FieldRefAccess<ReligionManager, float>("_spiritualityBonusPerRelic");
 
-        // Cache the vanilla value so we can compute (vanilla * multiplier) on re-apply
-        // rather than compounding.
         private static float? _vanillaBonusPerRelic;
         private static bool _applied;
 
-        public static void Reset()
-        {
-            _applied = false;
-            // Keep _vanillaBonusPerRelic — it survives across Map reloads since the
-            // ReligionManager singleton may be re-used.
-        }
+        public static void Reset() => _applied = false;
 
-        /// <summary>
-        /// Called from Plugin.OnUpdate once per second while a game is loaded, until
-        /// it successfully captures vanilla and writes the multiplied value.
-        /// </summary>
         public static void TryApplyBonusOnce()
         {
             if (_applied) return;
@@ -77,35 +72,63 @@ namespace SovereignBoons.Boons
             }
         }
 
-        [HarmonyPatch(typeof(Temple), "Awake")]
-        internal static class Temple_Awake_ForceWorkers_Patch
-        {
-            private static PropertyInfo? _maxWorkersProp;
+        // ---------- Unchain Relics ----------
 
-            private static void Postfix(Temple __instance)
+        private static readonly AccessTools.FieldRef<Temple, List<Relic>>? _relicSlotsRef =
+            AccessTools.FieldRefAccess<Temple, List<Relic>>("relicSlots");
+        private static readonly AccessTools.FieldRef<Temple, List<Relic>>? _disabledSlotsRef =
+            AccessTools.FieldRefAccess<Temple, List<Relic>>("disabledSlots");
+
+        // Cached MethodInfo for the private ActivateRelic call. We look it up once
+        // at first use rather than every patch invocation.
+        private static MethodInfo? _activateRelicMI;
+        private static MethodInfo ResolveActivateRelic()
+        {
+            return _activateRelicMI ??= AccessTools.Method(typeof(Temple), "ActivateRelic")
+                ?? throw new System.MissingMethodException("Temple.ActivateRelic not found");
+        }
+
+        [HarmonyPatch(typeof(Temple), "AdjustRelicsBasedOnPriestCount")]
+        internal static class Temple_AdjustRelicsBasedOnPriestCount_Patch
+        {
+            // Prefix: when Unchain Relics is on AND the temple has ≥1 priest, promote
+            // every relic in disabledSlots back into relicSlots, then skip vanilla.
+            // If 0 priests, defer to vanilla (no relics should be active without a
+            // staffed temple — preserves vanilla expectations).
+            private static bool Prefix(Temple __instance)
             {
-                if (!Config.EnableHallowedReliquary.Value) return;
-                if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return;
-                if (!Config.HallowedReliquaryForceWorkers.Value) return;
-                if (__instance == null) return;
+                if (!Config.EnableHallowedReliquary.Value) return true;
+                if (!Config.HallowedReliquaryUnchainRelics.Value) return true;
+                if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return true;
+                if (__instance == null) return true;
+                if (__instance.workersRO == null || __instance.workersRO.Count == 0) return true;
+                if (_relicSlotsRef == null || _disabledSlotsRef == null) return true;
 
                 try
                 {
-                    if (_maxWorkersProp == null)
-                    {
-                        _maxWorkersProp = typeof(Resource).GetProperty("maxWorkers",
-                            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    }
-                    if (_maxWorkersProp == null || !_maxWorkersProp.CanWrite) return;
+                    var slots    = _relicSlotsRef(__instance);
+                    var disabled = _disabledSlotsRef(__instance);
+                    if (slots == null || disabled == null) return true;
 
-                    int currentMax = __instance.maxWorkers;
-                    int relicCount = __instance.maxRelicCount;
-                    if (currentMax < relicCount)
-                        _maxWorkersProp.SetValue(__instance, relicCount, null);
+                    // Promote every disabled relic back to active.
+                    while (disabled.Count > 0)
+                    {
+                        int idx = disabled.Count - 1;
+                        var relic = disabled[idx];
+                        slots.Add(relic);
+                        disabled.RemoveAt(idx);
+                        if (relic != null)
+                            ResolveActivateRelic().Invoke(__instance, new object[] { relic });
+                    }
+
+                    // Skip vanilla so it doesn't immediately re-deactivate them.
+                    return false;
                 }
                 catch (System.Exception ex)
                 {
-                    Plugin.Log.Warning($"[Hallowed Reliquary] Temple.Awake postfix failed: {ex.Message}");
+                    Plugin.Log.Warning($"[Hallowed Reliquary] Unchain prefix failed, " +
+                                       $"falling through to vanilla: {ex.Message}");
+                    return true;
                 }
             }
         }

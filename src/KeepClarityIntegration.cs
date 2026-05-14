@@ -248,13 +248,14 @@ namespace SovereignBoons
             // ===== Hallowed Reliquary (Buildings) =====
             Reg(GroupBuildings, Config.EnableHallowedReliquary,
                 NewMeta("Hallowed Reliquary",
-                        "Spirituality bonus per relic multiplier + auto-match Temple maxWorkers to slot count.",
+                        "Spirituality bonus multiplier + Unchain Relics from priest count.",
                         restartRequired: false));
             Reg(GroupBuildings, Config.HallowedReliquaryBonusMul,
                 NewMeta("Spirituality Bonus Mul", "Vanilla = 1.0.", min: 0.5f, max: 3.0f,
                         visibleWhen: () => Config.EnableHallowedReliquary.Value));
-            Reg(GroupBuildings, Config.HallowedReliquaryForceWorkers,
-                NewMeta("Force Workers Match Slots", "Raise Temple maxWorkers to match relic count.",
+            Reg(GroupBuildings, Config.HallowedReliquaryUnchainRelics,
+                NewMeta("Unchain Relics from Priest Count",
+                        "1 priest activates every assigned relic. Off = vanilla (priest count gates active relics).",
                         visibleWhen: () => Config.EnableHallowedReliquary.Value));
 
             // ===== Bountiful Fields (Buildings) =====
