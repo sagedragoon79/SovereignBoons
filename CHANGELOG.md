@@ -2,6 +2,17 @@
 
 All notable changes to Sovereign Boons.
 
+## [Unreleased] — 0.4.0-dev (Phase 3 — Economy + Roads)
+
+### Added — 2 boons folded
+- **Wealthy Caravans** (Economy) — Beefier traveling merchants: more gold, more goods, optional buy-anything, higher trading-post stock cap. Folded from TravelingMerchantPlus (coos). Defaults tamed from source's 5× to 2× (user can crank up). Buy-Anything is its own toggle so the gold/goods buff can ship without unlocking it.
+- **King's Highway** (Workforce) — Faster travel on roads + slower aggressive animals. Inspired by Rapid Roads (Olleus). **Diverged from source design** — dropped the off-road penalties for villagers, battering rams, and catapults (Sovereign Boons is a power-spike pack, not a balance/penalty pack). Kept the two patches that favor the player: road-speed boost on `AIGridNode.RecalculateRoadSpeedBonus` and slower `AggressiveAnimal.movementSpeed`.
+
+### Notes
+- All entries default OFF; tunables hidden behind master toggles via KC `VisibleWhen`.
+- Foreign-mod kill switches active for both sources.
+- 0w/0e build; auto-staged.
+
 ## [Unreleased] — 0.3.0-dev (Phase 2 — VC family)
 
 ### Added — 7 boons folded

@@ -125,6 +125,47 @@ namespace SovereignBoons
                 NewMeta("Tax Multiplier", "Vanilla = 1.0.", min: 1.0f, max: 10.0f,
                         visibleWhen: () => Config.EnableCrownsBounty.Value));
 
+            // ===== Wealthy Caravans (Economy) =====
+            Reg(GroupEconomy, Config.EnableWealthyCaravans,
+                NewMeta("Wealthy Caravans",
+                        "Beefier traveling merchants + higher trading-post stock cap.",
+                        restartRequired: false));
+            Reg(GroupEconomy, Config.WealthyCaravansGoldMul,
+                NewMeta("Gold Multiplier", "Multiplier on merchant gold pool.", min: 1.0f, max: 10.0f,
+                        visibleWhen: () => Config.EnableWealthyCaravans.Value));
+            Reg(GroupEconomy, Config.WealthyCaravansGoodsMul,
+                NewMeta("Goods Multiplier", "Multiplier on goods counts.", min: 1.0f, max: 10.0f,
+                        visibleWhen: () => Config.EnableWealthyCaravans.Value));
+            Reg(GroupEconomy, Config.WealthyCaravansBuyAnything,
+                NewMeta("Buy Anything",
+                        "Merchants will purchase any item in their goods list OR already in storage.",
+                        visibleWhen: () => Config.EnableWealthyCaravans.Value));
+            Reg(GroupEconomy, Config.WealthyCaravansMaxStock,
+                NewMeta("Trading Post Max Stock",
+                        "Vanilla = 100.", min: 100, max: 5000,
+                        visibleWhen: () => Config.EnableWealthyCaravans.Value));
+
+            // ===== King's Highway (Workforce) =====
+            Reg(GroupWorkforce, Config.EnableKingsHighway,
+                NewMeta("King's Highway", "Faster travel on roads + slower aggressive animals.",
+                        restartRequired: false));
+            Reg(GroupWorkforce, Config.KingsHighwayBoostRoadSpeed,
+                NewMeta("Boost Road Speed",
+                        "Multiply the on-road speed bonus.",
+                        visibleWhen: () => Config.EnableKingsHighway.Value));
+            Reg(GroupWorkforce, Config.KingsHighwayRoadSpeedMul,
+                NewMeta("Road Speed Multiplier",
+                        "Vanilla = 1.0.", min: 1.0f, max: 3.0f,
+                        visibleWhen: () => Config.EnableKingsHighway.Value && Config.KingsHighwayBoostRoadSpeed.Value));
+            Reg(GroupWorkforce, Config.KingsHighwaySlowAggressiveAnimals,
+                NewMeta("Slow Aggressive Animals",
+                        "Wolves/bears/etc. move slower — easier to outrun, easier to hunt.",
+                        visibleWhen: () => Config.EnableKingsHighway.Value));
+            Reg(GroupWorkforce, Config.KingsHighwayAggressiveAnimalMul,
+                NewMeta("Aggressive Animal Speed Mul",
+                        "Vanilla = 1.0. Lower = slower predators.", min: 0.5f, max: 1.0f,
+                        visibleWhen: () => Config.EnableKingsHighway.Value && Config.KingsHighwaySlowAggressiveAnimals.Value));
+
             // ===== Swift Feet (Workforce) =====
             Reg(GroupWorkforce, Config.EnableSwiftFeet,
                 NewMeta("Swift Feet",

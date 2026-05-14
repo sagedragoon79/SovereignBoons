@@ -13,10 +13,10 @@ Catalog reference: `C:\Users\saged\source\repos\Other\List of Power Spike Mods\_
 | 5 | Forced Child Labor | 1.0.3 | Krasipeace | ForcedChildLabor_FF.dll | Workforce | **Eager Hands** | Folded (Phase 1) |
 | 6 | MineralSpawner (Mono) | 1.5.3 | paboyafx | MineralSpawnerMono.dll | — | — | **Deferred → SeedVault** (creator tool) |
 | 7 | MoveResource (Mono) | 1.5.1 | paboyafx | MoveResourceMod.dll | — | — | **Deferred → SeedVault** (also overlaps Tended Wilds / FT) |
-| 8 | Rapid Roads | 1.0.0 | Olleus | Rapid Roads_FF.dll | Workforce | _TBD_ | Pending pick |
+| 8 | Rapid Roads | 1.0.0 | Olleus | Rapid Roads_FF.dll | Workforce | **King's Highway** | Folded (Phase 3) — narrowed to player-favoring patches (road boost + animal slow); off-road penalties dropped since they nerf the player |
 | 9 | SeasonTweaker | 1.2.0 | Modder | SeasonTweaker.dll | Weather | _TBD_ | Pending pick |
 | 10 | TaxGoldGainMono | 1.1.0 | coos | TaxGoldgainMono.dll | Economy | **Crown's Bounty** | Folded (Phase 1) — narrowed to TaxCollection gain type only |
-| 11 | TravelingMerchantPlus | 1.1.1 | coos | TravelingMerchantPlusMono.dll | Economy | _TBD_ | Pending pick |
+| 11 | TravelingMerchantPlus | 1.1.1 | coos | TravelingMerchantPlusMono.dll | Economy | **Wealthy Caravans** | Folded (Phase 3) — defaults tamed (5×→2×); Buy-Anything as a separate toggle |
 | 12 | VC_BuildingRadiusAdjust | 1.2 | VC | VC_BuildingRadiusAdjust_FF.dll | Buildings | **Long Reach** | Folded (Phase 2) — extended to 7 buildings (added ForagerShack + RatCatcher patches the source declared but never wired) |
 | 13 | VC_ConfigurableCropFields | 1.7 | VC | VC_ConfigurableCropFields_FF.dll | Buildings | **Bountiful Fields** | Folded (Phase 2) — all 12 crops, 6 tunables each, plus globals |
 | 14 | VC_DesirabilityBuildingsControl | 1.0 | VC | VC_DesirabilityBuildingsControl_FF.dll | Buildings | **Civic Pride** | Folded (Phase 2) |

@@ -25,6 +25,13 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<bool>  EnableCrownsBounty { get; private set; } = null!;
         public static MelonPreferences_Entry<float> CrownsBountyTaxMultiplier { get; private set; } = null!;
 
+        // ----- Wealthy Caravans (folded from TravelingMerchantPlus by coos) -----
+        public static MelonPreferences_Entry<bool>  EnableWealthyCaravans       { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> WealthyCaravansGoldMul      { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> WealthyCaravansGoodsMul     { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  WealthyCaravansBuyAnything  { get; private set; } = null!;
+        public static MelonPreferences_Entry<int>   WealthyCaravansMaxStock     { get; private set; } = null!;
+
         // ===== Workforce bucket =====
 
         // ----- Swift Feet (folded from FastVillagers by Krasipeace) -----
@@ -32,6 +39,13 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<float> SwiftFeetShoeBonus      { get; private set; } = null!;
         public static MelonPreferences_Entry<float> SwiftFeetWagonSpeed     { get; private set; } = null!;
         public static MelonPreferences_Entry<int>   SwiftFeetWagonCapacity  { get; private set; } = null!;
+
+        // ----- King's Highway (inspired by Rapid Roads by Olleus) -----
+        public static MelonPreferences_Entry<bool>  EnableKingsHighway                  { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  KingsHighwayBoostRoadSpeed          { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> KingsHighwayRoadSpeedMul            { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  KingsHighwaySlowAggressiveAnimals   { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> KingsHighwayAggressiveAnimalMul     { get; private set; } = null!;
 
         // ----- Eager Hands (folded from ForcedChildLabor by Krasipeace) -----
         public static MelonPreferences_Entry<bool> EnableEagerHands       { get; private set; } = null!;
@@ -125,6 +139,43 @@ namespace SovereignBoons
                 display_name: "Crown's Bounty — Tax Multiplier",
                 description: "Multiplier applied to gold from each tax-collection event. " +
                              "Vanilla = 1.0. Range 1.0 – 10.0.");
+
+            // ===== Wealthy Caravans =====
+            EnableWealthyCaravans = _root.CreateEntry("EnableWealthyCaravans", false,
+                display_name: "Wealthy Caravans — Enabled",
+                description: "More gold and goods on traveling merchants, optional buy-anything, " +
+                             "higher trading-post stock cap. Folded from TravelingMerchantPlus by coos.");
+            WealthyCaravansGoldMul = _root.CreateEntry("WealthyCaravansGoldMul", 2.0f,
+                display_name: "Wealthy Caravans — Gold Multiplier",
+                description: "Multiplier on TradeWagon.numGold. Range 1.0..10.0.");
+            WealthyCaravansGoodsMul = _root.CreateEntry("WealthyCaravansGoodsMul", 2.0f,
+                display_name: "Wealthy Caravans — Goods Multiplier",
+                description: "Multiplier on item counts the merchant arrives with. Range 1.0..10.0.");
+            WealthyCaravansBuyAnything = _root.CreateEntry("WealthyCaravansBuyAnything", true,
+                display_name: "Wealthy Caravans — Buy Anything",
+                description: "When true, merchants will buy any item already in their goods list " +
+                             "OR already in their storage. Lets you offload everything for gold.");
+            WealthyCaravansMaxStock = _root.CreateEntry("WealthyCaravansMaxStock", 1000,
+                display_name: "Wealthy Caravans — Trading Post Max Stock",
+                description: "TradeManager.maxTradingPostStockCount override. Vanilla = 100. Range 100..5000.");
+
+            // ===== King's Highway =====
+            EnableKingsHighway = _root.CreateEntry("EnableKingsHighway", false,
+                display_name: "King's Highway — Enabled",
+                description: "Faster travel on roads + slower aggressive animals. " +
+                             "Inspired by Rapid Roads by Olleus (off-road penalties dropped — Sovereign Boons doesn't ship nerfs).");
+            KingsHighwayBoostRoadSpeed = _root.CreateEntry("KingsHighwayBoostRoadSpeed", true,
+                display_name: "King's Highway — Boost Road Speed",
+                description: "Multiplies AIGridNode.nodeSpeedBonus for any tile on a road.");
+            KingsHighwayRoadSpeedMul = _root.CreateEntry("KingsHighwayRoadSpeedMul", 1.5f,
+                display_name: "King's Highway — Road Speed Multiplier",
+                description: "Multiplier on road tiles' speed bonus. Vanilla = 1.0. Range 1.0..3.0.");
+            KingsHighwaySlowAggressiveAnimals = _root.CreateEntry("KingsHighwaySlowAggressiveAnimals", true,
+                display_name: "King's Highway — Slow Aggressive Animals",
+                description: "Slow wolves/bears/etc. uniformly so they're easier to evade and hunt.");
+            KingsHighwayAggressiveAnimalMul = _root.CreateEntry("KingsHighwayAggressiveAnimalMul", 0.85f,
+                display_name: "King's Highway — Aggressive Animal Speed Multiplier",
+                description: "Multiplier on AggressiveAnimal.movementSpeed. 1.0 = vanilla, 0.85 = ~15% slower. Range 0.5..1.0.");
 
             // ===== Swift Feet =====
             EnableSwiftFeet = _root.CreateEntry(
