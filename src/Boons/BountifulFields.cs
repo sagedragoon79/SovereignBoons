@@ -55,12 +55,14 @@ namespace SovereignBoons.Boons
         public const int NoChangeFrost = -1;
         public const int NoChangeHeat = -1;
 
-        // Lerp bounds (taken from source mod's MinMaxValueValidator constants).
-        // UI exposes 0..10 (mild..harsh); internal field stores the actual percent.
+        // Lerp bounds — taken from VC_ConfigurableCropFields. UI is 0..10 on a
+        // TOLERANCE scale: 10 = high tolerance = 0% dies (immune), 0 = no
+        // tolerance = MaxLerp% dies (max vulnerability). The internal field
+        // _percentDiesOnFrost / _basePercentDiesOfHeatStress stores 0..MaxLerp.
         private const float MinFrostLerp = 0f;
-        private const float MaxFrostLerp = 100f;
+        private const float MaxFrostLerp = 80f; // source mod's max die% from frost
         private const float MinHeatLerp  = 0f;
-        private const float MaxHeatLerp  = 100f;
+        private const float MaxHeatLerp  = 75f; // source mod's max die% from heat
 
         // Per-crop entries — keyed by short crop name (e.g. "Wheat").
         internal sealed class CropEntries
@@ -128,14 +130,16 @@ namespace SovereignBoons.Boons
                                      "Range: -10..10. -1 = no change (vanilla). " +
                                      "To set exactly -1, use -2 or another negative value instead."),
                     FrostTolerance = cat.CreateEntry($"BountifulFields_{crop}_Frost", NoChangeFrost,
-                        display_name: $"{crop} — Frost Vulnerability (0..10)",
-                        description: "UI scale: 0 = immune to frost, 10 = very vulnerable. Lower = power-spike. " +
-                                     "Internally writes _percentDiesOnFrost (0..100 lerp). " +
+                        display_name: $"{crop} — Frost Tolerance (0..10)",
+                        description: "UI scale: 0 = no tolerance (max % dies in frost), 10 = fully tolerant " +
+                                     "(0% dies). HIGHER = power-spike. Internal write maps UI 0..10 to " +
+                                     "_percentDiesOnFrost in range 80..0 (matches VC source's bounds). " +
                                      "Vanilla varies per crop — see Log Vanilla Values. -1 = no change."),
                     HeatTolerance = cat.CreateEntry($"BountifulFields_{crop}_Heat", NoChangeHeat,
-                        display_name: $"{crop} — Heat Vulnerability (0..10)",
-                        description: "UI scale: 0 = immune to heat stress, 10 = very vulnerable. Lower = power-spike. " +
-                                     "Internally writes _basePercentDiesOfHeatStress (0..100 lerp). " +
+                        display_name: $"{crop} — Heat Tolerance (0..10)",
+                        description: "UI scale: 0 = no tolerance (max % dies in heatwave), 10 = fully tolerant " +
+                                     "(0% dies). HIGHER = power-spike. Internal write maps UI 0..10 to " +
+                                     "_basePercentDiesOfHeatStress in range 75..0 (matches VC source's bounds). " +
                                      "Vanilla varies per crop — see Log Vanilla Values. -1 = no change."),
                 };
                 _byCrop[crop] = e;
@@ -300,10 +304,10 @@ namespace SovereignBoons.Boons
 
                 if (e.FrostTolerance.Value >= 0 && e.FrostTolerance.Value <= 10)
                     ApplyIntInRange(record, "_percentDiesOnFrost",
-                        LerpToPercent(e.FrostTolerance.Value, MinFrostLerp, MaxFrostLerp), 0, 100);
+                        ToleranceToPercent(e.FrostTolerance.Value, MinFrostLerp, MaxFrostLerp), 0, 100);
                 if (e.HeatTolerance.Value >= 0 && e.HeatTolerance.Value <= 10)
                     ApplyIntInRange(record, "_basePercentDiesOfHeatStress",
-                        LerpToPercent(e.HeatTolerance.Value, MinHeatLerp, MaxHeatLerp), 0, 100);
+                        ToleranceToPercent(e.HeatTolerance.Value, MinHeatLerp, MaxHeatLerp), 0, 100);
             }
         }
 
@@ -330,10 +334,16 @@ namespace SovereignBoons.Boons
             return idx > 0 ? s.Substring(0, idx) : s;
         }
 
-        private static int LerpToPercent(int uiValue, float min, float max)
+        /// <summary>
+        /// Convert a UI tolerance value (0..10) to internal die-percent (min..max).
+        /// HIGHER tolerance UI → LOWER die % (inverse relationship).
+        /// Matches VC_ConfigurableCropFields' ConvertBack:
+        ///   percent = min + (max - min) * (1 - ui / 10)
+        /// </summary>
+        private static int ToleranceToPercent(int uiValue, float min, float max)
         {
             float t = UnityEngine.Mathf.Clamp01(uiValue / 10f);
-            return UnityEngine.Mathf.RoundToInt(UnityEngine.Mathf.Lerp(min, max, t));
+            return UnityEngine.Mathf.RoundToInt(UnityEngine.Mathf.Lerp(min, max, 1f - t));
         }
     }
 }

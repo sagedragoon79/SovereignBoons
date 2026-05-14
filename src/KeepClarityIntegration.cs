@@ -365,14 +365,14 @@ namespace SovereignBoons
                             "Vanilla per-crop (small positive %) — see Log Vanilla Values. -1 = no change.",
                             min: -10f, max: 10f, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.FrostTolerance,
-                    NewMeta($"{crop} — Frost Vulnerability",
-                            "0 = immune, 10 = very vulnerable. Lower = power-spike. " +
-                            "Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
+                    NewMeta($"{crop} — Frost Tolerance",
+                            "0 = no tolerance (dies most in frost), 10 = fully tolerant (immune). " +
+                            "HIGHER = power-spike. Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
                             min: -1, max: 10, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.HeatTolerance,
-                    NewMeta($"{crop} — Heat Vulnerability",
-                            "0 = immune, 10 = very vulnerable. Lower = power-spike. " +
-                            "Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
+                    NewMeta($"{crop} — Heat Tolerance",
+                            "0 = no tolerance (dies most in heatwave), 10 = fully tolerant (immune). " +
+                            "HIGHER = power-spike. Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
                             min: -1, max: 10, visibleWhen: applyOn));
             }
 
