@@ -1,0 +1,57 @@
+// =============================================================================
+// BOON TEMPLATE — copy to <BoonName>.cs and fill in
+// =============================================================================
+// Folded from <OriginalModName> by <Author> (v<version>)
+// Original DLL: <filename.dll>
+// Original prefs: <list>
+// SB changes: <what we changed during the fold — defaults, grouping, dropped knobs>
+//
+// Verified targets (from decompile_verification.md):
+//   - <Class.Method> exists in current Assembly-CSharp: YES/NO
+//   - <field> name matches: YES/NO/RENAMED-TO-X
+// =============================================================================
+
+using HarmonyLib;
+using MelonLoader;
+
+namespace SovereignBoons.Boons
+{
+    /// <summary>
+    /// <One-paragraph description of what this boon does and why a player wants it.>
+    /// </summary>
+    internal static class <BoonName>
+    {
+        public static void Reset()
+        {
+            // Clear any static state that doesn't survive a Map -> menu -> Map round trip.
+            // Called from Plugin.OnSceneWasInitialized.
+        }
+
+        // ---------- Harmony patches ----------
+
+        [HarmonyPatch(typeof(/* GameClass */), "/* MethodName */")]
+        internal static class Patch_<Something>
+        {
+            private static void Postfix(/* GameClass */ __instance /*, ref T __result */)
+            {
+                if (!Config.Enable<BoonName>.Value) return;
+                if (Plugin.IsForeignModLoaded("<OriginalModAssemblyName>")) return;
+
+                // Patch body.
+            }
+        }
+    }
+}
+
+// =============================================================================
+// REMINDERS WHEN ADDING A NEW BOON
+// =============================================================================
+// 1. Add entries to Config.cs (Enable<BoonName> + any tunables).
+// 2. Add CreateEntry(...) calls in Config.Initialize().
+// 3. Add Reg<T>(GroupX, Config.Enable<BoonName>, NewMeta(...)) in KeepClarityIntegration.RegisterEntries().
+// 4. If this boon has static state -> add a Reset() call to Plugin.OnSceneWasInitialized.
+// 5. If this boon has per-frame work -> add an OnUpdate() call to Plugin.OnUpdate.
+// 6. If the source mod assembly name isn't already in Plugin.DetectForeignMods'
+//    watchedAssemblies list, add it.
+// 7. Update CHANGELOG.md and source_mods.md.
+// =============================================================================
