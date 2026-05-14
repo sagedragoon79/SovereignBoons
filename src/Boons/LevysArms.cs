@@ -47,6 +47,22 @@ namespace SovereignBoons.Boons
             _armedIds.Clear();
         }
 
+        /// <summary>
+        /// Public reflective-friendly query: "is this villager currently armed by
+        /// Levy's Arms?" Used by sibling mods (e.g. Essential Provisions' Self
+        /// Preservation) to skip flee logic for our militia. Returns false when the
+        /// boon is disabled OR the villager wasn't armed by us.
+        ///
+        /// Stable API — keep the signature `public static bool IsArmed(Villager)`
+        /// so reflective callers don't break across SB versions.
+        /// </summary>
+        public static bool IsArmed(Villager v)
+        {
+            if (v == null) return false;
+            if (!Config.EnableLevysArms.Value) return false;
+            return _armedIds.Contains(v.GetInstanceID());
+        }
+
         public static void ResolveHotkeys()
         {
             if (System.Enum.TryParse<KeyCode>(Config.LevysArmsArmKey.Value, ignoreCase: true, out var k1)) _armKey = k1;
