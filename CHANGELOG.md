@@ -2,6 +2,23 @@
 
 All notable changes to Sovereign Boons.
 
+## [Unreleased] — 0.3.0-dev (Phase 2 — VC family)
+
+### Added — 7 boons folded
+- **Long Reach** (Buildings) — Per-building work-radius multipliers for 7 buildings (WorkCamp, Hunter, Fishing, Arborist, Market, **ForagerShack, RatCatcher**). Folded from VC_BuildingRadiusAdjust (VC). **Extended beyond source** — the source mod declared Forage/RatCatcher prefs but never wired them; Sovereign Boons wires both.
+- **Civic Pride** (Buildings) — Multiplies DecorativeBuilding desirability radius and bonus. Folded from VC_DesirabilityBuildingsControl (VC).
+- **Temperate Skies** (Weather) — Independently suppress Blizzard / Heatwave / All-extreme / Drought. Folded from VC_NoBlizzardAndDrought (VC). **Inverted polarity** — `Disable<X>` toggles are easier to read than the source's confusing `Active=false`.
+- **Hoarded Stores** (Buildings, **partial fold**) — Per-storage-type capacity multiplier for 7 storage types. Folded from VC_UserStorageConfig (VC). Per-item-category min/max quotas deferred to v0.4 (heavy UI; out of scope for this phase).
+- **Greater Halls** (Buildings) — Per-building +Workers / +Residents add-on for 46 building types across 6 categories (Livestock / Production / Resource Sites / Field Work / Civic / Residential). Folded from VC_ModifyWorkerSlots (VC). Replaced source's custom IntCfg struct with flat `MelonPreferences_Entry<int>` per building.
+- **Hallowed Reliquary** (Buildings, **partial fold**) — Spirituality bonus per relic multiplier + auto-match Temple maxWorkers to slot count. Folded from VC_ModifyTemple (VC). `RelicAddons` (extra relic slots) deferred to v0.4 — the source's UI rewire depends on UniverseLib's UIFactory which we don't ship; the v0.4 follow-up will write a simpler renderer.
+- **Bountiful Fields** (Buildings) — All 12 vanilla crops × 6 tunables each (Fertility, PlantingDays, MatureDays, WeedLevel, Frost, Heat) + globals (GridsPerFarmerMul, MaintenanceDays). Folded from VC_ConfigurableCropFields (VC). Per-crop Apply toggle so individual crop overrides can be flipped without unsetting the master.
+
+### Notes
+- All 7 boons default OFF; all tunables hidden behind their master toggle via KC `VisibleWhen`.
+- Foreign-mod kill switches active for every source.
+- 0w/0e build; auto-staged to Mods folder.
+- Avoided `System.ValueTuple` dependency (not in net46) — used plain class types for dispatch records.
+
 ## [Unreleased] — 0.2.0-dev (Phase 1)
 
 ### Added — 5 boons folded

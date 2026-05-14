@@ -17,14 +17,14 @@ Catalog reference: `C:\Users\saged\source\repos\Other\List of Power Spike Mods\_
 | 9 | SeasonTweaker | 1.2.0 | Modder | SeasonTweaker.dll | Weather | _TBD_ | Pending pick |
 | 10 | TaxGoldGainMono | 1.1.0 | coos | TaxGoldgainMono.dll | Economy | **Crown's Bounty** | Folded (Phase 1) — narrowed to TaxCollection gain type only |
 | 11 | TravelingMerchantPlus | 1.1.1 | coos | TravelingMerchantPlusMono.dll | Economy | _TBD_ | Pending pick |
-| 12 | VC_BuildingRadiusAdjust | 1.2 | VC | VC_BuildingRadiusAdjust_FF.dll | Buildings | _TBD_ | Pending pick |
-| 13 | VC_ConfigurableCropFields | 1.7 | VC | VC_ConfigurableCropFields_FF.dll | Buildings | _TBD_ | Pending pick |
-| 14 | VC_DesirabilityBuildingsControl | 1.0 | VC | VC_DesirabilityBuildingsControl_FF.dll | Buildings | _TBD_ | Pending pick |
+| 12 | VC_BuildingRadiusAdjust | 1.2 | VC | VC_BuildingRadiusAdjust_FF.dll | Buildings | **Long Reach** | Folded (Phase 2) — extended to 7 buildings (added ForagerShack + RatCatcher patches the source declared but never wired) |
+| 13 | VC_ConfigurableCropFields | 1.7 | VC | VC_ConfigurableCropFields_FF.dll | Buildings | **Bountiful Fields** | Folded (Phase 2) — all 12 crops, 6 tunables each, plus globals |
+| 14 | VC_DesirabilityBuildingsControl | 1.0 | VC | VC_DesirabilityBuildingsControl_FF.dll | Buildings | **Civic Pride** | Folded (Phase 2) |
 | 15 | VC_FasterWaterRecharge | 1.0 | VC | VC_FasterWaterRecharge_FF.dll | Buildings | **Spring's Vigor** | Folded (Phase 1) |
-| 16 | VC_ModifyTemple | 1.4 | VC | VC_ModifyTemple_FF.dll | Buildings | _TBD_ | Pending pick |
-| 17 | VC_ModifyWorkerSlots | 1.3 | VC | VC_ModifyWorkerSlots.dll | Buildings | _TBD_ | Pending pick |
-| 18 | VC_NoBlizzardAndDrought | 1.1 | VC | VC_NoBlizzardAndDrought.dll | Weather | _TBD_ | Pending pick |
-| 19 | VC_UserStorageConfig | 1.3 | VC | VC_UserStorageConfig_FF.dll | Buildings | _TBD_ | Pending pick |
+| 16 | VC_ModifyTemple | 1.4 | VC | VC_ModifyTemple_FF.dll | Buildings | **Hallowed Reliquary** | **Partial fold** (Phase 2) — BonusMul + ForceWorkers shipped; RelicAddons UI rewire deferred to v0.4 |
+| 17 | VC_ModifyWorkerSlots | 1.3 | VC | VC_ModifyWorkerSlots.dll | Buildings | **Greater Halls** | Folded (Phase 2) — 46 buildings, +Workers add-on per type |
+| 18 | VC_NoBlizzardAndDrought | 1.1 | VC | VC_NoBlizzardAndDrought.dll | Weather | **Temperate Skies** | Folded (Phase 2) — polarity inverted (Disable<X> instead of confusing "Active=false means remove") |
+| 19 | VC_UserStorageConfig | 1.3 | VC | VC_UserStorageConfig_FF.dll | Buildings | **Hoarded Stores** | **Partial fold** (Phase 2) — capacity multiplier per type; per-category Min/Max quotas deferred to v0.4 |
 
 ## Author summary
 

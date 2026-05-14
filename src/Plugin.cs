@@ -92,15 +92,23 @@ namespace SovereignBoons
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
-            if (sceneName != "Map") return;
+            if (sceneName != "Map")
+            {
+                Boons.HallowedReliquary.Reset();
+                Boons.CivicPride.Reset();
+                return;
+            }
 
             // Apply static-field writes that need a fresh map context:
             Boons.EagerHands.ApplyStatics();
+            Boons.BountifulFields.Apply();
         }
 
         public override void OnUpdate()
         {
-            // Boons with per-frame work register here.
+            // Hallowed Reliquary captures vanilla ReligionManager bonus and applies
+            // its multiplier once GameManager exists. Self-throttles via _applied flag.
+            Boons.HallowedReliquary.TryApplyBonusOnce();
         }
     }
 }

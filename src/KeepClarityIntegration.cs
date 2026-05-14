@@ -185,6 +185,127 @@ namespace SovereignBoons
                 NewMeta("Steadfast Resolve",
                         "Achievements unlock even with non-default settings or mods.",
                         restartRequired: true));
+
+            // ===== Long Reach (Buildings) =====
+            Reg(GroupBuildings, Config.EnableLongReach,
+                NewMeta("Long Reach", "Per-building work-radius multipliers.", restartRequired: true));
+            Reg(GroupBuildings, Config.LongReachWorkCampPct,
+                NewMeta("Work Camp +%",      "WorkCamp work radius.",         min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value));
+            Reg(GroupBuildings, Config.LongReachHunterPct,
+                NewMeta("Hunter +%",         "HunterBuilding radius.",        min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value));
+            Reg(GroupBuildings, Config.LongReachFishingPct,
+                NewMeta("Fishing +%",        "FishingShack radius.",          min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value));
+            Reg(GroupBuildings, Config.LongReachArboristPct,
+                NewMeta("Arborist +%",       "ArboristBuilding radius.",      min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value));
+            Reg(GroupBuildings, Config.LongReachMarketPct,
+                NewMeta("Market +%",         "Market planning radius.",       min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value));
+            Reg(GroupBuildings, Config.LongReachForagerPct,
+                NewMeta("Forager Shack +%",  "ForagerShack foraging radius.", min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value));
+            Reg(GroupBuildings, Config.LongReachRatCatcherPct,
+                NewMeta("Rat Catcher +%",    "RatCatcher work radius.",       min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value));
+
+            // ===== Civic Pride (Buildings) =====
+            Reg(GroupBuildings, Config.EnableCivicPride,
+                NewMeta("Civic Pride", "Multiply DecorativeBuilding desirability radius/bonus.", restartRequired: true));
+            Reg(GroupBuildings, Config.CivicPrideRadiusMul,
+                NewMeta("Radius Multiplier", "Vanilla = 1.0.", min: 0.5f, max: 10f, visibleWhen: () => Config.EnableCivicPride.Value));
+            Reg(GroupBuildings, Config.CivicPrideBonusMul,
+                NewMeta("Bonus Multiplier",  "Vanilla = 1.0.", min: 0.5f, max: 10f, visibleWhen: () => Config.EnableCivicPride.Value));
+
+            // ===== Hoarded Stores (Buildings) =====
+            Reg(GroupBuildings, Config.EnableHoardedStores,
+                NewMeta("Hoarded Stores", "Per-storage-type capacity multiplier.", restartRequired: true));
+            Reg(GroupBuildings, Config.HoardedStoresRootCellarEnable,    NewMeta("Root Cellar — Apply",    "Apply capacity multiplier to Root Cellars.",   visibleWhen: () => Config.EnableHoardedStores.Value));
+            Reg(GroupBuildings, Config.HoardedStoresRootCellarMul,       NewMeta("Root Cellar — Mul",      "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresRootCellarEnable.Value));
+            Reg(GroupBuildings, Config.HoardedStoresGranaryEnable,       NewMeta("Granary — Apply",        "Apply capacity multiplier to Granaries.",      visibleWhen: () => Config.EnableHoardedStores.Value));
+            Reg(GroupBuildings, Config.HoardedStoresGranaryMul,          NewMeta("Granary — Mul",          "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresGranaryEnable.Value));
+            Reg(GroupBuildings, Config.HoardedStoresStorehouseEnable,    NewMeta("Storehouse — Apply",     "Apply capacity multiplier to Storehouses.",    visibleWhen: () => Config.EnableHoardedStores.Value));
+            Reg(GroupBuildings, Config.HoardedStoresStorehouseMul,       NewMeta("Storehouse — Mul",       "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStorehouseEnable.Value));
+            Reg(GroupBuildings, Config.HoardedStoresStorageDepotEnable,  NewMeta("Storage Depot — Apply",  "Apply capacity multiplier to Storage Depots.", visibleWhen: () => Config.EnableHoardedStores.Value));
+            Reg(GroupBuildings, Config.HoardedStoresStorageDepotMul,     NewMeta("Storage Depot — Mul",    "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStorageDepotEnable.Value));
+            Reg(GroupBuildings, Config.HoardedStoresStockyardEnable,     NewMeta("Stockyard — Apply",      "Apply capacity multiplier to Stockyards.",     visibleWhen: () => Config.EnableHoardedStores.Value));
+            Reg(GroupBuildings, Config.HoardedStoresStockyardMul,        NewMeta("Stockyard — Mul",        "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStockyardEnable.Value));
+            Reg(GroupBuildings, Config.HoardedStoresTreasuryEnable,      NewMeta("Treasury — Apply",       "Apply capacity multiplier to Treasuries.",     visibleWhen: () => Config.EnableHoardedStores.Value));
+            Reg(GroupBuildings, Config.HoardedStoresTreasuryMul,         NewMeta("Treasury — Mul",         "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresTreasuryEnable.Value));
+            Reg(GroupBuildings, Config.HoardedStoresMarketEnable,        NewMeta("Market — Apply",         "Apply capacity multiplier to Markets.",        visibleWhen: () => Config.EnableHoardedStores.Value));
+            Reg(GroupBuildings, Config.HoardedStoresMarketMul,           NewMeta("Market — Mul",           "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresMarketEnable.Value));
+
+            // ===== Greater Halls (Buildings) =====
+            Reg(GroupBuildings, Config.EnableGreaterHalls,
+                NewMeta("Greater Halls",
+                        "Per-building +Workers / +Residents add-on for ~46 building types. " +
+                        "Grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential.",
+                        restartRequired: true));
+            foreach (var bp in Boons.GreaterHalls.Iterate())
+            {
+                Reg(GroupBuildings, bp.Entry,
+                    NewMeta($"{bp.Name} +Workers",
+                            $"Extra worker/resident slots for {bp.Name}. Category: {bp.Category}.",
+                            min: bp.Min, max: bp.Max,
+                            visibleWhen: () => Config.EnableGreaterHalls.Value));
+            }
+
+            // ===== Hallowed Reliquary (Buildings) =====
+            Reg(GroupBuildings, Config.EnableHallowedReliquary,
+                NewMeta("Hallowed Reliquary",
+                        "Spirituality bonus per relic multiplier + auto-match Temple maxWorkers to slot count.",
+                        restartRequired: false));
+            Reg(GroupBuildings, Config.HallowedReliquaryBonusMul,
+                NewMeta("Spirituality Bonus Mul", "Vanilla = 1.0.", min: 0.5f, max: 3.0f,
+                        visibleWhen: () => Config.EnableHallowedReliquary.Value));
+            Reg(GroupBuildings, Config.HallowedReliquaryForceWorkers,
+                NewMeta("Force Workers Match Slots", "Raise Temple maxWorkers to match relic count.",
+                        visibleWhen: () => Config.EnableHallowedReliquary.Value));
+
+            // ===== Bountiful Fields (Buildings) =====
+            Reg(GroupBuildings, Config.EnableBountifulFields,
+                NewMeta("Bountiful Fields",
+                        "Per-crop tuning + farming globals.", restartRequired: true));
+            Reg(GroupBuildings, Config.BountifulFieldsGridsPerFarmerMul,
+                NewMeta("Grids per Farmer Mul", "Vanilla = 1.0.", min: 0.5f, max: 2.0f,
+                        visibleWhen: () => Config.EnableBountifulFields.Value));
+            Reg(GroupBuildings, Config.BountifulFieldsMaintenanceDays,
+                NewMeta("Maintenance Length (days)",
+                        "Range 45..90. -1 = no change.", min: -1, max: 90,
+                        visibleWhen: () => Config.EnableBountifulFields.Value));
+
+            foreach (var cp in Boons.BountifulFields.Iterate())
+            {
+                var crop = cp.Crop;
+                var e = cp.Entries;
+                System.Func<bool> applyOn = () => Config.EnableBountifulFields.Value && e.Apply.Value;
+                Reg(GroupBuildings, e.Apply,
+                    NewMeta($"{crop} — Apply", $"Master switch for {crop} overrides.",
+                            visibleWhen: () => Config.EnableBountifulFields.Value));
+                Reg(GroupBuildings, e.Fertility,
+                    NewMeta($"{crop} — Fertility %",  "Range -10..10. 255 = no change.", min: -10, max: 255, visibleWhen: applyOn));
+                Reg(GroupBuildings, e.PlantingDays,
+                    NewMeta($"{crop} — Planting Days", "Range 5..10. -1 = no change.",   min: -1,  max: 10,  visibleWhen: applyOn));
+                Reg(GroupBuildings, e.MatureDays,
+                    NewMeta($"{crop} — Mature Days",   "Range 25..150. -1 = no change.", min: -1,  max: 150, visibleWhen: applyOn));
+                Reg(GroupBuildings, e.WeedLevel,
+                    NewMeta($"{crop} — Weed Level",    "Multiplier on weed rate.",        min: -10f, max: 999f, visibleWhen: applyOn));
+                Reg(GroupBuildings, e.FrostTolerance,
+                    NewMeta($"{crop} — Frost Tol.",    "0 (immune) – 10 (vulnerable). -1 = no change.", min: -1, max: 10, visibleWhen: applyOn));
+                Reg(GroupBuildings, e.HeatTolerance,
+                    NewMeta($"{crop} — Heat Tol.",     "0 (immune) – 10 (vulnerable). -1 = no change.", min: -1, max: 10, visibleWhen: applyOn));
+            }
+
+            // ===== Temperate Skies (Weather) =====
+            Reg(GroupWeather, Config.EnableTemperateSkies,
+                NewMeta("Temperate Skies", "Suppress extreme weather events.", restartRequired: false));
+            Reg(GroupWeather, Config.TemperateSkiesDisableBlizzard,
+                NewMeta("Disable Blizzard", "Remove Blizzard from extreme weather rolls.",
+                        visibleWhen: () => Config.EnableTemperateSkies.Value));
+            Reg(GroupWeather, Config.TemperateSkiesDisableHeatwave,
+                NewMeta("Disable Heatwave", "Remove Heatwave from extreme weather rolls.",
+                        visibleWhen: () => Config.EnableTemperateSkies.Value));
+            Reg(GroupWeather, Config.TemperateSkiesDisableAllExtreme,
+                NewMeta("Disable ALL Extreme", "Force chanceOfExtremeWeather to 0.",
+                        visibleWhen: () => Config.EnableTemperateSkies.Value));
+            Reg(GroupWeather, Config.TemperateSkiesDisableDrought,
+                NewMeta("Disable Drought", "Flat-zero curve override for chanceOfDrought.",
+                        visibleWhen: () => Config.EnableTemperateSkies.Value));
         }
     }
 }
