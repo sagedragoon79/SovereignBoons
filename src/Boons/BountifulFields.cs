@@ -82,27 +82,37 @@ namespace SovereignBoons.Boons
                     Apply = cat.CreateEntry($"BountifulFields_{crop}_Apply", false,
                         display_name: $"{crop} — Apply Overrides",
                         description: $"Master switch for {crop} field tuning. " +
-                                     "If false, vanilla values are used for this crop."),
+                                     "If false, vanilla values are used for this crop. " +
+                                     "If true, each knob below is applied UNLESS set to its 'no change' sentinel."),
                     Fertility = cat.CreateEntry($"BountifulFields_{crop}_Fertility", NoChangeFertility,
-                        display_name: $"{crop} — Fertility Depletion %",
-                        description: $"Fertility lost per planting cycle. Vanilla varies per crop. " +
-                                     $"Range -10..10. Sentinel {NoChangeFertility} = no change."),
+                        display_name: $"{crop} — Fertility Depletion (per planting)",
+                        description: "Fertility points consumed each planting cycle. Vanilla is a small positive int (per-crop, " +
+                                     "see vanilla data). Lower = field stays fertile longer (power-spike). Negative = " +
+                                     "planting RESTORES fertility. " +
+                                     $"Range: -10..10. Default {NoChangeFertility} = no change (use vanilla)."),
                     PlantingDays = cat.CreateEntry($"BountifulFields_{crop}_PlantingDays", NoChangePlantingDays,
                         display_name: $"{crop} — Planting Days",
-                        description: "Days needed to plant the field. Range 5..10. -1 = no change."),
+                        description: "Days needed to plant the field before growth begins. Lower = faster turnaround. " +
+                                     "Range: 5..10. Default -1 = no change (use vanilla, per-crop)."),
                     MatureDays = cat.CreateEntry($"BountifulFields_{crop}_MatureDays", NoChangeMatureDays,
                         display_name: $"{crop} — Maturity Days",
-                        description: "Days to mature from planting to harvest. Range 25..150. -1 = no change."),
+                        description: "Days from planted to ready-to-harvest. Lower = faster crop (power-spike). " +
+                                     "Range: 25..150. Default -1 = no change (use vanilla, per-crop)."),
                     WeedLevel = cat.CreateEntry($"BountifulFields_{crop}_WeedLevel", NoChangeWeed,
-                        display_name: $"{crop} — Weed Level Multiplier",
-                        description: $"Weeds grow {{value}}× the vanilla rate. Range -10..10. " +
-                                     $"Sentinel {NoChangeWeed} = no change."),
+                        display_name: $"{crop} — Weed Injection (per cycle)",
+                        description: "Percentage weed level ADDED to the field each planting/harvest cycle " +
+                                     "(game applies as `weedLevel += value / 100`). Vanilla varies per crop, " +
+                                     "usually a small positive percent. Lower or negative = fewer weeds per " +
+                                     "cycle (power-spike). " +
+                                     $"Range: -10..10. Default {NoChangeWeed} = no change (use vanilla)."),
                     FrostTolerance = cat.CreateEntry($"BountifulFields_{crop}_Frost", NoChangeFrost,
-                        display_name: $"{crop} — Frost Tolerance",
-                        description: "0 (immune) – 10 (very vulnerable). -1 = no change."),
+                        display_name: $"{crop} — Frost Vulnerability (0..10)",
+                        description: "UI scale: 0 = immune to frost, 10 = very vulnerable. Lower = power-spike. " +
+                                     "Internally writes _percentDiesOnFrost via 0..100 lerp. Default -1 = no change."),
                     HeatTolerance = cat.CreateEntry($"BountifulFields_{crop}_Heat", NoChangeHeat,
-                        display_name: $"{crop} — Heat Tolerance",
-                        description: "0 (immune) – 10 (very vulnerable). -1 = no change."),
+                        display_name: $"{crop} — Heat Vulnerability (0..10)",
+                        description: "UI scale: 0 = immune to heat stress, 10 = very vulnerable. Lower = power-spike. " +
+                                     "Internally writes _basePercentDiesOfHeatStress via 0..100 lerp. Default -1 = no change."),
                 };
                 _byCrop[crop] = e;
             }

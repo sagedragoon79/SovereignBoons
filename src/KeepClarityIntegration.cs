@@ -334,20 +334,37 @@ namespace SovereignBoons
                 var e = cp.Entries;
                 System.Func<bool> applyOn = () => Config.EnableBountifulFields.Value && e.Apply.Value;
                 Reg(GroupBuildings, e.Apply,
-                    NewMeta($"{crop} — Apply", $"Master switch for {crop} overrides.",
+                    NewMeta($"{crop} — Apply",
+                            $"Master switch for {crop} overrides. When OFF, vanilla values are used. " +
+                            "When ON, each knob below applies unless set to its 'no change' default.",
                             visibleWhen: () => Config.EnableBountifulFields.Value));
                 Reg(GroupBuildings, e.Fertility,
-                    NewMeta($"{crop} — Fertility %",  "Range -10..10. 255 = no change.", min: -10, max: 255, visibleWhen: applyOn));
+                    NewMeta($"{crop} — Fertility Depletion",
+                            "Fertility points consumed per planting cycle. Lower = field stays fertile longer. " +
+                            "Negative = planting RESTORES fertility. 255 = no change.",
+                            min: -10, max: 255, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.PlantingDays,
-                    NewMeta($"{crop} — Planting Days", "Range 5..10. -1 = no change.",   min: -1,  max: 10,  visibleWhen: applyOn));
+                    NewMeta($"{crop} — Planting Days",
+                            "Days to plant the field. Lower = faster turnaround. -1 = no change (use vanilla).",
+                            min: -1,  max: 10,  visibleWhen: applyOn));
                 Reg(GroupBuildings, e.MatureDays,
-                    NewMeta($"{crop} — Mature Days",   "Range 25..150. -1 = no change.", min: -1,  max: 150, visibleWhen: applyOn));
+                    NewMeta($"{crop} — Mature Days",
+                            "Days from planted to ready-to-harvest. Lower = faster crop. -1 = no change.",
+                            min: -1,  max: 150, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.WeedLevel,
-                    NewMeta($"{crop} — Weed Level",    "Multiplier on weed rate.",        min: -10f, max: 999f, visibleWhen: applyOn));
+                    NewMeta($"{crop} — Weed Injection",
+                            "Percent weed level ADDED each planting/harvest cycle (game applies as " +
+                            "`weedLevel += value / 100`). Vanilla varies per crop — usually a small " +
+                            "positive percent. Lower or negative = fewer weeds. 999 = no change.",
+                            min: -10f, max: 999f, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.FrostTolerance,
-                    NewMeta($"{crop} — Frost Tol.",    "0 (immune) – 10 (vulnerable). -1 = no change.", min: -1, max: 10, visibleWhen: applyOn));
+                    NewMeta($"{crop} — Frost Vulnerability",
+                            "0 = immune, 10 = very vulnerable. Lower = power-spike. -1 = no change.",
+                            min: -1, max: 10, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.HeatTolerance,
-                    NewMeta($"{crop} — Heat Tol.",     "0 (immune) – 10 (vulnerable). -1 = no change.", min: -1, max: 10, visibleWhen: applyOn));
+                    NewMeta($"{crop} — Heat Vulnerability",
+                            "0 = immune, 10 = very vulnerable. Lower = power-spike. -1 = no change.",
+                            min: -1, max: 10, visibleWhen: applyOn));
             }
 
             // ===== Temperate Skies (Weather) =====
