@@ -116,14 +116,75 @@ namespace SovereignBoons
 
         private static void RegisterEntries()
         {
-            // Boons add their Reg<T>(...) calls here as they land, grouped by
-            // the Group* constants above.
-            //
-            // Example shape (uncomment when first boon lands):
-            //
-            // Reg(GroupEconomy, Config.EnableTaxBoost,
-            //     NewMeta("Tax Boost", "Multiply gold income from tax events.",
-            //             restartRequired: false));
+            // ===== Crown's Bounty (Economy) =====
+            Reg(GroupEconomy, Config.EnableCrownsBounty,
+                NewMeta("Crown's Bounty",
+                        "Multiply gold from tax-collection events. Honest to the name — " +
+                        "sales/refunds/event rewards are untouched."));
+            Reg(GroupEconomy, Config.CrownsBountyTaxMultiplier,
+                NewMeta("Tax Multiplier", "Vanilla = 1.0.", min: 1.0f, max: 10.0f,
+                        visibleWhen: () => Config.EnableCrownsBounty.Value));
+
+            // ===== Swift Feet (Workforce) =====
+            Reg(GroupWorkforce, Config.EnableSwiftFeet,
+                NewMeta("Swift Feet",
+                        "Faster villagers + beefier transport wagons.",
+                        restartRequired: true));
+            Reg(GroupWorkforce, Config.SwiftFeetShoeBonus,
+                NewMeta("Villager Shoe Bonus",
+                        "Replaces Character._shoeBonusBase. Vanilla = 0.15. Affects raiders too.",
+                        min: 0.10f, max: 2.00f,
+                        visibleWhen: () => Config.EnableSwiftFeet.Value));
+            Reg(GroupWorkforce, Config.SwiftFeetWagonSpeed,
+                NewMeta("Wagon Move Speed", "TransportWagon._movementSpeed override.",
+                        min: 4.0f, max: 20.0f,
+                        visibleWhen: () => Config.EnableSwiftFeet.Value));
+            Reg(GroupWorkforce, Config.SwiftFeetWagonCapacity,
+                NewMeta("Wagon Carry Capacity", "TransportWagon.carryCapacity override.",
+                        min: 150, max: 1000,
+                        visibleWhen: () => Config.EnableSwiftFeet.Value));
+
+            // ===== Eager Hands (Workforce) =====
+            Reg(GroupWorkforce, Config.EnableEagerHands,
+                NewMeta("Eager Hands",
+                        "Lower age cutoffs for the labor pool + School enrollment range.",
+                        restartRequired: false));
+            Reg(GroupWorkforce, Config.EagerHandsChildAge,
+                NewMeta("Child Cutoff Age", "Vanilla = 15.", min: 5, max: 18,
+                        visibleWhen: () => Config.EnableEagerHands.Value));
+            Reg(GroupWorkforce, Config.EagerHandsAdolescentAge,
+                NewMeta("Adolescent Cutoff Age", "Vanilla = 25.", min: 12, max: 30,
+                        visibleWhen: () => Config.EnableEagerHands.Value));
+            Reg(GroupWorkforce, Config.EagerHandsSchoolMinAge,
+                NewMeta("School Min Enrollment Age", "Vanilla = 5.", min: 3, max: 10,
+                        visibleWhen: () => Config.EnableEagerHands.Value));
+            Reg(GroupWorkforce, Config.EagerHandsSchoolMaxAge,
+                NewMeta("School Max Enrollment Age",
+                        "Vanilla = 10. Set very low to effectively disable schooling.",
+                        min: 5, max: 60,
+                        visibleWhen: () => Config.EnableEagerHands.Value));
+
+            // ===== Spring's Vigor (Buildings) =====
+            Reg(GroupBuildings, Config.EnableSpringsVigor,
+                NewMeta("Spring's Vigor",
+                        "Faster Well recharge + bigger Well capacity.",
+                        restartRequired: true));
+            Reg(GroupBuildings, Config.SpringsVigorRechargeMult,
+                NewMeta("Recharge Multiplier",
+                        "Multiplier on Well.waterGainPerSecond. Vanilla = 0.01 (×1.0).",
+                        min: 1.0f, max: 10.0f,
+                        visibleWhen: () => Config.EnableSpringsVigor.Value));
+            Reg(GroupBuildings, Config.SpringsVigorCapacityMult,
+                NewMeta("Capacity Multiplier",
+                        "Multiplier on Well.maxWater. Vanilla = 50 (×1.0).",
+                        min: 1.0f, max: 10.0f,
+                        visibleWhen: () => Config.EnableSpringsVigor.Value));
+
+            // ===== Steadfast Resolve (Misc) =====
+            Reg(GroupMisc, Config.EnableSteadfastResolve,
+                NewMeta("Steadfast Resolve",
+                        "Achievements unlock even with non-default settings or mods.",
+                        restartRequired: true));
         }
     }
 }

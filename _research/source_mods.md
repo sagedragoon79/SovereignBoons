@@ -8,19 +8,19 @@ Catalog reference: `C:\Users\saged\source\repos\Other\List of Power Spike Mods\_
 |---|------------|---------|--------|-----|-----------|-----------|--------|
 | 1 | AnimalSpawner (Mono) | 1.3.0 | paboyafx | AnimalSpawnerMono.dll | — | — | **Deferred → SeedVault** (creator tool) |
 | 2 | BasicWeaponEquipment | 3.1.0 | donimuzur | BasicWeaponEquipment.dll | Combat | _TBD_ | **Blocked** (Il2Cpp — needs Mono re-impl) |
-| 3 | Fast Villagers | 1.0.4 | Krasipeace | FastVillagers_FF.dll | Workforce | _TBD_ | Pending pick |
-| 4 | FFEnableAchievements | 1.0.0 | idontcare | FFEnableAchievements_FF.dll | Misc | _TBD_ | Pending pick |
-| 5 | Forced Child Labor | 1.0.3 | Krasipeace | ForcedChildLabor_FF.dll | Workforce | _TBD_ | Pending pick |
+| 3 | Fast Villagers | 1.0.4 | Krasipeace | FastVillagers_FF.dll | Workforce | **Swift Feet** | Folded (Phase 1) |
+| 4 | FFEnableAchievements | 1.0.0 | idontcare | FFEnableAchievements_FF.dll | Misc | **Steadfast Resolve** | Folded (Phase 1) |
+| 5 | Forced Child Labor | 1.0.3 | Krasipeace | ForcedChildLabor_FF.dll | Workforce | **Eager Hands** | Folded (Phase 1) |
 | 6 | MineralSpawner (Mono) | 1.5.3 | paboyafx | MineralSpawnerMono.dll | — | — | **Deferred → SeedVault** (creator tool) |
 | 7 | MoveResource (Mono) | 1.5.1 | paboyafx | MoveResourceMod.dll | — | — | **Deferred → SeedVault** (also overlaps Tended Wilds / FT) |
 | 8 | Rapid Roads | 1.0.0 | Olleus | Rapid Roads_FF.dll | Workforce | _TBD_ | Pending pick |
 | 9 | SeasonTweaker | 1.2.0 | Modder | SeasonTweaker.dll | Weather | _TBD_ | Pending pick |
-| 10 | TaxGoldGainMono | 1.1.0 | coos | TaxGoldgainMono.dll | Economy | _TBD_ | Pending pick |
+| 10 | TaxGoldGainMono | 1.1.0 | coos | TaxGoldgainMono.dll | Economy | **Crown's Bounty** | Folded (Phase 1) — narrowed to TaxCollection gain type only |
 | 11 | TravelingMerchantPlus | 1.1.1 | coos | TravelingMerchantPlusMono.dll | Economy | _TBD_ | Pending pick |
 | 12 | VC_BuildingRadiusAdjust | 1.2 | VC | VC_BuildingRadiusAdjust_FF.dll | Buildings | _TBD_ | Pending pick |
 | 13 | VC_ConfigurableCropFields | 1.7 | VC | VC_ConfigurableCropFields_FF.dll | Buildings | _TBD_ | Pending pick |
 | 14 | VC_DesirabilityBuildingsControl | 1.0 | VC | VC_DesirabilityBuildingsControl_FF.dll | Buildings | _TBD_ | Pending pick |
-| 15 | VC_FasterWaterRecharge | 1.0 | VC | VC_FasterWaterRecharge_FF.dll | Buildings | _TBD_ | Pending pick |
+| 15 | VC_FasterWaterRecharge | 1.0 | VC | VC_FasterWaterRecharge_FF.dll | Buildings | **Spring's Vigor** | Folded (Phase 1) |
 | 16 | VC_ModifyTemple | 1.4 | VC | VC_ModifyTemple_FF.dll | Buildings | _TBD_ | Pending pick |
 | 17 | VC_ModifyWorkerSlots | 1.3 | VC | VC_ModifyWorkerSlots.dll | Buildings | _TBD_ | Pending pick |
 | 18 | VC_NoBlizzardAndDrought | 1.1 | VC | VC_NoBlizzardAndDrought.dll | Weather | _TBD_ | Pending pick |

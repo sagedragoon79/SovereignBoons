@@ -133,9 +133,16 @@ If everything checks out in verification:
 
 **Total: ~14–18 evenings of work to fold all 16 in-scope mods.** v0.2 (Phase 1) is the natural first ship point at the end of week one.
 
-## Open questions for tomorrow
+## Decisions locked in 2026-05-14
 
-1. **Worker Slots pref bloat** — 45+ entries in one cfg file is unwieldy. Options: (a) ship as-is, (b) collapse into one JSON-encoded string entry, (c) only expose the most-used 10 and leave the rest hidden. _Recommend (c) for v0.3, expand if requested._
-2. **Naming** — accept the working candidates above, or pick fresh?
-3. **License outreach** — DM each source author for re-use blessing now, or only when public release nears?
-4. **Workshop strategy** — single Workshop entry that grows, or one per phase? _Recommend single entry, update notes per phase._
+1. **Naming**: working candidates accepted (Steadfast Resolve, Swift Feet, Eager Hands, Crown's Bounty, Spring's Vigor for Phase 1; rest as proposed). Author retains right to rename before public release.
+2. **GitHub repo**: private until v1.0. Changelog published as we go.
+3. **License**: all source authors credited in Steam Workshop release description at v1.0 ship time. No proactive author outreach unless someone objects post-publish.
+4. **Worker Slots pref UX** (Phase 2 research): user wants grid-row rendering — multiple jobs per visible row in the KC manager, with a master toggle that expands the section. Example layout:
+   ```
+   Worker Counts (Per building)
+     Woodcutters: [#]   Sawyers: [#]   Bakers: [#]   Miners: [#]
+     Hunters: [#]       Foragers: [#]  …
+   ```
+   **Decision**: when Phase 2 starts, audit KC's `SettingsAPI` / `SettingsMeta` for multi-column row support. If KC doesn't currently render rows of N controls, extend its renderer (we own KC). Fallback: group by building type into collapsible sections (Production / Livestock / Storage / Residential) — still better than 45 alphabetical entries. We are NOT going to ship a knob that requires the user to hand-edit `.cfg`.
+5. **Workshop strategy**: single entry that grows by phase, version-bumped per ship. Changelog includes the phase that added each boon.

@@ -2,7 +2,21 @@
 
 All notable changes to Sovereign Boons.
 
-## [Unreleased] — 0.1.0-dev
+## [Unreleased] — 0.2.0-dev (Phase 1)
+
+### Added — 5 boons folded
+- **Steadfast Resolve** (Misc) — Achievements unlock with custom settings/mods. Folded from FFEnableAchievements (idontcare).
+- **Swift Feet** (Workforce) — Faster villagers + beefier transport wagons. Folded from FastVillagers (Krasipeace).
+- **Eager Hands** (Workforce) — Lower child/adolescent labor cutoffs + School enrollment range. Folded from Forced Child Labor (Krasipeace). Uses single static-field write instead of source mod's per-instance Awake patch.
+- **Crown's Bounty** (Economy) — Multiplies gold from tax-collection events only. Folded from TaxGoldgainMono (coos). **Narrower than source** — sales/refunds/trade gains untouched, honest to the boon name.
+- **Spring's Vigor** (Buildings) — Faster Well recharge + bigger Well capacity. Folded from VC_FasterWaterRecharge (VC).
+
+### Notes
+- All 5 boons default OFF; every tunable is gated on its master toggle via KC `VisibleWhen`.
+- Foreign-mod kill switches in place: if you have the standalone source mod loaded, the matching boon defers.
+- Build clean (0 warn / 0 err); auto-staged to Mods folder.
+
+## [Initial scaffold] — 0.1.0-dev
 
 ### Added
 - Repo scaffolded (`src/Plugin.cs`, `src/Config.cs`, `src/KeepClarityIntegration.cs`, `src/Boons/`).

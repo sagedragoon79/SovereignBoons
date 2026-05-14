@@ -36,6 +36,9 @@ namespace SovereignBoons
 
             KeepClarityIntegration.TryRegisterAll();
 
+            // Boons that apply at init (no scene needed):
+            Boons.SteadfastResolve.Apply();
+
             LoggerInstance.Msg("Sovereign Boons 0.1.0 initialized");
         }
 
@@ -89,8 +92,10 @@ namespace SovereignBoons
 
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
-            // Boons with static state that needs to clear on scene transitions
-            // register a Reset() call here as they land.
+            if (sceneName != "Map") return;
+
+            // Apply static-field writes that need a fresh map context:
+            Boons.EagerHands.ApplyStatics();
         }
 
         public override void OnUpdate()
