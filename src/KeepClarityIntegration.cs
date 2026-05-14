@@ -320,6 +320,11 @@ namespace SovereignBoons
             Reg(GroupBuildings, Config.EnableBountifulFields,
                 NewMeta("Bountiful Fields",
                         "Per-crop tuning + farming globals.", restartRequired: true));
+            Reg(GroupBuildings, Config.BountifulFieldsLogVanilla,
+                NewMeta("Log Vanilla Values",
+                        "Dump every crop's vanilla VegetableFieldsRecord values to MelonLoader.log on map load. " +
+                        "Enable temporarily to discover per-crop defaults; turn off when done.",
+                        visibleWhen: () => Config.EnableBountifulFields.Value));
             Reg(GroupBuildings, Config.BountifulFieldsGridsPerFarmerMul,
                 NewMeta("Grids per Farmer Mul", "Vanilla = 1.0.", min: 0.5f, max: 2.0f,
                         visibleWhen: () => Config.EnableBountifulFields.Value));
@@ -341,29 +346,33 @@ namespace SovereignBoons
                 Reg(GroupBuildings, e.Fertility,
                     NewMeta($"{crop} — Fertility Depletion",
                             "Fertility points consumed per planting cycle. Lower = field stays fertile longer. " +
-                            "Negative = planting RESTORES fertility. 255 = no change.",
-                            min: -10, max: 255, visibleWhen: applyOn));
+                            "Vanilla per-crop (small positive int) — see Log Vanilla Values. -1 = no change.",
+                            min: -10, max: 10, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.PlantingDays,
                     NewMeta($"{crop} — Planting Days",
-                            "Days to plant the field. Lower = faster turnaround. -1 = no change (use vanilla).",
+                            "Days to plant before growth begins. Lower = faster turnaround. " +
+                            "Vanilla per-crop (~5–10) — see Log Vanilla Values. -1 = no change.",
                             min: -1,  max: 10,  visibleWhen: applyOn));
                 Reg(GroupBuildings, e.MatureDays,
                     NewMeta($"{crop} — Mature Days",
-                            "Days from planted to ready-to-harvest. Lower = faster crop. -1 = no change.",
+                            "Days from planted to ready-to-harvest. Lower = faster crop. " +
+                            "Vanilla per-crop (~25–150) — see Log Vanilla Values. -1 = no change.",
                             min: -1,  max: 150, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.WeedLevel,
                     NewMeta($"{crop} — Weed Injection",
                             "Percent weed level ADDED each planting/harvest cycle (game applies as " +
-                            "`weedLevel += value / 100`). Vanilla varies per crop — usually a small " +
-                            "positive percent. Lower or negative = fewer weeds. 999 = no change.",
-                            min: -10f, max: 999f, visibleWhen: applyOn));
+                            "`weedLevel += value / 100`). Lower/negative = fewer weeds. " +
+                            "Vanilla per-crop (small positive %) — see Log Vanilla Values. -1 = no change.",
+                            min: -10f, max: 10f, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.FrostTolerance,
                     NewMeta($"{crop} — Frost Vulnerability",
-                            "0 = immune, 10 = very vulnerable. Lower = power-spike. -1 = no change.",
+                            "0 = immune, 10 = very vulnerable. Lower = power-spike. " +
+                            "Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
                             min: -1, max: 10, visibleWhen: applyOn));
                 Reg(GroupBuildings, e.HeatTolerance,
                     NewMeta($"{crop} — Heat Vulnerability",
-                            "0 = immune, 10 = very vulnerable. Lower = power-spike. -1 = no change.",
+                            "0 = immune, 10 = very vulnerable. Lower = power-spike. " +
+                            "Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
                             min: -1, max: 10, visibleWhen: applyOn));
             }
 

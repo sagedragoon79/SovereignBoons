@@ -104,6 +104,7 @@ namespace SovereignBoons
 
         // ----- Bountiful Fields (folded from VC_ConfigurableCropFields by VC) -----
         public static MelonPreferences_Entry<bool>  EnableBountifulFields              { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  BountifulFieldsLogVanilla          { get; private set; } = null!;
         public static MelonPreferences_Entry<float> BountifulFieldsGridsPerFarmerMul   { get; private set; } = null!;
         public static MelonPreferences_Entry<int>   BountifulFieldsMaintenanceDays     { get; private set; } = null!;
         // Per-crop entries created dynamically in Boons.BountifulFields.RegisterPrefs.
@@ -356,6 +357,11 @@ namespace SovereignBoons
                 display_name: "Bountiful Fields — Enabled",
                 description: "Per-crop tuning of fertility/days/weed/frost/heat plus globals. " +
                              "Folded from VC_ConfigurableCropFields by VC.");
+            BountifulFieldsLogVanilla = _root.CreateEntry("BountifulFieldsLogVanilla", false,
+                display_name: "Bountiful Fields — Log Vanilla Values",
+                description: "When true, every Vegetable Field record's vanilla values " +
+                             "(captured BEFORE any overrides apply) are dumped to MelonLoader.log " +
+                             "on map load. Use to discover per-crop vanilla defaults, then turn off.");
             BountifulFieldsGridsPerFarmerMul = _root.CreateEntry("BountifulFieldsGridsPerFarmerMul", 1.0f,
                 display_name: "Bountiful Fields — Grids per Farmer Mul",
                 description: "Multiplier on AgricultureManager._gridsPerFarmer. Vanilla = 1.0. Range 0.5..2.0.");

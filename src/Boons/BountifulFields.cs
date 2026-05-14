@@ -44,10 +44,14 @@ namespace SovereignBoons.Boons
             "Pea",    "Cabbage", "Leek", "Flax",      "Clover", "Hay",
         };
 
-        public const int NoChangeFertility = 255;
+        // All "no change" sentinels are -1 for consistency with vanilla FF's
+        // "use default" conventions. Tradeoff: setting any of these knobs to
+        // exactly -1 is unreachable. Users wanting negative values can pick
+        // -2 through -10 (or any non-(-1) value in the valid range).
+        public const int NoChangeFertility = -1;
         public const int NoChangePlantingDays = -1;
         public const int NoChangeMatureDays = -1;
-        public const float NoChangeWeed = 999f;
+        public const float NoChangeWeed = -1f;
         public const int NoChangeFrost = -1;
         public const int NoChangeHeat = -1;
 
@@ -73,6 +77,22 @@ namespace SovereignBoons.Boons
         private static readonly Dictionary<string, CropEntries> _byCrop =
             new Dictionary<string, CropEntries>();
 
+        // Captured vanilla snapshot per VegetableFieldsRecord. Populated on first
+        // Apply() before any writes, so we can report actual vanilla values via
+        // the LogVanilla pref even after overrides have been applied.
+        private sealed class VanillaSnapshot
+        {
+            public int Fertility;
+            public int PlantingDays;
+            public int MatureDays;
+            public float WeedLevel;
+            public int PercentDiesOnFrost;
+            public int BasePercentDiesOfHeatStress;
+        }
+        private static readonly Dictionary<string, VanillaSnapshot> _vanillaByRecord =
+            new Dictionary<string, VanillaSnapshot>();
+        private static bool _vanillaLogged;
+
         public static void RegisterPrefs(MelonPreferences_Category cat)
         {
             foreach (var crop in Crops)
@@ -83,36 +103,40 @@ namespace SovereignBoons.Boons
                         display_name: $"{crop} — Apply Overrides",
                         description: $"Master switch for {crop} field tuning. " +
                                      "If false, vanilla values are used for this crop. " +
-                                     "If true, each knob below is applied UNLESS set to its 'no change' sentinel."),
+                                     "If true, each knob below is applied UNLESS set to -1 (= 'no change')."),
                     Fertility = cat.CreateEntry($"BountifulFields_{crop}_Fertility", NoChangeFertility,
                         display_name: $"{crop} — Fertility Depletion (per planting)",
-                        description: "Fertility points consumed each planting cycle. Vanilla is a small positive int (per-crop, " +
-                                     "see vanilla data). Lower = field stays fertile longer (power-spike). Negative = " +
-                                     "planting RESTORES fertility. " +
-                                     $"Range: -10..10. Default {NoChangeFertility} = no change (use vanilla)."),
+                        description: "Fertility points consumed each planting cycle. Lower = field stays fertile " +
+                                     "longer (power-spike). -2..-10 RESTORES fertility per cycle. Vanilla varies " +
+                                     "per crop (small positive int) — enable 'Log Vanilla Values' to see exact values " +
+                                     "in MelonLoader.log. Range: -10..10. -1 = no change (vanilla)."),
                     PlantingDays = cat.CreateEntry($"BountifulFields_{crop}_PlantingDays", NoChangePlantingDays,
                         display_name: $"{crop} — Planting Days",
                         description: "Days needed to plant the field before growth begins. Lower = faster turnaround. " +
-                                     "Range: 5..10. Default -1 = no change (use vanilla, per-crop)."),
+                                     "Vanilla varies per crop (usually 5–10) — see Log Vanilla Values. " +
+                                     "Range: 5..10. -1 = no change (vanilla)."),
                     MatureDays = cat.CreateEntry($"BountifulFields_{crop}_MatureDays", NoChangeMatureDays,
                         display_name: $"{crop} — Maturity Days",
                         description: "Days from planted to ready-to-harvest. Lower = faster crop (power-spike). " +
-                                     "Range: 25..150. Default -1 = no change (use vanilla, per-crop)."),
+                                     "Vanilla varies per crop (~25 fast crops to ~150 grains) — see Log Vanilla Values. " +
+                                     "Range: 25..150. -1 = no change (vanilla)."),
                     WeedLevel = cat.CreateEntry($"BountifulFields_{crop}_WeedLevel", NoChangeWeed,
                         display_name: $"{crop} — Weed Injection (per cycle)",
-                        description: "Percentage weed level ADDED to the field each planting/harvest cycle " +
-                                     "(game applies as `weedLevel += value / 100`). Vanilla varies per crop, " +
-                                     "usually a small positive percent. Lower or negative = fewer weeds per " +
-                                     "cycle (power-spike). " +
-                                     $"Range: -10..10. Default {NoChangeWeed} = no change (use vanilla)."),
+                        description: "Percent weed level ADDED each planting/harvest cycle (game applies as " +
+                                     "`weedLevel += value / 100`). Lower or negative = fewer weeds (power-spike). " +
+                                     "Vanilla is a small positive percent per crop — see Log Vanilla Values. " +
+                                     "Range: -10..10. -1 = no change (vanilla). " +
+                                     "To set exactly -1, use -2 or another negative value instead."),
                     FrostTolerance = cat.CreateEntry($"BountifulFields_{crop}_Frost", NoChangeFrost,
                         display_name: $"{crop} — Frost Vulnerability (0..10)",
                         description: "UI scale: 0 = immune to frost, 10 = very vulnerable. Lower = power-spike. " +
-                                     "Internally writes _percentDiesOnFrost via 0..100 lerp. Default -1 = no change."),
+                                     "Internally writes _percentDiesOnFrost (0..100 lerp). " +
+                                     "Vanilla varies per crop — see Log Vanilla Values. -1 = no change."),
                     HeatTolerance = cat.CreateEntry($"BountifulFields_{crop}_Heat", NoChangeHeat,
                         display_name: $"{crop} — Heat Vulnerability (0..10)",
                         description: "UI scale: 0 = immune to heat stress, 10 = very vulnerable. Lower = power-spike. " +
-                                     "Internally writes _basePercentDiesOfHeatStress via 0..100 lerp. Default -1 = no change."),
+                                     "Internally writes _basePercentDiesOfHeatStress (0..100 lerp). " +
+                                     "Vanilla varies per crop — see Log Vanilla Values. -1 = no change."),
                 };
                 _byCrop[crop] = e;
             }
@@ -142,6 +166,8 @@ namespace SovereignBoons.Boons
             try
             {
                 ApplyGlobals();
+                CaptureVanillaIfNeeded();
+                MaybeLogVanilla();
                 ApplyPerCrop();
             }
             catch (System.Exception ex)
@@ -149,6 +175,70 @@ namespace SovereignBoons.Boons
                 Plugin.Log.Warning($"[Bountiful Fields] Apply failed: {ex.Message}");
             }
         }
+
+        private static void CaptureVanillaIfNeeded()
+        {
+            if (_vanillaByRecord.Count > 0) return; // already captured
+
+            var records = ObjectDataStore.GetAllDataRecords<VegetableFieldsRecord>();
+            if (records == null) return;
+
+            foreach (var record in records)
+            {
+                if (record == null) continue;
+                string name = record.name;
+                if (string.IsNullOrEmpty(name) || !name.Contains("Field")) continue;
+                if (_vanillaByRecord.ContainsKey(name)) continue;
+
+                _vanillaByRecord[name] = new VanillaSnapshot
+                {
+                    Fertility                   = ReadInt(record, "_fertilityDepletionPerPlantingPercent"),
+                    PlantingDays                = ReadInt(record, "_daysOfPlanting"),
+                    MatureDays                  = ReadInt(record, "_daysToMature"),
+                    WeedLevel                   = ReadFloat(record, "_weedLevelMultiplier"),
+                    PercentDiesOnFrost          = ReadInt(record, "_percentDiesOnFrost"),
+                    BasePercentDiesOfHeatStress = ReadInt(record, "_basePercentDiesOfHeatStress"),
+                };
+            }
+        }
+
+        private static int ReadInt(VegetableFieldsRecord r, string field)
+        {
+            var fi = AccessTools.Field(typeof(VegetableFieldsRecord), field);
+            if (fi == null) return 0;
+            var v = fi.GetValue(r);
+            return v is int i ? i : 0;
+        }
+
+        private static float ReadFloat(VegetableFieldsRecord r, string field)
+        {
+            var fi = AccessTools.Field(typeof(VegetableFieldsRecord), field);
+            if (fi == null) return 0f;
+            var v = fi.GetValue(r);
+            return v is float f ? f : 0f;
+        }
+
+        private static void MaybeLogVanilla()
+        {
+            if (!Config.BountifulFieldsLogVanilla.Value) return;
+            if (_vanillaLogged) return;
+            _vanillaLogged = true;
+
+            Plugin.Log.Msg("[Bountiful Fields] ===== VANILLA VEGETABLE FIELD VALUES =====");
+            Plugin.Log.Msg("  Record                    Fertility  PlantDays  MatureDays  WeedInjection  FrostDie%  HeatDie%");
+            foreach (var kv in _vanillaByRecord)
+            {
+                var s = kv.Value;
+                Plugin.Log.Msg(string.Format(
+                    "  {0,-24}  {1,9}  {2,9}  {3,10}  {4,13:F2}  {5,9}  {6,8}",
+                    kv.Key, s.Fertility, s.PlantingDays, s.MatureDays, s.WeedLevel,
+                    s.PercentDiesOnFrost, s.BasePercentDiesOfHeatStress));
+            }
+            Plugin.Log.Msg("[Bountiful Fields] ===== END VANILLA DUMP =====");
+        }
+
+        /// <summary>Reset vanilla-logged flag so the next map load re-dumps. Called from Plugin.OnSceneWasInitialized.</summary>
+        public static void ResetLogFlag() => _vanillaLogged = false;
 
         private static void ApplyGlobals()
         {
@@ -189,7 +279,6 @@ namespace SovereignBoons.Boons
             var records = ObjectDataStore.GetAllDataRecords<VegetableFieldsRecord>();
             if (records == null) return;
 
-            // Map "Wheat" → "WheatField" (matches DataRecord.name pattern).
             foreach (var record in records)
             {
                 if (record == null) continue;
@@ -200,18 +289,38 @@ namespace SovereignBoons.Boons
                 if (!_byCrop.TryGetValue(crop, out var e)) continue;
                 if (!e.Apply.Value) continue;
 
-                ApplyIntField(record, "_fertilityDepletionPerPlantingPercent", e.Fertility.Value, NoChangeFertility);
-                ApplyIntField(record, "_daysOfPlanting", e.PlantingDays.Value, NoChangePlantingDays);
-                ApplyIntField(record, "_daysToMature", e.MatureDays.Value, NoChangeMatureDays);
-                ApplyFloatField(record, "_weedLevelMultiplier", e.WeedLevel.Value, NoChangeWeed);
+                // Each ApplyX method writes ONLY when the value is in the valid range.
+                // -1 (and any out-of-range value, incl. legacy 255 / 999 sentinels from
+                // earlier mod versions) is treated as "no change". This protects users
+                // with old cfgs from accidental out-of-range writes.
+                ApplyIntInRange  (record, "_fertilityDepletionPerPlantingPercent", e.Fertility.Value,    -10, 10);
+                ApplyIntInRange  (record, "_daysOfPlanting",                      e.PlantingDays.Value, 5, 10);
+                ApplyIntInRange  (record, "_daysToMature",                        e.MatureDays.Value,   25, 150);
+                ApplyFloatInRange(record, "_weedLevelMultiplier",                 e.WeedLevel.Value,    -10f, 10f);
 
-                if (e.FrostTolerance.Value != NoChangeFrost)
-                    ApplyIntField(record, "_percentDiesOnFrost",
-                        LerpToPercent(e.FrostTolerance.Value, MinFrostLerp, MaxFrostLerp), int.MinValue);
-                if (e.HeatTolerance.Value != NoChangeHeat)
-                    ApplyIntField(record, "_basePercentDiesOfHeatStress",
-                        LerpToPercent(e.HeatTolerance.Value, MinHeatLerp, MaxHeatLerp), int.MinValue);
+                if (e.FrostTolerance.Value >= 0 && e.FrostTolerance.Value <= 10)
+                    ApplyIntInRange(record, "_percentDiesOnFrost",
+                        LerpToPercent(e.FrostTolerance.Value, MinFrostLerp, MaxFrostLerp), 0, 100);
+                if (e.HeatTolerance.Value >= 0 && e.HeatTolerance.Value <= 10)
+                    ApplyIntInRange(record, "_basePercentDiesOfHeatStress",
+                        LerpToPercent(e.HeatTolerance.Value, MinHeatLerp, MaxHeatLerp), 0, 100);
             }
+        }
+
+        private static void ApplyIntInRange(VegetableFieldsRecord r, string field, int value, int min, int max)
+        {
+            if (value < min || value > max) return; // out of range → treat as no-change
+            var fi = AccessTools.Field(typeof(VegetableFieldsRecord), field);
+            if (fi == null) return;
+            fi.SetValue(r, value);
+        }
+
+        private static void ApplyFloatInRange(VegetableFieldsRecord r, string field, float value, float min, float max)
+        {
+            if (value < min || value > max) return;
+            var fi = AccessTools.Field(typeof(VegetableFieldsRecord), field);
+            if (fi == null) return;
+            fi.SetValue(r, value);
         }
 
         private static string StripFieldSuffix(string s)
@@ -225,22 +334,6 @@ namespace SovereignBoons.Boons
         {
             float t = UnityEngine.Mathf.Clamp01(uiValue / 10f);
             return UnityEngine.Mathf.RoundToInt(UnityEngine.Mathf.Lerp(min, max, t));
-        }
-
-        private static void ApplyIntField(VegetableFieldsRecord record, string fieldName, int value, int sentinel)
-        {
-            if (value == sentinel) return;
-            var fi = AccessTools.Field(typeof(VegetableFieldsRecord), fieldName);
-            if (fi == null) return;
-            fi.SetValue(record, value);
-        }
-
-        private static void ApplyFloatField(VegetableFieldsRecord record, string fieldName, float value, float sentinel)
-        {
-            if (UnityEngine.Mathf.Approximately(value, sentinel)) return;
-            var fi = AccessTools.Field(typeof(VegetableFieldsRecord), fieldName);
-            if (fi == null) return;
-            fi.SetValue(record, value);
         }
     }
 }

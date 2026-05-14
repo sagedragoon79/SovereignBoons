@@ -97,6 +97,7 @@ namespace SovereignBoons
                 Boons.HallowedReliquary.Reset();
                 Boons.CivicPride.Reset();
                 Boons.LevysArms.Reset();
+                Boons.BountifulFields.ResetLogFlag();
                 return;
             }
 
