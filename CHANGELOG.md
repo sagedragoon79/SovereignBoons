@@ -2,6 +2,29 @@
 
 All notable changes to Sovereign Boons.
 
+## [Unreleased] — 0.5.0-dev (Phase 5 — Combat)
+
+### Added
+- **Levy's Arms** (Combat) — Hotkey-driven militia summon. Press a configurable key to arm every eligible villager (skipping Hunters, Guards, Soldiers, and Children) with militia combat config + a tunable ItemStats buff. Mono re-implementation of BasicWeaponEquipment (donimuzur, original was Il2Cpp-only). Default keys: `B` to arm, `N` to unarm. Default stat magnitude: 100 (+100% on every Perc field; the source mod's "powerful" preset was 1000). Buff re-applies on occupation change while armed.
+
+### Not folded — SeasonTweaker (was tentatively planned as Steady Calendar)
+- Decompile + Assembly-CSharp verification revealed that SeasonTweaker's primary mechanics don't actually function against current FF:
+  - `TimeManager.DAYS_PER_MONTH` is a **`const int`** — compile-time inlined, can't be modified at runtime. The source's `TimeManager.DaysInMonth` write silently no-ops.
+  - `Cropfield` doesn't have `daysToMature` / `daysToRot` as instance fields — those live on `VegetableFieldsRecord` (Bountiful Fields already covers this).
+  - The maintenance-length patch targets `CropFieldMaintenance` but the real class is `CropfieldMaintenance` (lowercase f), and the property is on `AgricultureManager` (Bountiful Fields' `MaintenanceDays` pref already exposes this).
+- The remaining functional piece — scaling `SeasonalComponentBase` subclass day-windows — is about season ordering, not a power-spike feature.
+- Decision: not folded. Bountiful Fields covers everything functional. If a global "make all crops grow faster" knob is wanted later, it can be added as a small extension to Bountiful Fields.
+
+### Notes
+- All entries default OFF; tunables hidden behind master toggle via KC `VisibleWhen`.
+- Foreign-mod kill switches for both source mods.
+- 0w/0e build; auto-staged.
+
+### Limitations of Levy's Arms (v0.6)
+- Armed state does not persist across save/load — press the Arm hotkey again after loading.
+- itemRequester re-weapon-fetch logic deferred to v0.7. Villagers fight with whatever weapon they already carry; if they have nothing, they fight with fists (but with the huge stat buff, they're still surprisingly tough).
+- Unarm reverts ItemStats and meleeAttack flag but leaves `teamDef` set to `guardTowerTeamDefinition` — save reload fully resets if needed.
+
 ## [Unreleased] — 0.4.0-dev (Phase 3 — Economy + Roads)
 
 ### Added — 2 boons folded

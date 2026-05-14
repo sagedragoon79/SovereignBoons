@@ -221,6 +221,23 @@ namespace SovereignBoons
                         min: 1.0f, max: 10.0f,
                         visibleWhen: () => Config.EnableSpringsVigor.Value));
 
+            // ===== Levy's Arms (Combat) =====
+            Reg(GroupCombat, Config.EnableLevysArms,
+                NewMeta("Levy's Arms",
+                        "Hotkey-driven militia. Arms every eligible villager with combat config + stat buff.",
+                        restartRequired: false));
+            Reg(GroupCombat, Config.LevysArmsArmKey,
+                NewMeta("Arm Hotkey", "Unity KeyCode name (B, F4, etc.).",
+                        visibleWhen: () => Config.EnableLevysArms.Value));
+            Reg(GroupCombat, Config.LevysArmsUnarmKey,
+                NewMeta("Unarm Hotkey", "Unity KeyCode name.",
+                        visibleWhen: () => Config.EnableLevysArms.Value));
+            Reg(GroupCombat, Config.LevysArmsStatMagnitude,
+                NewMeta("Stat Magnitude",
+                        "Applied to every Perc stat field. 100 = +100%; 1000 matches source's 'powerful' preset.",
+                        min: 0f, max: 1000f,
+                        visibleWhen: () => Config.EnableLevysArms.Value));
+
             // ===== Steadfast Resolve (Misc) =====
             Reg(GroupMisc, Config.EnableSteadfastResolve,
                 NewMeta("Steadfast Resolve",

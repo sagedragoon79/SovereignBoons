@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", "0.1.0", "sagedragoon79")]
+[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", "0.5.0", "sagedragoon79")]
 [assembly: MelonGame("Crate Entertainment", "Farthest Frontier")]
 
 namespace SovereignBoons
@@ -39,7 +39,7 @@ namespace SovereignBoons
             // Boons that apply at init (no scene needed):
             Boons.SteadfastResolve.Apply();
 
-            LoggerInstance.Msg("Sovereign Boons 0.1.0 initialized");
+            LoggerInstance.Msg("Sovereign Boons 0.5.0 initialized");
         }
 
         private void DetectForeignMods()
@@ -96,6 +96,7 @@ namespace SovereignBoons
             {
                 Boons.HallowedReliquary.Reset();
                 Boons.CivicPride.Reset();
+                Boons.LevysArms.Reset();
                 return;
             }
 
@@ -109,6 +110,9 @@ namespace SovereignBoons
             // Hallowed Reliquary captures vanilla ReligionManager bonus and applies
             // its multiplier once GameManager exists. Self-throttles via _applied flag.
             Boons.HallowedReliquary.TryApplyBonusOnce();
+
+            // Levy's Arms hotkey poll.
+            Boons.LevysArms.OnUpdate();
         }
     }
 }

@@ -117,6 +117,14 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<bool> TemperateSkiesDisableAllExtreme   { get; private set; } = null!;
         public static MelonPreferences_Entry<bool> TemperateSkiesDisableDrought      { get; private set; } = null!;
 
+        // ===== Combat bucket =====
+
+        // ----- Levy's Arms (re-impl of BasicWeaponEquipment by donimuzur, Il2Cpp→Mono) -----
+        public static MelonPreferences_Entry<bool>   EnableLevysArms        { get; private set; } = null!;
+        public static MelonPreferences_Entry<string> LevysArmsArmKey        { get; private set; } = null!;
+        public static MelonPreferences_Entry<string> LevysArmsUnarmKey      { get; private set; } = null!;
+        public static MelonPreferences_Entry<float>  LevysArmsStatMagnitude { get; private set; } = null!;
+
         // ===== Misc bucket =====
 
         // ----- Steadfast Resolve (folded from FFEnableAchievements by idontcare) -----
@@ -251,6 +259,24 @@ namespace SovereignBoons
                 display_name: "Spring's Vigor — Capacity Multiplier",
                 description: "Multiplier on Well.maxWater. Vanilla = 50 (×1.0). " +
                              "Range 1.0 – 10.0.");
+
+            // ===== Levy's Arms =====
+            EnableLevysArms = _root.CreateEntry("EnableLevysArms", false,
+                display_name: "Levy's Arms — Enabled",
+                description: "Hotkey-driven militia: press a key to arm every eligible " +
+                             "villager (skipping Hunters, Guards, Soldiers, and Children). " +
+                             "Mono re-implementation of BasicWeaponEquipment (donimuzur).");
+            LevysArmsArmKey = _root.CreateEntry("LevysArmsArmKey", "B",
+                display_name: "Levy's Arms — Arm Hotkey",
+                description: "Unity KeyCode name (B, F4, etc.). Press to arm all eligible villagers.");
+            LevysArmsUnarmKey = _root.CreateEntry("LevysArmsUnarmKey", "N",
+                display_name: "Levy's Arms — Unarm Hotkey",
+                description: "Unity KeyCode name. Press to unarm everyone armed by this boon.");
+            LevysArmsStatMagnitude = _root.CreateEntry("LevysArmsStatMagnitude", 100f,
+                display_name: "Levy's Arms — Stat Magnitude",
+                description: "Applied to every ItemStats *Perc field (armor, max life, melee/ranged damage, etc.). " +
+                             "0 = vanilla, 100 = +100% (default), 1000 = matches source mod's 'powerful' preset. Range 0..1000.");
+            Boons.LevysArms.ResolveHotkeys();
 
             // ===== Steadfast Resolve =====
             EnableSteadfastResolve = _root.CreateEntry(

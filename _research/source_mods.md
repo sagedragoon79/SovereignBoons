@@ -7,14 +7,14 @@ Catalog reference: `C:\Users\saged\source\repos\Other\List of Power Spike Mods\_
 | # | Source Mod | Version | Author | DLL | SB Bucket | Boon Name | Status |
 |---|------------|---------|--------|-----|-----------|-----------|--------|
 | 1 | AnimalSpawner (Mono) | 1.3.0 | paboyafx | AnimalSpawnerMono.dll | — | — | **Deferred → SeedVault** (creator tool) |
-| 2 | BasicWeaponEquipment | 3.1.0 | donimuzur | BasicWeaponEquipment.dll | Combat | _TBD_ | **Blocked** (Il2Cpp — needs Mono re-impl) |
+| 2 | BasicWeaponEquipment | 3.1.0 | donimuzur | BasicWeaponEquipment.dll | Combat | **Levy's Arms** | Folded (Phase 5) — Mono re-impl. Hotkey-driven (no UI prefab injection). itemRequester weapon-fetch deferred to v0.7. |
 | 3 | Fast Villagers | 1.0.4 | Krasipeace | FastVillagers_FF.dll | Workforce | **Swift Feet** | Folded (Phase 1) |
 | 4 | FFEnableAchievements | 1.0.0 | idontcare | FFEnableAchievements_FF.dll | Misc | **Steadfast Resolve** | Folded (Phase 1) |
 | 5 | Forced Child Labor | 1.0.3 | Krasipeace | ForcedChildLabor_FF.dll | Workforce | **Eager Hands** | Folded (Phase 1) |
 | 6 | MineralSpawner (Mono) | 1.5.3 | paboyafx | MineralSpawnerMono.dll | — | — | **Deferred → SeedVault** (creator tool) |
 | 7 | MoveResource (Mono) | 1.5.1 | paboyafx | MoveResourceMod.dll | — | — | **Deferred → SeedVault** (also overlaps Tended Wilds / FT) |
 | 8 | Rapid Roads | 1.0.0 | Olleus | Rapid Roads_FF.dll | Workforce | **King's Highway** | Folded (Phase 3) — narrowed to player-favoring patches (road boost + animal slow); off-road penalties dropped since they nerf the player |
-| 9 | SeasonTweaker | 1.2.0 | Modder | SeasonTweaker.dll | Weather | _TBD_ | Pending pick |
+| 9 | SeasonTweaker | 1.2.0 | Modder | SeasonTweaker.dll | — | — | **Not folded.** Source mod's primary targets are broken against current FF: `DAYS_PER_MONTH` is a const, `Cropfield.daysToMature` doesn't exist (lives on data record), maintenance patch hits wrong class. Bountiful Fields already covers the functional pieces. |
 | 10 | TaxGoldGainMono | 1.1.0 | coos | TaxGoldgainMono.dll | Economy | **Crown's Bounty** | Folded (Phase 1) — narrowed to TaxCollection gain type only |
 | 11 | TravelingMerchantPlus | 1.1.1 | coos | TravelingMerchantPlusMono.dll | Economy | **Wealthy Caravans** | Folded (Phase 3) — defaults tamed (5×→2×); Buy-Anything as a separate toggle |
 | 12 | VC_BuildingRadiusAdjust | 1.2 | VC | VC_BuildingRadiusAdjust_FF.dll | Buildings | **Long Reach** | Folded (Phase 2) — extended to 7 buildings (added ForagerShack + RatCatcher patches the source declared but never wired) |
