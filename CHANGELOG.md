@@ -20,6 +20,9 @@ All notable changes to Sovereign Boons.
 - Foreign-mod kill switches for both source mods.
 - 0w/0e build; auto-staged.
 
+### Public API — Levy's Arms interop
+- `SovereignBoons.Boons.LevysArms.IsArmed(Villager v)` returns `bool`. Stable signature for sibling mods that need to know which villagers are currently armed by SB. Used by Essential Provisions' Self Preservation to skip flee logic for our militia.
+
 ### Limitations of Levy's Arms (v0.6)
 - Armed state does not persist across save/load — press the Arm hotkey again after loading.
 - itemRequester re-weapon-fetch logic deferred to v0.7. Villagers fight with whatever weapon they already carry; if they have nothing, they fight with fists (but with the huge stat buff, they're still surprisingly tough).
