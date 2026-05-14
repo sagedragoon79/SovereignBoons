@@ -24,7 +24,7 @@ Catalog reference: `C:\Users\saged\source\repos\Other\List of Power Spike Mods\_
 | 16 | VC_ModifyTemple | 1.4 | VC | VC_ModifyTemple_FF.dll | Buildings | **Hallowed Reliquary** | Folded (Phase 2) — **Diverged from source design.** Replaced "extra slots + UI rewire" with "Unchain Relics" (1 priest activates all relics) to skip the UniverseLib UI dep. BonusMul kept. |
 | 17 | VC_ModifyWorkerSlots | 1.3 | VC | VC_ModifyWorkerSlots.dll | Buildings | **Greater Halls** | Folded (Phase 2) — 46 buildings, +Workers add-on per type |
 | 18 | VC_NoBlizzardAndDrought | 1.1 | VC | VC_NoBlizzardAndDrought.dll | Weather | **Temperate Skies** | Folded (Phase 2) — polarity inverted (Disable<X> instead of confusing "Active=false means remove") |
-| 19 | VC_UserStorageConfig | 1.3 | VC | VC_UserStorageConfig_FF.dll | Buildings | **Hoarded Stores** | **Partial fold** (Phase 2) — capacity multiplier per type; per-category Min/Max quotas deferred to v0.4 |
+| 19 | VC_UserStorageConfig | 1.3 | VC | VC_UserStorageConfig_FF.dll | Buildings | **Hoarded Stores** | Folded (Phase 2) — capacity multiplier per type. Source's per-category Min/Max quotas not folded: **vanilla FF now ships that natively**, so the source mod's feature is redundant. |
 
 ## Author summary
 

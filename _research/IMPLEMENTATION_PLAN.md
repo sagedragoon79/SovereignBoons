@@ -41,7 +41,7 @@ The VC mods share author + patterns and pull-fold cleanly together. Group these 
 6. **Building Radius Adjust** (Buildings) — 7 building Awake postfixes, 7 percent-multiplier prefs. ~120 lines.
 7. **Worker Slots** (Buildings) — ~45 building Awake postfixes via dispatcher, 45 add-on prefs. ~250 lines. _Biggest VC mod by pref count. Consider one master toggle + a JSON-encoded sub-map to avoid pref bloat in the cfg._
 8. **No Blizzard / Drought / Heatwave** (Weather) — 3 Weather patches, 4 toggles. ~80 lines.
-9. **User Storage Config** (Buildings) — Per-type StorageBuilding lifecycle hook, 7 building configs (each with Apply/Mul/Min/Max). ~200 lines. _Most complex VC mod; per-item category limits need careful Item.itemIDByName lookup._
+9. **Hoarded Stores** (Buildings) — Per-storage-type capacity multiplier, 7 building configs (Apply + Mul each). ~80 lines. _Vanilla FF now ships per-category min/max quota UI natively, so we only fold the capacity-multiplier piece._
 
 Phase 2 release: **+4 boons (9 total).**
 

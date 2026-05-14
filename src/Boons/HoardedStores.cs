@@ -2,10 +2,9 @@
 // Original DLL: VC_UserStorageConfig_FF.dll
 // Original prefs: per-storage-type {Apply, StorageCapacityMul, MinLimits[4], MaxLimits[4]}
 //                 with per-item-category min/max quotas (Food/Raw/Produced/Usables).
-// SB changes: NARROWED to capacity multiplier per storage type only. The source mod's
-//             per-category quota arrays are powerful but unwieldy without dedicated UI;
-//             they're parked for a v0.4 follow-up if requested. Capacity scaling alone
-//             addresses the most common ask ("my granary is too small").
+// SB changes: capacity multiplier per storage type only. The source mod's per-category
+//             min/max quota system became redundant when vanilla FF shipped per-category
+//             quota UI natively — so Sovereign Boons leaves that to the base game.
 //
 // Verified targets (decompile_verification.md):
 //   - StorageBuilding._storageItemCountCapacity (private int = 2000) at ff_full.cs:353388
