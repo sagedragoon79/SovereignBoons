@@ -2,6 +2,58 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.0.0 (2026-05-14) — initial release
+
+Power-spike pack for Farthest Frontier. 14 boons across 6 buckets, every one OFF by default, every one curated from a community source mod with credit preserved. Soft-integrates with [Keep Clarity](https://github.com/sagedragoon79/KeepClarity)'s in-game settings panel for tooltips, sliders, grouped buckets, and nested indentation; works without KC installed too (read prefs from `UserData/SovereignBoons.cfg`).
+
+### Economy
+- **Crown's Bounty** — multiply gold from tax-collection events (only — sales, refunds, and event rewards are untouched). Folded from TaxGoldgainMono (coos).
+- **Wealthy Caravans** — beefier traveling merchants: more gold, more goods, optional buy-anything, higher trading-post stock cap. Folded from TravelingMerchantPlus (coos).
+
+### Workforce
+- **Swift Feet** — faster villagers + beefier transport wagons. Folded from FastVillagers (Krasipeace).
+- **Eager Hands** — lower child/adolescent age cutoffs and school enrollment range. Folded from ForcedChildLabor (Krasipeace).
+- **King's Highway** — faster road travel + slower predators. Inspired by Rapid Roads (Olleus); dropped the source's off-road penalties since SB is power-spike-only.
+
+### Buildings
+- **Wetter Wells** — faster Well recharge + bigger capacity. Folded from VC_FasterWaterRecharge (VC).
+- **Domain Expansion** — per-building work-radius multipliers for 7 buildings (WorkCamp, Hunter, Fishing, Arborist, Market, ForagerShack, RatCatcher). Folded from VC_BuildingRadiusAdjust (VC); SB wires up two prefs the source declared but never patched.
+- **Civic Pride** — multiply DecorativeBuilding desirability radius and bonus. Folded from VC_DesirabilityBuildingsControl (VC).
+- **Hallowed Reliquary** — Temple spirituality bonus multiplier + Unchain Relics (one priest activates every assigned relic). Inspired by VC_ModifyTemple (VC); SB's decoupling approach skips the UniverseLib UI dep the source mod needed.
+- **Hoarded Stores** — per-storage-type capacity multiplier for 7 storage types. Folded from VC_UserStorageConfig (VC). Vanilla FF now ships per-category min/max quotas natively, so SB only folds the capacity-multiplier piece.
+- **Greater Halls** — per-building +Workers / +Residents add-on across 46 building types, grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential. Folded from VC_ModifyWorkerSlots (VC).
+- **Bountiful Fields** — per-crop tuning of fertility/days/weed-injection/frost-die%/heat-die% for all 12 vanilla crops, plus globals (grids-per-farmer, maintenance length). Defaults match real vanilla values per crop (no `-1` sentinels). `Log Vanilla Values` pref dumps the canonical table to MelonLoader.log on demand. Folded from VC_ConfigurableCropFields (VC).
+
+### Weather
+- **Temperate Skies** — independently suppress Blizzard / Heatwave / All-extreme / Drought. Folded from VC_NoBlizzardAndDrought (VC); polarity inverted from source so the tooltips are readable.
+
+### Combat
+- **Emergency Militia** — hotkey-driven militia summon. Default `B` arms every eligible villager (skipping Hunter / Guard / Soldier / Child) with militia combat config + tunable ItemStats buff; `N` unarms. Mono re-implementation of BasicWeaponEquipment (donimuzur, original Il2Cpp-only).
+
+### Misc
+- **Achieve Cheese** — achievements unlock even with non-default settings or mods. Folded from FFEnableAchievements (idontcare).
+
+### Architecture
+- KC SettingsAPI soft-dep wired with 6 buckets (Economy / Workforce / Buildings / Weather / Combat / Misc) and nested indentation; master toggles ordered above their sub-prefs in the panel.
+- Per-boon foreign-mod detection: if the source standalone mod is loaded, the corresponding boon defers automatically (no double-patching).
+- Every cfg entry's tooltip explicitly states the default value, range, and power-spike direction.
+- `SovereignBoons.Boons.LevysArms.IsArmed(Villager)` — public reflection target for sibling mods (used by Essential Provisions' Self Preservation to skip flee logic for armed militia).
+
+### Diverged from source mods
+- **King's Highway**: dropped Rapid Roads' three off-road penalty patches. Power-spike pack, not a balance pack.
+- **Hallowed Reliquary**: replaced VC_ModifyTemple's "extra slots + UI rewire" with "Unchain Relics from priest count" — same end state, zero UniverseLib dependency.
+- **Bountiful Fields**: tooltip text fixed across all per-crop knobs (source mod's pref descriptions were wrong about vanilla values; SB dumps real vanilla via `Log Vanilla Values`).
+- **SeasonTweaker**: not folded. Decompile verification revealed the source mod's primary mechanics are broken against current FF — `TimeManager.DAYS_PER_MONTH` is a `const int`, `Cropfield` doesn't own the day fields, and the maintenance patch targets the wrong class. Bountiful Fields covers the functional pieces.
+
+### Credits
+Every fold credits its source author. Full provenance in `_research/source_mods.md`. Special thanks to **VC** (8 source mods), **coos** (2), **Krasipeace** (2), and **idontcare**, **Modder**, **donimuzur**, **Olleus** (1 each).
+
+---
+
+## Pre-release history
+
+The phase-by-phase development log below is kept for archaeology.
+
 ## [Unreleased] — 0.5.0-dev (Phase 5 — Combat)
 
 ### Added
