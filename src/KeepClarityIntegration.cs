@@ -156,8 +156,8 @@ namespace SovereignBoons
             // ===== Swift Feet (Workforce) — order block 100 =====
             Reg(GroupWorkforce, Config.EnableSwiftFeet,
                 NewMeta("Swift Feet",
-                        "Faster villagers + beefier transport wagons.",
-                        restartRequired: true, order: 100));
+                        "Faster villagers + beefier transport wagons. Applies to characters and wagons spawned after enabling; reload save to refresh existing.",
+                        order: 100));
             Reg(GroupWorkforce, Config.SwiftFeetShoeBonus,
                 NewMeta("Villager Shoe Bonus",
                         "Replaces Character._shoeBonusBase. Vanilla = 0.15. Affects raiders too.",
@@ -227,8 +227,8 @@ namespace SovereignBoons
             // ===== Spring's Vigor (Buildings) — order block 100 =====
             Reg(GroupBuildings, Config.EnableSpringsVigor,
                 NewMeta("Spring's Vigor",
-                        "Faster Well recharge + bigger Well capacity.",
-                        restartRequired: true, order: 100));
+                        "Faster Well recharge + bigger Well capacity. Applies to Wells placed after enabling; reload save to refresh existing.",
+                        order: 100));
             Reg(GroupBuildings, Config.SpringsVigorRechargeMult,
                 NewMeta("Recharge Multiplier",
                         "Multiplier on Well.waterGainPerSecond. Vanilla = 0.01 (×1.0).",
@@ -270,7 +270,9 @@ namespace SovereignBoons
 
             // ===== Long Reach (Buildings) — order block 200 =====
             Reg(GroupBuildings, Config.EnableLongReach,
-                NewMeta("Long Reach", "Per-building work-radius multipliers.", restartRequired: true, order: 200));
+                NewMeta("Long Reach",
+                        "Per-building work-radius multipliers. Applies to buildings placed after enabling; reload save to refresh existing.",
+                        order: 200));
             Reg(GroupBuildings, Config.LongReachWorkCampPct,
                 NewMeta("Work Camp +%",      "WorkCamp work radius.",         min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 201, indent: 20));
             Reg(GroupBuildings, Config.LongReachHunterPct,
@@ -288,7 +290,9 @@ namespace SovereignBoons
 
             // ===== Civic Pride (Buildings) — order block 300 =====
             Reg(GroupBuildings, Config.EnableCivicPride,
-                NewMeta("Civic Pride", "Multiply DecorativeBuilding desirability radius/bonus.", restartRequired: true, order: 300));
+                NewMeta("Civic Pride",
+                        "Multiply DecorativeBuilding desirability radius/bonus. Applies to decoratives placed after enabling; reload save to refresh existing.",
+                        order: 300));
             Reg(GroupBuildings, Config.CivicPrideRadiusMul,
                 NewMeta("Radius Multiplier", "Vanilla = 1.0.", min: 0.5f, max: 10f, visibleWhen: () => Config.EnableCivicPride.Value, order: 301, indent: 20));
             Reg(GroupBuildings, Config.CivicPrideBonusMul,
@@ -311,7 +315,9 @@ namespace SovereignBoons
 
             // ===== Hoarded Stores (Buildings) — order block 500 =====
             Reg(GroupBuildings, Config.EnableHoardedStores,
-                NewMeta("Hoarded Stores", "Per-storage-type capacity multiplier.", restartRequired: true, order: 500));
+                NewMeta("Hoarded Stores",
+                        "Per-storage-type capacity multiplier. Applies to storage buildings placed after enabling; reload save to refresh existing.",
+                        order: 500));
             Reg(GroupBuildings, Config.HoardedStoresRootCellarEnable,    NewMeta("Root Cellar — Apply",    "Apply capacity multiplier to Root Cellars.",   visibleWhen: () => Config.EnableHoardedStores.Value, order: 501, indent: 20));
             Reg(GroupBuildings, Config.HoardedStoresRootCellarMul,       NewMeta("Root Cellar — Mul",      "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresRootCellarEnable.Value, order: 502, indent: 40));
             Reg(GroupBuildings, Config.HoardedStoresGranaryEnable,       NewMeta("Granary — Apply",        "Apply capacity multiplier to Granaries.",      visibleWhen: () => Config.EnableHoardedStores.Value, order: 503, indent: 20));
@@ -331,8 +337,9 @@ namespace SovereignBoons
             Reg(GroupBuildings, Config.EnableGreaterHalls,
                 NewMeta("Greater Halls",
                         "Per-building +Workers / +Residents add-on for ~46 building types. " +
-                        "Grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential.",
-                        restartRequired: true, order: 600));
+                        "Grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential. " +
+                        "Applies to buildings placed after enabling; reload save to refresh existing.",
+                        order: 600));
             int ghOrder = 601;
             foreach (var bp in Boons.GreaterHalls.Iterate())
             {
@@ -347,7 +354,9 @@ namespace SovereignBoons
             // ===== Bountiful Fields (Buildings) — order block 1000 (1 master + 3 globals + 12 crops × 7 = 84 sub-entries) =====
             Reg(GroupBuildings, Config.EnableBountifulFields,
                 NewMeta("Bountiful Fields",
-                        "Per-crop tuning + farming globals.", restartRequired: true, order: 1000));
+                        "Per-crop tuning + farming globals. Crop data records are mutated on map load — " +
+                        "reload your save after changing values for them to take effect.",
+                        order: 1000));
             Reg(GroupBuildings, Config.BountifulFieldsLogVanilla,
                 NewMeta("Log Vanilla Values",
                         "Dump every crop's vanilla VegetableFieldsRecord values to MelonLoader.log on map load. " +
