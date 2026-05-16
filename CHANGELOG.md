@@ -5,7 +5,7 @@ All notable changes to Sovereign Boons.
 ## [Unreleased] — 0.5.0-dev (Phase 5 — Combat)
 
 ### Added
-- **Levy's Arms** (Combat) — Hotkey-driven militia summon. Press a configurable key to arm every eligible villager (skipping Hunters, Guards, Soldiers, and Children) with militia combat config + a tunable ItemStats buff. Mono re-implementation of BasicWeaponEquipment (donimuzur, original was Il2Cpp-only). Default keys: `B` to arm, `N` to unarm. Default stat magnitude: 100 (+100% on every Perc field; the source mod's "powerful" preset was 1000). Buff re-applies on occupation change while armed.
+- **Emergency Militia** (Combat) — Hotkey-driven militia summon. Press a configurable key to arm every eligible villager (skipping Hunters, Guards, Soldiers, and Children) with militia combat config + a tunable ItemStats buff. Mono re-implementation of BasicWeaponEquipment (donimuzur, original was Il2Cpp-only). Default keys: `B` to arm, `N` to unarm. Default stat magnitude: 100 (+100% on every Perc field; the source mod's "powerful" preset was 1000). Buff re-applies on occupation change while armed.
 
 ### Not folded — SeasonTweaker (was tentatively planned as Steady Calendar)
 - Decompile + Assembly-CSharp verification revealed that SeasonTweaker's primary mechanics don't actually function against current FF:
@@ -20,10 +20,10 @@ All notable changes to Sovereign Boons.
 - Foreign-mod kill switches for both source mods.
 - 0w/0e build; auto-staged.
 
-### Public API — Levy's Arms interop
+### Public API — Emergency Militia interop
 - `SovereignBoons.Boons.LevysArms.IsArmed(Villager v)` returns `bool`. Stable signature for sibling mods that need to know which villagers are currently armed by SB. Used by Essential Provisions' Self Preservation to skip flee logic for our militia.
 
-### Limitations of Levy's Arms (v0.6)
+### Limitations of Emergency Militia (v0.6)
 - Armed state does not persist across save/load — press the Arm hotkey again after loading.
 - itemRequester re-weapon-fetch logic deferred to v0.7. Villagers fight with whatever weapon they already carry; if they have nothing, they fight with fists (but with the huge stat buff, they're still surprisingly tough).
 - Unarm reverts ItemStats and meleeAttack flag but leaves `teamDef` set to `guardTowerTeamDefinition` — save reload fully resets if needed.
@@ -42,7 +42,7 @@ All notable changes to Sovereign Boons.
 ## [Unreleased] — 0.3.0-dev (Phase 2 — VC family)
 
 ### Added — 7 boons folded
-- **Long Reach** (Buildings) — Per-building work-radius multipliers for 7 buildings (WorkCamp, Hunter, Fishing, Arborist, Market, **ForagerShack, RatCatcher**). Folded from VC_BuildingRadiusAdjust (VC). **Extended beyond source** — the source mod declared Forage/RatCatcher prefs but never wired them; Sovereign Boons wires both.
+- **Domain Expansion** (Buildings) — Per-building work-radius multipliers for 7 buildings (WorkCamp, Hunter, Fishing, Arborist, Market, **ForagerShack, RatCatcher**). Folded from VC_BuildingRadiusAdjust (VC). **Extended beyond source** — the source mod declared Forage/RatCatcher prefs but never wired them; Sovereign Boons wires both.
 - **Civic Pride** (Buildings) — Multiplies DecorativeBuilding desirability radius and bonus. Folded from VC_DesirabilityBuildingsControl (VC).
 - **Temperate Skies** (Weather) — Independently suppress Blizzard / Heatwave / All-extreme / Drought. Folded from VC_NoBlizzardAndDrought (VC). **Inverted polarity** — `Disable<X>` toggles are easier to read than the source's confusing `Active=false`.
 - **Hoarded Stores** (Buildings) — Per-storage-type capacity multiplier for 7 storage types (RootCellar, Granary, Storehouse, StorageDepot, Stockyard, Treasury, Market). Folded from VC_UserStorageConfig (VC). The source mod also exposed per-item-category min/max quotas; vanilla FF has built that in natively since the source was authored, so Sovereign Boons doesn't duplicate it.
@@ -59,11 +59,11 @@ All notable changes to Sovereign Boons.
 ## [Unreleased] — 0.2.0-dev (Phase 1)
 
 ### Added — 5 boons folded
-- **Steadfast Resolve** (Misc) — Achievements unlock with custom settings/mods. Folded from FFEnableAchievements (idontcare).
+- **Achieve Cheese** (Misc) — Achievements unlock with custom settings/mods. Folded from FFEnableAchievements (idontcare).
 - **Swift Feet** (Workforce) — Faster villagers + beefier transport wagons. Folded from FastVillagers (Krasipeace).
 - **Eager Hands** (Workforce) — Lower child/adolescent labor cutoffs + School enrollment range. Folded from Forced Child Labor (Krasipeace). Uses single static-field write instead of source mod's per-instance Awake patch.
 - **Crown's Bounty** (Economy) — Multiplies gold from tax-collection events only. Folded from TaxGoldgainMono (coos). **Narrower than source** — sales/refunds/trade gains untouched, honest to the boon name.
-- **Spring's Vigor** (Buildings) — Faster Well recharge + bigger Well capacity. Folded from VC_FasterWaterRecharge (VC).
+- **Wetter Wells** (Buildings) — Faster Well recharge + bigger Well capacity. Folded from VC_FasterWaterRecharge (VC).
 
 ### Notes
 - All 5 boons default OFF; every tunable is gated on its master toggle via KC `VisibleWhen`.

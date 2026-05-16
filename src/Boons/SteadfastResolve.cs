@@ -25,11 +25,11 @@ namespace SovereignBoons.Boons
             try
             {
                 SettingsManager.allowCustomSettingsForAchievements = true;
-                Plugin.Log.Msg("[Steadfast Resolve] Achievements unlocked for custom settings.");
+                Plugin.Log.Msg("[Achieve Cheese] Achievements unlocked for custom settings.");
             }
             catch (System.Exception ex)
             {
-                Plugin.Log.Warning($"[Steadfast Resolve] Apply failed: {ex.Message}");
+                Plugin.Log.Warning($"[Achieve Cheese] Apply failed: {ex.Message}");
             }
         }
     }

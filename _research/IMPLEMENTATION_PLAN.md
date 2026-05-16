@@ -90,12 +90,12 @@ Per `Plugin.DetectForeignMods`, if a user has the standalone source mod loaded (
 
 ### Naming
 Each boon gets a **two-word medieval/descriptive name** for the KC UI (per `reference_ep_voice.md` precedent from EP). Working candidates:
-- FFEnableAchievements → **Steadfast Resolve** (achievements stay yours)
+- FFEnableAchievements → **Achieve Cheese** (was: Steadfast Resolve)
 - Fast Villagers → **Swift Feet** _or_ **Fleet Footing**
 - Forced Child Labor → **Early Bloom** _or_ **Eager Hands**
 - Tax Gold Gain → **Crown's Bounty**
-- Faster Water Recharge → **Spring's Vigor**
-- Building Radius → **Long Reach**
+- Faster Water Recharge → **Wetter Wells** (was: Spring's Vigor)
+- Building Radius → **Domain Expansion** (was: Long Reach)
 - Worker Slots → **Greater Halls**
 - No Blizzard/Drought → **Temperate Skies**
 - Storage Config → **Hoarded Stores**
@@ -105,7 +105,7 @@ Each boon gets a **two-word medieval/descriptive name** for the KC UI (per `refe
 - Modify Temple → **Hallowed Reliquary**
 - Configurable Crops → **Bountiful Fields**
 - Season Tweaker → **Steady Calendar**
-- Basic Weapon Equipment → **Levy's Arms** _or_ **Citizens-at-Arms**
+- Basic Weapon Equipment → **Emergency Militia** (was: Levy's Arms)
 
 (Final names: user picks tomorrow.)
 

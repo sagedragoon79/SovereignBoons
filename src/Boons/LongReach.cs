@@ -3,7 +3,7 @@
 // Original prefs: 7 declared (Forage/RatCatcher/Hunter/Fishing/Arborist/Market/WorkCamp) but
 //                 only 5 Awake patches actually shipped (WorkCamp/Hunter/Fishing/Arborist/Market).
 // SB changes: WIRED THE MISSING TWO — Forager Shack and Rat Catcher have radius fields
-//             in vanilla but the source mod never patched their Awake. Long Reach covers
+//             in vanilla but the source mod never patched their Awake. Domain Expansion covers
 //             7 buildings, matching the source's pref count with no orphan toggles.
 //
 // Verified targets (decompile_verification.md + ff_full.cs spot check):
@@ -56,7 +56,7 @@ namespace SovereignBoons.Boons
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_workCampRef == null) return;
                 try { _workCampRef(__instance) = Scale(_workCampRef(__instance), Config.LongReachWorkCampPct.Value); }
-                catch (System.Exception ex) { Plugin.Log.Warning($"[Long Reach] WorkCamp: {ex.Message}"); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] WorkCamp: {ex.Message}"); }
             }
         }
 
@@ -69,7 +69,7 @@ namespace SovereignBoons.Boons
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_hunterRef == null) return;
                 try { _hunterRef(__instance) = Scale(_hunterRef(__instance), Config.LongReachHunterPct.Value); }
-                catch (System.Exception ex) { Plugin.Log.Warning($"[Long Reach] Hunter: {ex.Message}"); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Hunter: {ex.Message}"); }
             }
         }
 
@@ -82,7 +82,7 @@ namespace SovereignBoons.Boons
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_fishingRef == null) return;
                 try { _fishingRef(__instance) = Scale(_fishingRef(__instance), Config.LongReachFishingPct.Value); }
-                catch (System.Exception ex) { Plugin.Log.Warning($"[Long Reach] Fishing: {ex.Message}"); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Fishing: {ex.Message}"); }
             }
         }
 
@@ -95,7 +95,7 @@ namespace SovereignBoons.Boons
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_arboristRef == null) return;
                 try { _arboristRef(__instance) = Scale(_arboristRef(__instance), Config.LongReachArboristPct.Value); }
-                catch (System.Exception ex) { Plugin.Log.Warning($"[Long Reach] Arborist: {ex.Message}"); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Arborist: {ex.Message}"); }
             }
         }
 
@@ -108,7 +108,7 @@ namespace SovereignBoons.Boons
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_marketRef == null) return;
                 try { _marketRef(__instance) = Scale(_marketRef(__instance), Config.LongReachMarketPct.Value); }
-                catch (System.Exception ex) { Plugin.Log.Warning($"[Long Reach] Market: {ex.Message}"); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Market: {ex.Message}"); }
             }
         }
 
@@ -121,7 +121,7 @@ namespace SovereignBoons.Boons
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_foragerRef == null) return;
                 try { _foragerRef(__instance) = Scale(_foragerRef(__instance), Config.LongReachForagerPct.Value); }
-                catch (System.Exception ex) { Plugin.Log.Warning($"[Long Reach] Forager: {ex.Message}"); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Forager: {ex.Message}"); }
             }
         }
 
@@ -134,7 +134,7 @@ namespace SovereignBoons.Boons
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_ratCatcherRef == null) return;
                 try { _ratCatcherRef(__instance) = Scale(_ratCatcherRef(__instance), Config.LongReachRatCatcherPct.Value); }
-                catch (System.Exception ex) { Plugin.Log.Warning($"[Long Reach] RatCatcher: {ex.Message}"); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] RatCatcher: {ex.Message}"); }
             }
         }
     }

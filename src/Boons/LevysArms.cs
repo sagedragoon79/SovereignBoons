@@ -49,7 +49,7 @@ namespace SovereignBoons.Boons
 
         /// <summary>
         /// Public reflective-friendly query: "is this villager currently armed by
-        /// Levy's Arms?" Used by sibling mods (e.g. Essential Provisions' Self
+        /// Emergency Militia?" Used by sibling mods (e.g. Essential Provisions' Self
         /// Preservation) to skip flee logic for our militia. Returns false when the
         /// boon is disabled OR the villager wasn't armed by us.
         ///
@@ -77,12 +77,12 @@ namespace SovereignBoons.Boons
             if (Input.GetKeyDown(_armKey))
             {
                 int n = ArmAllEligible();
-                Plugin.Log.Msg($"[Levy's Arms] Armed {n} villager(s).");
+                Plugin.Log.Msg($"[Emergency Militia] Armed {n} villager(s).");
             }
             else if (Input.GetKeyDown(_unarmKey))
             {
                 int n = UnarmAll();
-                Plugin.Log.Msg($"[Levy's Arms] Unarmed {n} villager(s).");
+                Plugin.Log.Msg($"[Emergency Militia] Unarmed {n} villager(s).");
             }
         }
 
@@ -108,7 +108,7 @@ namespace SovereignBoons.Boons
                 }
                 catch (System.Exception ex)
                 {
-                    Plugin.Log.Warning($"[Levy's Arms] Arm failed for {v.name}: {ex.Message}");
+                    Plugin.Log.Warning($"[Emergency Militia] Arm failed for {v.name}: {ex.Message}");
                 }
             }
             return count;
@@ -129,7 +129,7 @@ namespace SovereignBoons.Boons
                 try { UnequipWeapon(v); _armedIds.Remove(id); count++; }
                 catch (System.Exception ex)
                 {
-                    Plugin.Log.Warning($"[Levy's Arms] Unarm failed for {v.name}: {ex.Message}");
+                    Plugin.Log.Warning($"[Emergency Militia] Unarm failed for {v.name}: {ex.Message}");
                 }
             }
             return count;
@@ -220,7 +220,7 @@ namespace SovereignBoons.Boons
                 try { EquipWeapon(__instance, cm); }
                 catch (System.Exception ex)
                 {
-                    Plugin.Log.Warning($"[Levy's Arms] Re-arm on ChangeOccupation failed for {__instance.name}: {ex.Message}");
+                    Plugin.Log.Warning($"[Emergency Militia] Re-arm on ChangeOccupation failed for {__instance.name}: {ex.Message}");
                 }
             }
         }

@@ -244,9 +244,9 @@ namespace SovereignBoons
                         visibleWhen: () => Config.EnableKingsHighway.Value && Config.KingsHighwaySlowAggressiveAnimals.Value,
                         order: 304, indent: 40));
 
-            // ===== Spring's Vigor (Buildings) — order block 100 =====
+            // ===== Wetter Wells (Buildings) — order block 100 =====
             Reg(GroupBuildings, Config.EnableSpringsVigor,
-                NewMeta("Spring's Vigor",
+                NewMeta("Wetter Wells",
                         "Faster Well recharge + bigger Well capacity. Applies to Wells placed after " +
                         "enabling; reload save to refresh existing. Default: OFF.",
                         order: 100));
@@ -264,9 +264,9 @@ namespace SovereignBoons
                         visibleWhen: () => Config.EnableSpringsVigor.Value,
                         order: 102, indent: 20));
 
-            // ===== Levy's Arms (Combat) — order block 100 =====
+            // ===== Emergency Militia (Combat) — order block 100 =====
             Reg(GroupCombat, Config.EnableLevysArms,
-                NewMeta("Levy's Arms",
+                NewMeta("Emergency Militia",
                         "Hotkey-driven militia. Arms every eligible villager with combat config + stat buff. " +
                         "Default: OFF.",
                         restartRequired: false, order: 100));
@@ -288,15 +288,15 @@ namespace SovereignBoons
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 103, indent: 20));
 
-            // ===== Steadfast Resolve (Misc) — order block 100 =====
+            // ===== Achieve Cheese (Misc) — order block 100 =====
             Reg(GroupMisc, Config.EnableSteadfastResolve,
-                NewMeta("Steadfast Resolve",
+                NewMeta("Achieve Cheese",
                         "Achievements unlock even with non-default settings or mods. Default: OFF.",
                         restartRequired: true, order: 100));
 
-            // ===== Long Reach (Buildings) — order block 200 =====
+            // ===== Domain Expansion (Buildings) — order block 200 =====
             Reg(GroupBuildings, Config.EnableLongReach,
-                NewMeta("Long Reach",
+                NewMeta("Domain Expansion",
                         "Per-building work-radius multipliers. Applies to buildings placed after " +
                         "enabling; reload save to refresh existing. Default: OFF.",
                         order: 200));

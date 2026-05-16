@@ -56,12 +56,12 @@ namespace SovereignBoons
 
         // ===== Buildings bucket =====
 
-        // ----- Spring's Vigor (folded from VC_FasterWaterRecharge by VC) -----
+        // ----- Wetter Wells (folded from VC_FasterWaterRecharge by VC) -----
         public static MelonPreferences_Entry<bool>  EnableSpringsVigor       { get; private set; } = null!;
         public static MelonPreferences_Entry<float> SpringsVigorRechargeMult { get; private set; } = null!;
         public static MelonPreferences_Entry<float> SpringsVigorCapacityMult { get; private set; } = null!;
 
-        // ----- Long Reach (folded from VC_BuildingRadiusAdjust by VC) -----
+        // ----- Domain Expansion (folded from VC_BuildingRadiusAdjust by VC) -----
         public static MelonPreferences_Entry<bool>  EnableLongReach          { get; private set; } = null!;
         public static MelonPreferences_Entry<float> LongReachWorkCampPct     { get; private set; } = null!;
         public static MelonPreferences_Entry<float> LongReachHunterPct       { get; private set; } = null!;
@@ -120,7 +120,7 @@ namespace SovereignBoons
 
         // ===== Combat bucket =====
 
-        // ----- Levy's Arms (re-impl of BasicWeaponEquipment by donimuzur, Il2Cpp→Mono) -----
+        // ----- Emergency Militia (re-impl of BasicWeaponEquipment by donimuzur, Il2Cpp→Mono) -----
         public static MelonPreferences_Entry<bool>   EnableLevysArms        { get; private set; } = null!;
         public static MelonPreferences_Entry<string> LevysArmsArmKey        { get; private set; } = null!;
         public static MelonPreferences_Entry<string> LevysArmsUnarmKey      { get; private set; } = null!;
@@ -128,7 +128,7 @@ namespace SovereignBoons
 
         // ===== Misc bucket =====
 
-        // ----- Steadfast Resolve (folded from FFEnableAchievements by idontcare) -----
+        // ----- Achieve Cheese (folded from FFEnableAchievements by idontcare) -----
         public static MelonPreferences_Entry<bool> EnableSteadfastResolve { get; private set; } = null!;
 
         public static void Initialize()
@@ -242,62 +242,62 @@ namespace SovereignBoons
                 description: "Maximum age for school enrollment. Set very low to effectively disable " +
                              "schooling. Vanilla = 10. Range 5 – 60.");
 
-            // ===== Spring's Vigor =====
+            // ===== Wetter Wells =====
             EnableSpringsVigor = _root.CreateEntry(
                 "EnableSpringsVigor", false,
-                display_name: "Spring's Vigor — Enabled",
+                display_name: "Wetter Wells — Enabled",
                 description: "Faster well recharge and bigger well capacity. " +
                              "Folded from VC_FasterWaterRecharge by VC.");
 
             SpringsVigorRechargeMult = _root.CreateEntry(
                 "SpringsVigorRechargeMult", 2.0f,
-                display_name: "Spring's Vigor — Recharge Multiplier",
+                display_name: "Wetter Wells — Recharge Multiplier",
                 description: "Multiplier on Well.waterGainPerSecond. Vanilla = 0.01 (×1.0). " +
                              "Range 1.0 – 10.0.");
 
             SpringsVigorCapacityMult = _root.CreateEntry(
                 "SpringsVigorCapacityMult", 2.0f,
-                display_name: "Spring's Vigor — Capacity Multiplier",
+                display_name: "Wetter Wells — Capacity Multiplier",
                 description: "Multiplier on Well.maxWater. Vanilla = 50 (×1.0). " +
                              "Range 1.0 – 10.0.");
 
-            // ===== Levy's Arms =====
+            // ===== Emergency Militia =====
             EnableLevysArms = _root.CreateEntry("EnableLevysArms", false,
-                display_name: "Levy's Arms — Enabled",
+                display_name: "Emergency Militia — Enabled",
                 description: "Hotkey-driven militia: press a key to arm every eligible " +
                              "villager (skipping Hunters, Guards, Soldiers, and Children). " +
                              "Mono re-implementation of BasicWeaponEquipment (donimuzur).");
             LevysArmsArmKey = _root.CreateEntry("LevysArmsArmKey", "B",
-                display_name: "Levy's Arms — Arm Hotkey",
+                display_name: "Emergency Militia — Arm Hotkey",
                 description: "Unity KeyCode name (B, F4, etc.). Press to arm all eligible villagers.");
             LevysArmsUnarmKey = _root.CreateEntry("LevysArmsUnarmKey", "N",
-                display_name: "Levy's Arms — Unarm Hotkey",
+                display_name: "Emergency Militia — Unarm Hotkey",
                 description: "Unity KeyCode name. Press to unarm everyone armed by this boon.");
             LevysArmsStatMagnitude = _root.CreateEntry("LevysArmsStatMagnitude", 100f,
-                display_name: "Levy's Arms — Stat Magnitude",
+                display_name: "Emergency Militia — Stat Magnitude",
                 description: "Applied to every ItemStats *Perc field (armor, max life, melee/ranged damage, etc.). " +
                              "0 = vanilla, 100 = +100% (default), 1000 = matches source mod's 'powerful' preset. Range 0..1000.");
             Boons.LevysArms.ResolveHotkeys();
 
-            // ===== Steadfast Resolve =====
+            // ===== Achieve Cheese =====
             EnableSteadfastResolve = _root.CreateEntry(
                 "EnableSteadfastResolve", false,
-                display_name: "Steadfast Resolve — Enabled",
+                display_name: "Achieve Cheese — Enabled",
                 description: "Achievements unlock even when non-default game settings or mods are in use. " +
                              "Flips SettingsManager.allowCustomSettingsForAchievements at boot. " +
                              "Folded from FFEnableAchievements by idontcare.");
 
-            // ===== Long Reach =====
+            // ===== Domain Expansion =====
             EnableLongReach = _root.CreateEntry("EnableLongReach", false,
-                display_name: "Long Reach — Enabled",
+                display_name: "Domain Expansion — Enabled",
                 description: "Per-building work-radius multipliers. Folded from VC_BuildingRadiusAdjust by VC.");
-            LongReachWorkCampPct   = _root.CreateEntry("LongReachWorkCampPct",   0f, display_name: "Long Reach — Work Camp +%",   description: "WorkCamp work radius. 0 = no change. Range -50..200.");
-            LongReachHunterPct     = _root.CreateEntry("LongReachHunterPct",     0f, display_name: "Long Reach — Hunter +%",       description: "HunterBuilding radius. 0 = no change. Range -50..200.");
-            LongReachFishingPct    = _root.CreateEntry("LongReachFishingPct",    0f, display_name: "Long Reach — Fishing +%",      description: "FishingShack radius. 0 = no change. Range -50..200.");
-            LongReachArboristPct   = _root.CreateEntry("LongReachArboristPct",   0f, display_name: "Long Reach — Arborist +%",     description: "ArboristBuilding radius. 0 = no change. Range -50..200.");
-            LongReachMarketPct     = _root.CreateEntry("LongReachMarketPct",     0f, display_name: "Long Reach — Market +%",       description: "MarketBuilding strategic planning radius. 0 = no change. Range -50..200.");
-            LongReachForagerPct    = _root.CreateEntry("LongReachForagerPct",    0f, display_name: "Long Reach — Forager Shack +%",description: "ForagerShack foraging radius. 0 = no change. Range -50..200. [SB extension — source mod's pref was orphaned]");
-            LongReachRatCatcherPct = _root.CreateEntry("LongReachRatCatcherPct", 0f, display_name: "Long Reach — Rat Catcher +%",  description: "RatCatcherBuilding work radius. 0 = no change. Range -50..200. [SB extension]");
+            LongReachWorkCampPct   = _root.CreateEntry("LongReachWorkCampPct",   0f, display_name: "Domain Expansion — Work Camp +%",   description: "WorkCamp work radius. 0 = no change. Range -50..200.");
+            LongReachHunterPct     = _root.CreateEntry("LongReachHunterPct",     0f, display_name: "Domain Expansion — Hunter +%",       description: "HunterBuilding radius. 0 = no change. Range -50..200.");
+            LongReachFishingPct    = _root.CreateEntry("LongReachFishingPct",    0f, display_name: "Domain Expansion — Fishing +%",      description: "FishingShack radius. 0 = no change. Range -50..200.");
+            LongReachArboristPct   = _root.CreateEntry("LongReachArboristPct",   0f, display_name: "Domain Expansion — Arborist +%",     description: "ArboristBuilding radius. 0 = no change. Range -50..200.");
+            LongReachMarketPct     = _root.CreateEntry("LongReachMarketPct",     0f, display_name: "Domain Expansion — Market +%",       description: "MarketBuilding strategic planning radius. 0 = no change. Range -50..200.");
+            LongReachForagerPct    = _root.CreateEntry("LongReachForagerPct",    0f, display_name: "Domain Expansion — Forager Shack +%",description: "ForagerShack foraging radius. 0 = no change. Range -50..200. [SB extension — source mod's pref was orphaned]");
+            LongReachRatCatcherPct = _root.CreateEntry("LongReachRatCatcherPct", 0f, display_name: "Domain Expansion — Rat Catcher +%",  description: "RatCatcherBuilding work radius. 0 = no change. Range -50..200. [SB extension]");
 
             // ===== Civic Pride =====
             EnableCivicPride = _root.CreateEntry("EnableCivicPride", false,

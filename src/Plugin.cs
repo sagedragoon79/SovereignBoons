@@ -112,7 +112,7 @@ namespace SovereignBoons
             // its multiplier once GameManager exists. Self-throttles via _applied flag.
             Boons.HallowedReliquary.TryApplyBonusOnce();
 
-            // Levy's Arms hotkey poll.
+            // Emergency Militia hotkey poll.
             Boons.LevysArms.OnUpdate();
         }
     }

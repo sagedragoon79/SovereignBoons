@@ -51,7 +51,7 @@ namespace SovereignBoons.Boons
                 }
                 catch (System.Exception ex)
                 {
-                    Plugin.Log.Warning($"[Spring's Vigor] Well.Awake postfix failed: {ex.Message}");
+                    Plugin.Log.Warning($"[Wetter Wells] Well.Awake postfix failed: {ex.Message}");
                 }
             }
         }
