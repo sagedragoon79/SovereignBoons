@@ -14,6 +14,9 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Keep the version string clean in Windows Explorer hover (no +commit-hash suffix). -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <Deterministic>true</Deterministic>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <Platforms>AnyCPU;x64</Platforms>
     <GameDir Condition="'$(GameDir)' == ''">G:\SteamLibrary\steamapps\common\Farthest Frontier</GameDir>
