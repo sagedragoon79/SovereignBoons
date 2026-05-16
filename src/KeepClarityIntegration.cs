@@ -122,55 +122,66 @@ namespace SovereignBoons
             Reg(GroupEconomy, Config.EnableCrownsBounty,
                 NewMeta("Crown's Bounty",
                         "Multiply gold from tax-collection events. Honest to the name — " +
-                        "sales/refunds/event rewards are untouched.",
+                        "sales/refunds/event rewards are untouched. Default: OFF.",
                         order: 100));
             Reg(GroupEconomy, Config.CrownsBountyTaxMultiplier,
-                NewMeta("Tax Multiplier", "Vanilla = 1.0.", min: 1.0f, max: 10.0f,
+                NewMeta("Tax Multiplier",
+                        "Multiplier applied to gold from each tax event. Vanilla = 1.0. Default: 2.0.",
+                        min: 1.0f, max: 10.0f,
                         visibleWhen: () => Config.EnableCrownsBounty.Value,
                         order: 101, indent: 20));
 
             // ===== Wealthy Caravans (Economy) — order block 200 =====
             Reg(GroupEconomy, Config.EnableWealthyCaravans,
                 NewMeta("Wealthy Caravans",
-                        "Beefier traveling merchants + higher trading-post stock cap.",
+                        "Beefier traveling merchants + higher trading-post stock cap. Default: OFF.",
                         restartRequired: false, order: 200));
             Reg(GroupEconomy, Config.WealthyCaravansGoldMul,
-                NewMeta("Gold Multiplier", "Multiplier on merchant gold pool.", min: 1.0f, max: 10.0f,
+                NewMeta("Gold Multiplier",
+                        "Multiplier on merchant gold pool. Vanilla = 1.0. Default: 2.0.",
+                        min: 1.0f, max: 10.0f,
                         visibleWhen: () => Config.EnableWealthyCaravans.Value,
                         order: 201, indent: 20));
             Reg(GroupEconomy, Config.WealthyCaravansGoodsMul,
-                NewMeta("Goods Multiplier", "Multiplier on goods counts.", min: 1.0f, max: 10.0f,
+                NewMeta("Goods Multiplier",
+                        "Multiplier on merchant goods counts. Vanilla = 1.0. Default: 2.0.",
+                        min: 1.0f, max: 10.0f,
                         visibleWhen: () => Config.EnableWealthyCaravans.Value,
                         order: 202, indent: 20));
             Reg(GroupEconomy, Config.WealthyCaravansBuyAnything,
                 NewMeta("Buy Anything",
-                        "Merchants will purchase any item in their goods list OR already in storage.",
+                        "Merchants will purchase any item in their goods list OR already in storage. Default: ON.",
                         visibleWhen: () => Config.EnableWealthyCaravans.Value,
                         order: 203, indent: 20));
             Reg(GroupEconomy, Config.WealthyCaravansMaxStock,
                 NewMeta("Trading Post Max Stock",
-                        "Vanilla = 100.", min: 100, max: 5000,
+                        "Override TradeManager.maxTradingPostStockCount. Vanilla = 100. Default: 1000.",
+                        min: 100, max: 5000,
                         visibleWhen: () => Config.EnableWealthyCaravans.Value,
                         order: 204, indent: 20));
 
             // ===== Swift Feet (Workforce) — order block 100 =====
             Reg(GroupWorkforce, Config.EnableSwiftFeet,
                 NewMeta("Swift Feet",
-                        "Faster villagers + beefier transport wagons. Applies to characters and wagons spawned after enabling; reload save to refresh existing.",
+                        "Faster villagers + beefier transport wagons. Applies to characters/wagons " +
+                        "spawned after enabling; reload save to refresh existing. Default: OFF.",
                         order: 100));
             Reg(GroupWorkforce, Config.SwiftFeetShoeBonus,
                 NewMeta("Villager Shoe Bonus",
-                        "Replaces Character._shoeBonusBase. Vanilla = 0.15. Affects raiders too.",
+                        "Replaces Character._shoeBonusBase. Affects raiders too. " +
+                        "Vanilla = 0.15. Default: 0.30.",
                         min: 0.10f, max: 2.00f,
                         visibleWhen: () => Config.EnableSwiftFeet.Value,
                         order: 101, indent: 20));
             Reg(GroupWorkforce, Config.SwiftFeetWagonSpeed,
-                NewMeta("Wagon Move Speed", "TransportWagon._movementSpeed override.",
+                NewMeta("Wagon Move Speed",
+                        "TransportWagon._movementSpeed override. Vanilla ≈ 4.5. Default: 8.0.",
                         min: 4.0f, max: 20.0f,
                         visibleWhen: () => Config.EnableSwiftFeet.Value,
                         order: 102, indent: 20));
             Reg(GroupWorkforce, Config.SwiftFeetWagonCapacity,
-                NewMeta("Wagon Carry Capacity", "TransportWagon.carryCapacity override.",
+                NewMeta("Wagon Carry Capacity",
+                        "TransportWagon.carryCapacity override. Vanilla = 150. Default: 300.",
                         min: 150, max: 1000,
                         visibleWhen: () => Config.EnableSwiftFeet.Value,
                         order: 103, indent: 20));
@@ -178,66 +189,77 @@ namespace SovereignBoons
             // ===== Eager Hands (Workforce) — order block 200 =====
             Reg(GroupWorkforce, Config.EnableEagerHands,
                 NewMeta("Eager Hands",
-                        "Lower age cutoffs for the labor pool + School enrollment range.",
+                        "Lower age cutoffs for the labor pool + School enrollment range. Default: OFF.",
                         restartRequired: false, order: 200));
             Reg(GroupWorkforce, Config.EagerHandsChildAge,
-                NewMeta("Child Cutoff Age", "Vanilla = 15.", min: 5, max: 18,
+                NewMeta("Child Cutoff Age",
+                        "Min age at which a villager becomes a child laborer. Vanilla = 15. Default: 12.",
+                        min: 5, max: 18,
                         visibleWhen: () => Config.EnableEagerHands.Value,
                         order: 201, indent: 20));
             Reg(GroupWorkforce, Config.EagerHandsAdolescentAge,
-                NewMeta("Adolescent Cutoff Age", "Vanilla = 25.", min: 12, max: 30,
+                NewMeta("Adolescent Cutoff Age",
+                        "Age at which a villager promotes to adult labor. Vanilla = 25. Default: 18.",
+                        min: 12, max: 30,
                         visibleWhen: () => Config.EnableEagerHands.Value,
                         order: 202, indent: 20));
             Reg(GroupWorkforce, Config.EagerHandsSchoolMinAge,
-                NewMeta("School Min Enrollment Age", "Vanilla = 5.", min: 3, max: 10,
+                NewMeta("School Min Enrollment Age",
+                        "Vanilla = 5. Default: 5.",
+                        min: 3, max: 10,
                         visibleWhen: () => Config.EnableEagerHands.Value,
                         order: 203, indent: 20));
             Reg(GroupWorkforce, Config.EagerHandsSchoolMaxAge,
                 NewMeta("School Max Enrollment Age",
-                        "Vanilla = 10. Set very low to effectively disable schooling.",
+                        "Set very low to effectively disable schooling. Vanilla = 10. Default: 10.",
                         min: 5, max: 60,
                         visibleWhen: () => Config.EnableEagerHands.Value,
                         order: 204, indent: 20));
 
             // ===== King's Highway (Workforce) — order block 300 =====
             Reg(GroupWorkforce, Config.EnableKingsHighway,
-                NewMeta("King's Highway", "Faster travel on roads + slower aggressive animals.",
+                NewMeta("King's Highway",
+                        "Faster travel on roads + slower aggressive animals. Default: OFF.",
                         restartRequired: false, order: 300));
             Reg(GroupWorkforce, Config.KingsHighwayBoostRoadSpeed,
                 NewMeta("Boost Road Speed",
-                        "Multiply the on-road speed bonus.",
+                        "Multiply the on-road speed bonus. Default: ON (when boon is enabled).",
                         visibleWhen: () => Config.EnableKingsHighway.Value,
                         order: 301, indent: 20));
             Reg(GroupWorkforce, Config.KingsHighwayRoadSpeedMul,
                 NewMeta("Road Speed Multiplier",
-                        "Vanilla = 1.0.", min: 1.0f, max: 3.0f,
+                        "Multiplier on AIGridNode.nodeSpeedBonus. Vanilla = 1.0. Default: 1.5.",
+                        min: 1.0f, max: 3.0f,
                         visibleWhen: () => Config.EnableKingsHighway.Value && Config.KingsHighwayBoostRoadSpeed.Value,
                         order: 302, indent: 40));
             Reg(GroupWorkforce, Config.KingsHighwaySlowAggressiveAnimals,
                 NewMeta("Slow Aggressive Animals",
-                        "Wolves/bears/etc. move slower — easier to outrun, easier to hunt.",
+                        "Wolves/bears/etc. move slower — easier to outrun, easier to hunt. Default: ON.",
                         visibleWhen: () => Config.EnableKingsHighway.Value,
                         order: 303, indent: 20));
             Reg(GroupWorkforce, Config.KingsHighwayAggressiveAnimalMul,
                 NewMeta("Aggressive Animal Speed Mul",
-                        "Vanilla = 1.0. Lower = slower predators.", min: 0.5f, max: 1.0f,
+                        "Vanilla = 1.0. Lower = slower predators. Default: 0.85.",
+                        min: 0.5f, max: 1.0f,
                         visibleWhen: () => Config.EnableKingsHighway.Value && Config.KingsHighwaySlowAggressiveAnimals.Value,
                         order: 304, indent: 40));
 
             // ===== Spring's Vigor (Buildings) — order block 100 =====
             Reg(GroupBuildings, Config.EnableSpringsVigor,
                 NewMeta("Spring's Vigor",
-                        "Faster Well recharge + bigger Well capacity. Applies to Wells placed after enabling; reload save to refresh existing.",
+                        "Faster Well recharge + bigger Well capacity. Applies to Wells placed after " +
+                        "enabling; reload save to refresh existing. Default: OFF.",
                         order: 100));
             Reg(GroupBuildings, Config.SpringsVigorRechargeMult,
                 NewMeta("Recharge Multiplier",
-                        "Multiplier on Well.waterGainPerSecond. Vanilla = 0.01 (×1.0).",
+                        "Multiplier on Well.waterGainPerSecond (vanilla = 0.01 per second). " +
+                        "Default: 2.0 (×2 → 0.02 per second).",
                         min: 1.0f, max: 10.0f,
                         visibleWhen: () => Config.EnableSpringsVigor.Value,
                         order: 101, indent: 20));
             Reg(GroupBuildings, Config.SpringsVigorCapacityMult,
                 NewMeta("Capacity Multiplier",
-                        "Multiplier on Well.maxWater. Vanilla = 50 (×1.0).",
+                        "Multiplier on Well.maxWater (vanilla = 50). Default: 2.0 (×2 → 100 max).",
                         min: 1.0f, max: 10.0f,
                         visibleWhen: () => Config.EnableSpringsVigor.Value,
                         order: 102, indent: 20));
@@ -245,19 +267,23 @@ namespace SovereignBoons
             // ===== Levy's Arms (Combat) — order block 100 =====
             Reg(GroupCombat, Config.EnableLevysArms,
                 NewMeta("Levy's Arms",
-                        "Hotkey-driven militia. Arms every eligible villager with combat config + stat buff.",
+                        "Hotkey-driven militia. Arms every eligible villager with combat config + stat buff. " +
+                        "Default: OFF.",
                         restartRequired: false, order: 100));
             Reg(GroupCombat, Config.LevysArmsArmKey,
-                NewMeta("Arm Hotkey", "Unity KeyCode name (B, F4, etc.).",
+                NewMeta("Arm Hotkey",
+                        "Unity KeyCode name (B, F4, etc.). Default: B.",
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 101, indent: 20));
             Reg(GroupCombat, Config.LevysArmsUnarmKey,
-                NewMeta("Unarm Hotkey", "Unity KeyCode name.",
+                NewMeta("Unarm Hotkey",
+                        "Unity KeyCode name. Default: N.",
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 102, indent: 20));
             Reg(GroupCombat, Config.LevysArmsStatMagnitude,
                 NewMeta("Stat Magnitude",
-                        "Applied to every Perc stat field. 100 = +100%; 1000 matches source's 'powerful' preset.",
+                        "Applied to every Perc stat field (max life, armor, melee/ranged damage, etc.). " +
+                        "Vanilla = 0. Source mod's 'powerful' preset = 1000. Default: 100.",
                         min: 0f, max: 1000f,
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 103, indent: 20));
@@ -265,87 +291,102 @@ namespace SovereignBoons
             // ===== Steadfast Resolve (Misc) — order block 100 =====
             Reg(GroupMisc, Config.EnableSteadfastResolve,
                 NewMeta("Steadfast Resolve",
-                        "Achievements unlock even with non-default settings or mods.",
+                        "Achievements unlock even with non-default settings or mods. Default: OFF.",
                         restartRequired: true, order: 100));
 
             // ===== Long Reach (Buildings) — order block 200 =====
             Reg(GroupBuildings, Config.EnableLongReach,
                 NewMeta("Long Reach",
-                        "Per-building work-radius multipliers. Applies to buildings placed after enabling; reload save to refresh existing.",
+                        "Per-building work-radius multipliers. Applies to buildings placed after " +
+                        "enabling; reload save to refresh existing. Default: OFF.",
                         order: 200));
             Reg(GroupBuildings, Config.LongReachWorkCampPct,
-                NewMeta("Work Camp +%",      "WorkCamp work radius.",         min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 201, indent: 20));
+                NewMeta("Work Camp +%",     "WorkCamp work radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",            min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 201, indent: 20));
             Reg(GroupBuildings, Config.LongReachHunterPct,
-                NewMeta("Hunter +%",         "HunterBuilding radius.",        min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 202, indent: 20));
+                NewMeta("Hunter +%",        "HunterBuilding radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",           min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 202, indent: 20));
             Reg(GroupBuildings, Config.LongReachFishingPct,
-                NewMeta("Fishing +%",        "FishingShack radius.",          min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 203, indent: 20));
+                NewMeta("Fishing +%",       "FishingShack radius — percent increase. Vanilla radius = 30. Default: 0 (no change).",             min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 203, indent: 20));
             Reg(GroupBuildings, Config.LongReachArboristPct,
-                NewMeta("Arborist +%",       "ArboristBuilding radius.",      min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 204, indent: 20));
+                NewMeta("Arborist +%",      "ArboristBuilding radius — percent increase. Vanilla radius = 100. Default: 0 (no change).",        min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 204, indent: 20));
             Reg(GroupBuildings, Config.LongReachMarketPct,
-                NewMeta("Market +%",         "Market planning radius.",       min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 205, indent: 20));
+                NewMeta("Market +%",        "Market planning radius — percent increase. Vanilla radius = 50. Default: 0 (no change).",          min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 205, indent: 20));
             Reg(GroupBuildings, Config.LongReachForagerPct,
-                NewMeta("Forager Shack +%",  "ForagerShack foraging radius.", min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 206, indent: 20));
+                NewMeta("Forager Shack +%", "ForagerShack foraging radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",    min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 206, indent: 20));
             Reg(GroupBuildings, Config.LongReachRatCatcherPct,
-                NewMeta("Rat Catcher +%",    "RatCatcher work radius.",       min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 207, indent: 20));
+                NewMeta("Rat Catcher +%",   "RatCatcherBuilding work radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",  min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 207, indent: 20));
 
             // ===== Civic Pride (Buildings) — order block 300 =====
             Reg(GroupBuildings, Config.EnableCivicPride,
                 NewMeta("Civic Pride",
-                        "Multiply DecorativeBuilding desirability radius/bonus. Applies to decoratives placed after enabling; reload save to refresh existing.",
+                        "Multiply DecorativeBuilding desirability radius/bonus. Applies to decoratives " +
+                        "placed after enabling; reload save to refresh existing. Default: OFF.",
                         order: 300));
             Reg(GroupBuildings, Config.CivicPrideRadiusMul,
-                NewMeta("Radius Multiplier", "Vanilla = 1.0.", min: 0.5f, max: 10f, visibleWhen: () => Config.EnableCivicPride.Value, order: 301, indent: 20));
+                NewMeta("Radius Multiplier",
+                        "Multiplier on Building._strategicPlanningRadius (vanilla = 50). Default: 1.5.",
+                        min: 0.5f, max: 10f,
+                        visibleWhen: () => Config.EnableCivicPride.Value, order: 301, indent: 20));
             Reg(GroupBuildings, Config.CivicPrideBonusMul,
-                NewMeta("Bonus Multiplier",  "Vanilla = 1.0.", min: 0.5f, max: 10f, visibleWhen: () => Config.EnableCivicPride.Value, order: 302, indent: 20));
+                NewMeta("Bonus Multiplier",
+                        "Multiplier on Building._strategicPlanningBonus magnitude. Vanilla = 1.0. Default: 1.5.",
+                        min: 0.5f, max: 10f,
+                        visibleWhen: () => Config.EnableCivicPride.Value, order: 302, indent: 20));
 
             // ===== Hallowed Reliquary (Buildings) — order block 400 =====
             Reg(GroupBuildings, Config.EnableHallowedReliquary,
                 NewMeta("Hallowed Reliquary",
-                        "Spirituality bonus multiplier + Unchain Relics from priest count.",
+                        "Spirituality bonus multiplier + Unchain Relics from priest count. Default: OFF.",
                         restartRequired: false, order: 400));
             Reg(GroupBuildings, Config.HallowedReliquaryBonusMul,
-                NewMeta("Spirituality Bonus Mul", "Vanilla = 1.0.", min: 0.5f, max: 3.0f,
+                NewMeta("Spirituality Bonus Mul",
+                        "Multiplier on ReligionManager._spiritualityBonusPerRelic (vanilla = 50). " +
+                        "Default: 1.5.",
+                        min: 0.5f, max: 3.0f,
                         visibleWhen: () => Config.EnableHallowedReliquary.Value,
                         order: 401, indent: 20));
             Reg(GroupBuildings, Config.HallowedReliquaryUnchainRelics,
                 NewMeta("Unchain Relics from Priest Count",
-                        "1 priest activates every assigned relic. Off = vanilla (priest count gates active relics).",
+                        "1 priest activates every assigned relic. Off = vanilla (priest count gates " +
+                        "active relics). Default: ON.",
                         visibleWhen: () => Config.EnableHallowedReliquary.Value,
                         order: 402, indent: 20));
 
             // ===== Hoarded Stores (Buildings) — order block 500 =====
             Reg(GroupBuildings, Config.EnableHoardedStores,
                 NewMeta("Hoarded Stores",
-                        "Per-storage-type capacity multiplier. Applies to storage buildings placed after enabling; reload save to refresh existing.",
+                        "Per-storage-type capacity multiplier. Applies to storage buildings placed after " +
+                        "enabling; reload save to refresh existing. Default: OFF.",
                         order: 500));
-            Reg(GroupBuildings, Config.HoardedStoresRootCellarEnable,    NewMeta("Root Cellar — Apply",    "Apply capacity multiplier to Root Cellars.",   visibleWhen: () => Config.EnableHoardedStores.Value, order: 501, indent: 20));
-            Reg(GroupBuildings, Config.HoardedStoresRootCellarMul,       NewMeta("Root Cellar — Mul",      "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresRootCellarEnable.Value, order: 502, indent: 40));
-            Reg(GroupBuildings, Config.HoardedStoresGranaryEnable,       NewMeta("Granary — Apply",        "Apply capacity multiplier to Granaries.",      visibleWhen: () => Config.EnableHoardedStores.Value, order: 503, indent: 20));
-            Reg(GroupBuildings, Config.HoardedStoresGranaryMul,          NewMeta("Granary — Mul",          "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresGranaryEnable.Value, order: 504, indent: 40));
-            Reg(GroupBuildings, Config.HoardedStoresStorehouseEnable,    NewMeta("Storehouse — Apply",     "Apply capacity multiplier to Storehouses.",    visibleWhen: () => Config.EnableHoardedStores.Value, order: 505, indent: 20));
-            Reg(GroupBuildings, Config.HoardedStoresStorehouseMul,       NewMeta("Storehouse — Mul",       "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStorehouseEnable.Value, order: 506, indent: 40));
-            Reg(GroupBuildings, Config.HoardedStoresStorageDepotEnable,  NewMeta("Storage Depot — Apply",  "Apply capacity multiplier to Storage Depots.", visibleWhen: () => Config.EnableHoardedStores.Value, order: 507, indent: 20));
-            Reg(GroupBuildings, Config.HoardedStoresStorageDepotMul,     NewMeta("Storage Depot — Mul",    "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStorageDepotEnable.Value, order: 508, indent: 40));
-            Reg(GroupBuildings, Config.HoardedStoresStockyardEnable,     NewMeta("Stockyard — Apply",      "Apply capacity multiplier to Stockyards.",     visibleWhen: () => Config.EnableHoardedStores.Value, order: 509, indent: 20));
-            Reg(GroupBuildings, Config.HoardedStoresStockyardMul,        NewMeta("Stockyard — Mul",        "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStockyardEnable.Value, order: 510, indent: 40));
-            Reg(GroupBuildings, Config.HoardedStoresTreasuryEnable,      NewMeta("Treasury — Apply",       "Apply capacity multiplier to Treasuries.",     visibleWhen: () => Config.EnableHoardedStores.Value, order: 511, indent: 20));
-            Reg(GroupBuildings, Config.HoardedStoresTreasuryMul,         NewMeta("Treasury — Mul",         "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresTreasuryEnable.Value, order: 512, indent: 40));
-            Reg(GroupBuildings, Config.HoardedStoresMarketEnable,        NewMeta("Market — Apply",         "Apply capacity multiplier to Markets.",        visibleWhen: () => Config.EnableHoardedStores.Value, order: 513, indent: 20));
-            Reg(GroupBuildings, Config.HoardedStoresMarketMul,           NewMeta("Market — Mul",           "Capacity multiplier.",      min: 1f, max: 50f, visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresMarketEnable.Value, order: 514, indent: 40));
+            // All per-type Apply default OFF; all Mul default 2.0. Capacity field = StorageBuilding._storageItemCountCapacity.
+            Reg(GroupBuildings, Config.HoardedStoresRootCellarEnable,    NewMeta("Root Cellar — Apply",    "Apply capacity multiplier to Root Cellars. Default: OFF.",                              visibleWhen: () => Config.EnableHoardedStores.Value, order: 501, indent: 20));
+            Reg(GroupBuildings, Config.HoardedStoresRootCellarMul,       NewMeta("Root Cellar — Mul",      "Capacity multiplier for Root Cellars. Default: 2.0.",      min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresRootCellarEnable.Value, order: 502, indent: 40));
+            Reg(GroupBuildings, Config.HoardedStoresGranaryEnable,       NewMeta("Granary — Apply",        "Apply capacity multiplier to Granaries. Default: OFF.",                                 visibleWhen: () => Config.EnableHoardedStores.Value, order: 503, indent: 20));
+            Reg(GroupBuildings, Config.HoardedStoresGranaryMul,          NewMeta("Granary — Mul",          "Capacity multiplier for Granaries. Default: 2.0.",         min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresGranaryEnable.Value, order: 504, indent: 40));
+            Reg(GroupBuildings, Config.HoardedStoresStorehouseEnable,    NewMeta("Storehouse — Apply",     "Apply capacity multiplier to Storehouses. Default: OFF.",                               visibleWhen: () => Config.EnableHoardedStores.Value, order: 505, indent: 20));
+            Reg(GroupBuildings, Config.HoardedStoresStorehouseMul,       NewMeta("Storehouse — Mul",       "Capacity multiplier for Storehouses. Default: 2.0.",       min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStorehouseEnable.Value, order: 506, indent: 40));
+            Reg(GroupBuildings, Config.HoardedStoresStorageDepotEnable,  NewMeta("Storage Depot — Apply",  "Apply capacity multiplier to Storage Depots. Default: OFF.",                            visibleWhen: () => Config.EnableHoardedStores.Value, order: 507, indent: 20));
+            Reg(GroupBuildings, Config.HoardedStoresStorageDepotMul,     NewMeta("Storage Depot — Mul",    "Capacity multiplier for Storage Depots. Default: 2.0.",    min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStorageDepotEnable.Value, order: 508, indent: 40));
+            Reg(GroupBuildings, Config.HoardedStoresStockyardEnable,     NewMeta("Stockyard — Apply",      "Apply capacity multiplier to Stockyards. Default: OFF.",                                visibleWhen: () => Config.EnableHoardedStores.Value, order: 509, indent: 20));
+            Reg(GroupBuildings, Config.HoardedStoresStockyardMul,        NewMeta("Stockyard — Mul",        "Capacity multiplier for Stockyards. Default: 2.0.",        min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresStockyardEnable.Value, order: 510, indent: 40));
+            Reg(GroupBuildings, Config.HoardedStoresTreasuryEnable,      NewMeta("Treasury — Apply",       "Apply capacity multiplier to Treasuries. Default: OFF.",                                visibleWhen: () => Config.EnableHoardedStores.Value, order: 511, indent: 20));
+            Reg(GroupBuildings, Config.HoardedStoresTreasuryMul,         NewMeta("Treasury — Mul",         "Capacity multiplier for Treasuries. Default: 2.0.",        min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresTreasuryEnable.Value, order: 512, indent: 40));
+            Reg(GroupBuildings, Config.HoardedStoresMarketEnable,        NewMeta("Market — Apply",         "Apply capacity multiplier to Markets. Default: OFF.",                                   visibleWhen: () => Config.EnableHoardedStores.Value, order: 513, indent: 20));
+            Reg(GroupBuildings, Config.HoardedStoresMarketMul,           NewMeta("Market — Mul",           "Capacity multiplier for Markets. Default: 2.0.",           min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresMarketEnable.Value, order: 514, indent: 40));
 
             // ===== Greater Halls (Buildings) — order block 600 (1 master + ~46 buildings, ordered by iteration) =====
             Reg(GroupBuildings, Config.EnableGreaterHalls,
                 NewMeta("Greater Halls",
                         "Per-building +Workers / +Residents add-on for ~46 building types. " +
                         "Grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential. " +
-                        "Applies to buildings placed after enabling; reload save to refresh existing.",
+                        "Applies to buildings placed after enabling; reload save to refresh existing. Default: OFF.",
                         order: 600));
             int ghOrder = 601;
             foreach (var bp in Boons.GreaterHalls.Iterate())
             {
                 Reg(GroupBuildings, bp.Entry,
                     NewMeta($"{bp.Name} +Workers",
-                            $"Extra worker/resident slots for {bp.Name}. Category: {bp.Category}.",
+                            $"Extra worker/resident slots added on top of vanilla maxWorkers. " +
+                            $"Category: {bp.Category}. Range: {bp.Min}..{bp.Max}. Default: 0 (no change).",
                             min: bp.Min, max: bp.Max,
                             visibleWhen: () => Config.EnableGreaterHalls.Value,
                             order: ghOrder++, indent: 20));
@@ -360,92 +401,106 @@ namespace SovereignBoons
             Reg(GroupBuildings, Config.BountifulFieldsLogVanilla,
                 NewMeta("Log Vanilla Values",
                         "Dump every crop's vanilla VegetableFieldsRecord values to MelonLoader.log on map load. " +
-                        "Enable temporarily to discover per-crop defaults; turn off when done.",
+                        "Enable temporarily to discover per-crop defaults; turn off when done. Default: false.",
                         visibleWhen: () => Config.EnableBountifulFields.Value,
                         order: 1001, indent: 20));
             Reg(GroupBuildings, Config.BountifulFieldsGridsPerFarmerMul,
-                NewMeta("Grids per Farmer Mul", "Vanilla = 1.0.", min: 0.5f, max: 2.0f,
+                NewMeta("Grids per Farmer Mul",
+                        "Multiplier on AgricultureManager._gridsPerFarmer. Default: 1.0 (vanilla).",
+                        min: 0.5f, max: 2.0f,
                         visibleWhen: () => Config.EnableBountifulFields.Value,
                         order: 1002, indent: 20));
             Reg(GroupBuildings, Config.BountifulFieldsMaintenanceDays,
                 NewMeta("Maintenance Length (days)",
-                        "Range 45..90. -1 = no change.", min: -1, max: 90,
+                        "Override AgricultureManager._maintenanceLengthInDays. Range 45..90 to apply; " +
+                        "anything outside that range is treated as no-change. Default: -1 (no change).",
+                        min: -1, max: 90,
                         visibleWhen: () => Config.EnableBountifulFields.Value,
                         order: 1003, indent: 20));
 
             // Per-crop entries — each crop gets a 10-wide order block starting at
             // 1010 (Turnip), 1020 (Carrot), etc. Within a block: Apply at indent 20
             // (under Bountiful Fields master), knobs at indent 40 (under crop Apply).
+            // Defaults match vanilla per crop (see BountifulFields.Vanilla dict).
             int cropBase = 1010;
             foreach (var cp in Boons.BountifulFields.Iterate())
             {
                 var crop = cp.Crop;
                 var e = cp.Entries;
+                var v = cp.Vanilla;
                 System.Func<bool> applyOn = () => Config.EnableBountifulFields.Value && e.Apply.Value;
                 int b = cropBase;
+
                 Reg(GroupBuildings, e.Apply,
                     NewMeta($"{crop} — Apply",
-                            $"Master switch for {crop} overrides. When OFF, vanilla values are used. " +
-                            "When ON, each knob below applies unless set to its 'no change' default.",
+                            $"Master switch for {crop} overrides. OFF → vanilla values used (knobs below " +
+                            "ignored). ON → values below are written to the crop's data record on map load. " +
+                            "Default: false.",
                             visibleWhen: () => Config.EnableBountifulFields.Value,
                             order: b, indent: 20));
                 Reg(GroupBuildings, e.Fertility,
                     NewMeta($"{crop} — Fertility Depletion",
-                            "Fertility points consumed per planting cycle. Lower = field stays fertile longer. " +
-                            "Vanilla per-crop (small positive int) — see Log Vanilla Values. -1 = no change.",
+                            $"Fertility consumed per planting cycle. Negative = restores fertility. " +
+                            $"Range: -10..10. Default (vanilla {crop}): {v.Fertility}.",
                             min: -10, max: 10, visibleWhen: applyOn,
                             order: b + 1, indent: 40));
                 Reg(GroupBuildings, e.PlantingDays,
                     NewMeta($"{crop} — Planting Days",
-                            "Days to plant before growth begins. Lower = faster turnaround. " +
-                            "Vanilla per-crop (~5–10) — see Log Vanilla Values. -1 = no change.",
-                            min: -1,  max: 10,  visibleWhen: applyOn,
+                            $"Days to plant before growth begins. Lower = faster turnaround. " +
+                            $"Range: 1..30. Default (vanilla {crop}): {v.PlantingDays}.",
+                            min: 1, max: 30, visibleWhen: applyOn,
                             order: b + 2, indent: 40));
                 Reg(GroupBuildings, e.MatureDays,
                     NewMeta($"{crop} — Mature Days",
-                            "Days from planted to ready-to-harvest. Lower = faster crop. " +
-                            "Vanilla per-crop (~25–150) — see Log Vanilla Values. -1 = no change.",
-                            min: -1,  max: 150, visibleWhen: applyOn,
+                            $"Days from planted to ready-to-harvest. Lower = faster crop. " +
+                            $"Range: 10..300. Default (vanilla {crop}): {v.MatureDays}.",
+                            min: 10, max: 300, visibleWhen: applyOn,
                             order: b + 3, indent: 40));
                 Reg(GroupBuildings, e.WeedLevel,
                     NewMeta($"{crop} — Weed Injection",
-                            "Percent weed level ADDED each planting/harvest cycle (game applies as " +
-                            "`weedLevel += value / 100`). Lower/negative = fewer weeds. " +
-                            "Vanilla per-crop (small positive %) — see Log Vanilla Values. -1 = no change.",
-                            min: -10f, max: 10f, visibleWhen: applyOn,
+                            $"Percent weed level added each planting/harvest cycle " +
+                            $"(`weedLevel += value / 100`). Negative = removes weeds (most vanilla crops). " +
+                            $"Lower = fewer weeds. Range: -20..10. Default (vanilla {crop}): {v.WeedLevel:F1}.",
+                            min: -20f, max: 10f, visibleWhen: applyOn,
                             order: b + 4, indent: 40));
-                Reg(GroupBuildings, e.FrostTolerance,
-                    NewMeta($"{crop} — Frost Tolerance",
-                            "0 = no tolerance (dies most in frost), 10 = fully tolerant (immune). " +
-                            "HIGHER = power-spike. Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
-                            min: -1, max: 10, visibleWhen: applyOn,
+                Reg(GroupBuildings, e.FrostDiePct,
+                    NewMeta($"{crop} — Frost Die %",
+                            $"Percent of crop that dies in a frost event. 0 = immune. Lower = power-spike. " +
+                            $"Range: 0..100. Default (vanilla {crop}): {v.FrostDiePct}.",
+                            min: 0, max: 100, visibleWhen: applyOn,
                             order: b + 5, indent: 40));
-                Reg(GroupBuildings, e.HeatTolerance,
-                    NewMeta($"{crop} — Heat Tolerance",
-                            "0 = no tolerance (dies most in heatwave), 10 = fully tolerant (immune). " +
-                            "HIGHER = power-spike. Vanilla per-crop — see Log Vanilla Values. -1 = no change.",
-                            min: -1, max: 10, visibleWhen: applyOn,
+                Reg(GroupBuildings, e.HeatDiePct,
+                    NewMeta($"{crop} — Heat Die %",
+                            $"Percent of crop that dies in a heatwave event. 0 = immune. Lower = power-spike. " +
+                            $"Range: 0..100. Default (vanilla {crop}): {v.HeatDiePct}.",
+                            min: 0, max: 100, visibleWhen: applyOn,
                             order: b + 6, indent: 40));
+
                 cropBase += 10;
             }
 
             // ===== Temperate Skies (Weather) — order block 100 =====
             Reg(GroupWeather, Config.EnableTemperateSkies,
-                NewMeta("Temperate Skies", "Suppress extreme weather events.", restartRequired: false, order: 100));
+                NewMeta("Temperate Skies", "Suppress extreme weather events. Default: OFF.",
+                        restartRequired: false, order: 100));
             Reg(GroupWeather, Config.TemperateSkiesDisableBlizzard,
-                NewMeta("Disable Blizzard", "Remove Blizzard from extreme weather rolls.",
+                NewMeta("Disable Blizzard",
+                        "Remove Blizzard from extreme weather rolls. Default: OFF.",
                         visibleWhen: () => Config.EnableTemperateSkies.Value,
                         order: 101, indent: 20));
             Reg(GroupWeather, Config.TemperateSkiesDisableHeatwave,
-                NewMeta("Disable Heatwave", "Remove Heatwave from extreme weather rolls.",
+                NewMeta("Disable Heatwave",
+                        "Remove Heatwave from extreme weather rolls. Default: OFF.",
                         visibleWhen: () => Config.EnableTemperateSkies.Value,
                         order: 102, indent: 20));
             Reg(GroupWeather, Config.TemperateSkiesDisableAllExtreme,
-                NewMeta("Disable ALL Extreme", "Force chanceOfExtremeWeather to 0.",
+                NewMeta("Disable ALL Extreme",
+                        "Force chanceOfExtremeWeather to 0. Stacks with the per-event toggles. Default: OFF.",
                         visibleWhen: () => Config.EnableTemperateSkies.Value,
                         order: 103, indent: 20));
             Reg(GroupWeather, Config.TemperateSkiesDisableDrought,
-                NewMeta("Disable Drought", "Flat-zero curve override for chanceOfDrought.",
+                NewMeta("Disable Drought",
+                        "Flat-zero curve override for WeatherProfile.chanceOfDrought. Default: OFF.",
                         visibleWhen: () => Config.EnableTemperateSkies.Value,
                         order: 104, indent: 20));
         }
