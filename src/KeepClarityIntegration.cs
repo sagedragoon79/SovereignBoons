@@ -404,19 +404,26 @@ namespace SovereignBoons
                         "Enable temporarily to discover per-crop defaults; turn off when done. Default: false.",
                         visibleWhen: () => Config.EnableBountifulFields.Value,
                         order: 1001, indent: 20));
+            Reg(GroupBuildings, Config.BountifulFieldsLogDiseases,
+                NewMeta("Log Crop Diseases",
+                        "Dump every crop disease (name, target crops, infection/spread tuning) to " +
+                        "MelonLoader.log on map load — ~80 lines. Diagnostic only; the only way to see " +
+                        "disease target-crop lists (they live in asset bundles). Default: false.",
+                        visibleWhen: () => Config.EnableBountifulFields.Value,
+                        order: 1002, indent: 20));
             Reg(GroupBuildings, Config.BountifulFieldsGridsPerFarmerMul,
                 NewMeta("Grids per Farmer Mul",
                         "Multiplier on AgricultureManager._gridsPerFarmer. Default: 1.0 (vanilla).",
                         min: 0.5f, max: 2.0f,
                         visibleWhen: () => Config.EnableBountifulFields.Value,
-                        order: 1002, indent: 20));
+                        order: 1003, indent: 20));
             Reg(GroupBuildings, Config.BountifulFieldsMaintenanceDays,
                 NewMeta("Maintenance Length (days)",
                         "Override AgricultureManager._maintenanceLengthInDays. Range 45..90 to apply; " +
                         "anything outside that range is treated as no-change. Default: -1 (no change).",
                         min: -1, max: 90,
                         visibleWhen: () => Config.EnableBountifulFields.Value,
-                        order: 1003, indent: 20));
+                        order: 1004, indent: 20));
 
             // Per-crop entries — each crop gets a 10-wide order block starting at
             // 1010 (Turnip), 1020 (Carrot), etc. Within a block: Apply at indent 20

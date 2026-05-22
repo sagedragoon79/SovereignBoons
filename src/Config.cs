@@ -105,6 +105,7 @@ namespace SovereignBoons
         // ----- Bountiful Fields (folded from VC_ConfigurableCropFields by VC) -----
         public static MelonPreferences_Entry<bool>  EnableBountifulFields              { get; private set; } = null!;
         public static MelonPreferences_Entry<bool>  BountifulFieldsLogVanilla          { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  BountifulFieldsLogDiseases         { get; private set; } = null!;
         public static MelonPreferences_Entry<float> BountifulFieldsGridsPerFarmerMul   { get; private set; } = null!;
         public static MelonPreferences_Entry<int>   BountifulFieldsMaintenanceDays     { get; private set; } = null!;
         // Per-crop entries created dynamically in Boons.BountifulFields.RegisterPrefs.
@@ -362,6 +363,12 @@ namespace SovereignBoons
                 description: "When true, every Vegetable Field record's vanilla values " +
                              "(captured BEFORE any overrides apply) are dumped to MelonLoader.log " +
                              "on map load. Use to discover per-crop vanilla defaults, then turn off.");
+            BountifulFieldsLogDiseases = _root.CreateEntry("BountifulFieldsLogDiseases", false,
+                display_name: "Bountiful Fields — Log Crop Diseases",
+                description: "When true, every CropDiseaseRecord (name, target crops, infection/spread " +
+                             "tuning) is dumped to MelonLoader.log on map load. ~80 lines — diagnostic " +
+                             "only; turn off when done. Disease data lives in asset bundles, so this is " +
+                             "the only way to see the target-crop lists.");
             BountifulFieldsGridsPerFarmerMul = _root.CreateEntry("BountifulFieldsGridsPerFarmerMul", 1.0f,
                 display_name: "Bountiful Fields — Grids per Farmer Mul",
                 description: "Multiplier on AgricultureManager._gridsPerFarmer. Vanilla = 1.0. Range 0.5..2.0.");

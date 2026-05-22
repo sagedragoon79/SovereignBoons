@@ -96,6 +96,7 @@ namespace SovereignBoons.Boons
         private static readonly Dictionary<string, VanillaSnapshot> _vanillaByRecord =
             new Dictionary<string, VanillaSnapshot>();
         private static bool _vanillaLogged;
+        private static bool _diseasesLogged;
 
         public static void RegisterPrefs(MelonPreferences_Category cat)
         {
@@ -176,6 +177,7 @@ namespace SovereignBoons.Boons
                 ApplyGlobals();
                 CaptureVanillaIfNeeded();
                 MaybeLogVanilla();
+                MaybeLogDiseases();
                 ApplyPerCrop();
             }
             catch (System.Exception ex)
@@ -279,8 +281,67 @@ namespace SovereignBoons.Boons
             Plugin.Log.Msg("[Bountiful Fields] ===== END VANILLA DUMP =====");
         }
 
-        /// <summary>Reset vanilla-logged flag so the next map load re-dumps. Called from Plugin.OnSceneWasInitialized.</summary>
-        public static void ResetLogFlag() => _vanillaLogged = false;
+        /// <summary>
+        /// Diagnostic: dump every CropDiseaseRecord (the disease definitions) to the log.
+        /// Disease records live in asset bundles, not the DLL, so this is the only way to
+        /// see their target-crop lists and tuning. Gated on its own LogDiseases toggle
+        /// (~80 lines) so it doesn't ride along with the vanilla-values dump.
+        /// </summary>
+        private static void MaybeLogDiseases()
+        {
+            if (!Config.BountifulFieldsLogDiseases.Value) return;
+            if (_diseasesLogged) return;
+            _diseasesLogged = true;
+
+            try
+            {
+                var diseases = ObjectDataStore.GetAllDataRecords<CropDiseaseRecord>();
+                if (diseases == null)
+                {
+                    Plugin.Log.Msg("[Bountiful Fields] No CropDiseaseRecord data found.");
+                    return;
+                }
+
+                Plugin.Log.Msg("[Bountiful Fields] ===== CROP DISEASE RECORDS =====");
+                int count = 0;
+                foreach (var d in diseases)
+                {
+                    if (d == null) continue;
+                    count++;
+
+                    var targets = new System.Collections.Generic.List<string>();
+                    if (!string.IsNullOrEmpty(d.targetCrop1)) targets.Add(d.targetCrop1);
+                    if (!string.IsNullOrEmpty(d.targetCrop2)) targets.Add(d.targetCrop2);
+                    if (!string.IsNullOrEmpty(d.targetCrop3)) targets.Add(d.targetCrop3);
+                    if (!string.IsNullOrEmpty(d.targetCrop4)) targets.Add(d.targetCrop4);
+                    string targetList = targets.Count > 0 ? string.Join(", ", targets.ToArray()) : "(none)";
+
+                    Plugin.Log.Msg($"  • {d.name}  (\"{d.diseaseName}\")");
+                    Plugin.Log.Msg($"      targets:      {targetList}");
+                    Plugin.Log.Msg($"      infect/plant: {d.infectionChancePerPlantingPercent:F3}   " +
+                                   $"cropLoss@full: {d.cropLossAtFullMagnitudePercent:F3}");
+                    Plugin.Log.Msg($"      activeMonths: {d.activeStartMonthNum}..{d.activeEndMonthNum}   " +
+                                   $"initMag: {d.initialMagnitudePercent:F3}   " +
+                                   $"+/plant: {d.perPlantingMagnitudeIncreasePercent:F3}   " +
+                                   $"-/plant: {d.perPlantingMagnitudeDecreasePercent:F3}");
+                    Plugin.Log.Msg($"      spreadChance@full: {d.spreadChanceAtFullMagnitudePercent:F3}   " +
+                                   $"spreadDist: {d.spreadDistanceAtFullMagnitudeMeters}m   " +
+                                   $"gracePeriodYears: {d.gracePeriodYears}");
+                }
+                Plugin.Log.Msg($"[Bountiful Fields] ===== END DISEASE DUMP ({count} diseases) =====");
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.Warning($"[Bountiful Fields] Disease dump failed: {ex.Message}");
+            }
+        }
+
+        /// <summary>Reset diagnostic-dump flags so the next map load re-dumps. Called from Plugin.OnSceneWasInitialized.</summary>
+        public static void ResetLogFlag()
+        {
+            _vanillaLogged = false;
+            _diseasesLogged = false;
+        }
 
         private static void ApplyPerCrop()
         {
