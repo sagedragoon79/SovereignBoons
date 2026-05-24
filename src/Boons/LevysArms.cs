@@ -6,9 +6,11 @@
 //     hotkeys: Arm All (default B), Unarm All (default N). No UI prefab injection.
 //   - Source's debug `B` → SpawnRaidCamps keybind dropped; `B` repurposed for Arm.
 //   - Two-DLL stat preset split collapsed to one float pref `LevysArmsStatMagnitude`.
-//   - itemRequester re-weapon-fetch + search-entry tuning deferred to v0.7. v0.6
-//     ships the meaningful core: militia combat config + ItemStats buff. Villagers
-//     fight with whatever weapon they already carry.
+//   - Weapon fetch IS implemented: arming sets an Upgrade melee seek group
+//     (Weapon -> SimpleWeapon) via VillagerItemRequester.SetItemCriteriaToSeek, so
+//     militia request + visibly equip a crafted weapon through normal logistics
+//     (one-shot, no polling). Mirrors vanilla VillagerOccupationGuard. Unarm clears it.
+//   - Hotkey chords supported (Ctrl+A, Alt+Shift+M) via the Chord parser.
 //   - In-memory armed-set tracking. Does NOT persist across save/load.
 //   - ChangeOccupation postfix re-applies the buff so it doesn't get clobbered.
 //
@@ -30,7 +32,11 @@ namespace SovereignBoons.Boons
     /// </summary>
     internal static class LevysArms
     {
-        private static readonly HashSet<int> _skipOccupations = new HashSet<int> { 1, 9, 21, 45 };
+        // Skip occupations that are already combatants or shouldn't be armed:
+        // 1=Hunter, 9=Guard, 13=TransitionToSoldier, 21=Child, 45=Soldier.
+        // (Guard/Hunter/TransitionToSoldier are the only occupations that use the
+        // item-seek-criteria system, so skipping them also avoids clobbering it.)
+        private static readonly HashSet<int> _skipOccupations = new HashSet<int> { 1, 9, 13, 21, 45 };
         private static readonly HashSet<int> _armedIds = new HashSet<int>();
 
         // A hotkey chord: a base KeyCode plus required modifier state. Modifiers must
@@ -231,6 +237,21 @@ namespace SovereignBoons.Boons
                     mountedMoveSpeedModifierPerc = m,
                 };
             }
+
+            // Weapon fetch — request a melee weapon through normal logistics so the
+            // militia visibly equips one (and the player must actually CRAFT weapons for
+            // this to do anything). One-shot: we set the seek criteria here; FF's own
+            // logistics delivers it. No polling/scan. Mirrors vanilla VillagerOccupationGuard's
+            // melee group (Upgrade = take any weapon, prefer the better tier).
+            // Worker occupations don't use the seek-criteria system, so overwriting it here
+            // and clearing on unequip is safe (no normal criteria to clobber).
+            if (v.itemRequester != null)
+            {
+                var meleeGroup = new SeekItemGroup(SeekItemGroup.GroupInteraction.Upgrade);
+                meleeGroup.entries.Add(new SeekItemEntry(ItemID.Weapon, 1u, 0u));
+                meleeGroup.entries.Add(new SeekItemEntry(ItemID.SimpleWeapon, 1u, 0u));
+                v.itemRequester.SetItemCriteriaToSeek(new List<SeekItemGroup> { meleeGroup });
+            }
         }
 
         private static void UnequipWeapon(Villager v)
@@ -239,6 +260,10 @@ namespace SovereignBoons.Boons
                 _defaultIsMeleeAttackField?.SetValue(v.combatComp, false);
             if (v.equipmentManager != null)
                 v.equipmentManager.baseItemStats = default(ItemStats);
+            // Stop seeking a weapon. Worker occupations have no normal seek criteria,
+            // so clearing returns them to their default (empty) state. The held weapon
+            // returns to storage through the villager's normal unused-item handling.
+            v.itemRequester?.ClearItemCriteriaToSeek();
             // Note: teamDef stays at guardTowerTeamDefinition until save reload.
         }
 
