@@ -53,7 +53,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(WorkCamp), "Awake")]
         internal static class WorkCamp_Awake_Patch
         {
-            private static void Postfix(WorkCamp __instance)
+            private static void Prefix(WorkCamp __instance)
             {
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
@@ -66,7 +66,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(HunterBuilding), "Awake")]
         internal static class HunterBuilding_Awake_Patch
         {
-            private static void Postfix(HunterBuilding __instance)
+            private static void Prefix(HunterBuilding __instance)
             {
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
@@ -79,7 +79,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(FishingShack), "Awake")]
         internal static class FishingShack_Awake_Patch
         {
-            private static void Postfix(FishingShack __instance)
+            private static void Prefix(FishingShack __instance)
             {
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
@@ -92,7 +92,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(ArboristBuilding), "Awake")]
         internal static class ArboristBuilding_Awake_Patch
         {
-            private static void Postfix(ArboristBuilding __instance)
+            private static void Prefix(ArboristBuilding __instance)
             {
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
@@ -105,7 +105,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(MarketBuilding), "Awake")]
         internal static class MarketBuilding_Awake_Patch
         {
-            private static void Postfix(MarketBuilding __instance)
+            private static void Prefix(MarketBuilding __instance)
             {
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
@@ -118,7 +118,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(ForagerShack), "Awake")]
         internal static class ForagerShack_Awake_Patch
         {
-            private static void Postfix(ForagerShack __instance)
+            private static void Prefix(ForagerShack __instance)
             {
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
@@ -131,7 +131,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(RatCatcherBuilding), "Awake")]
         internal static class RatCatcherBuilding_Awake_Patch
         {
-            private static void Postfix(RatCatcherBuilding __instance)
+            private static void Prefix(RatCatcherBuilding __instance)
             {
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
