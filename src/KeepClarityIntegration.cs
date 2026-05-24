@@ -89,7 +89,7 @@ namespace SovereignBoons
         internal static object NewMeta(string? label = null, string? tooltip = null,
             object? min = null, object? max = null, string? group = null,
             bool restartRequired = false, int order = 0, Func<bool>? visibleWhen = null,
-            int indent = 0)
+            int indent = 0, bool reloadRequired = false)
         {
             var m = Activator.CreateInstance(_settingsMetaType!);
             void Set(string field, object? value)
@@ -103,6 +103,7 @@ namespace SovereignBoons
             Set("Max", max);
             Set("Group", group);
             Set("RestartRequired", restartRequired);
+            Set("ReloadRequired", reloadRequired); // KC: cyan "reload save" indicator
             Set("Order", order);
             Set("VisibleWhen", visibleWhen);
             Set("Indent", indent); // KC 0.6+ — older KC silently ignores
@@ -165,7 +166,7 @@ namespace SovereignBoons
                 NewMeta("Swift Feet",
                         "Faster villagers + beefier transport wagons. Applies to characters/wagons " +
                         "spawned after enabling; reload save to refresh existing. Default: OFF.",
-                        order: 100));
+                        order: 100, reloadRequired: true));
             Reg(GroupWorkforce, Config.SwiftFeetShoeBonus,
                 NewMeta("Villager Shoe Bonus",
                         "Replaces Character._shoeBonusBase. Affects raiders too. " +
@@ -190,7 +191,7 @@ namespace SovereignBoons
             Reg(GroupWorkforce, Config.EnableEagerHands,
                 NewMeta("Eager Hands",
                         "Lower age cutoffs for the labor pool + School enrollment range. Default: OFF.",
-                        restartRequired: false, order: 200));
+                        reloadRequired: true, order: 200));
             Reg(GroupWorkforce, Config.EagerHandsChildAge,
                 NewMeta("Child Cutoff Age",
                         "Min age at which a villager becomes a child laborer. Vanilla = 15. Default: 12.",
@@ -219,8 +220,9 @@ namespace SovereignBoons
             // ===== King's Highway (Workforce) — order block 300 =====
             Reg(GroupWorkforce, Config.EnableKingsHighway,
                 NewMeta("King's Highway",
-                        "Faster travel on roads + slower aggressive animals. Default: OFF.",
-                        restartRequired: false, order: 300));
+                        "Faster travel on roads + slower aggressive animals. Road bonus recomputes " +
+                        "on road change/reload; animal slow is live. Default: OFF.",
+                        reloadRequired: true, order: 300));
             Reg(GroupWorkforce, Config.KingsHighwayBoostRoadSpeed,
                 NewMeta("Boost Road Speed",
                         "Multiply the on-road speed bonus. Default: ON (when boon is enabled).",
@@ -249,7 +251,7 @@ namespace SovereignBoons
                 NewMeta("Wetter Wells",
                         "Faster Well recharge + bigger Well capacity. Applies to Wells placed after " +
                         "enabling; reload save to refresh existing. Default: OFF.",
-                        order: 100));
+                        order: 100, reloadRequired: true));
             Reg(GroupBuildings, Config.SpringsVigorRechargeMult,
                 NewMeta("Recharge Multiplier",
                         "Multiplier on Well.waterGainPerSecond (vanilla = 0.01 per second). " +
@@ -299,7 +301,7 @@ namespace SovereignBoons
                 NewMeta("Domain Expansion",
                         "Per-building work-radius multipliers. Applies to buildings placed after " +
                         "enabling; reload save to refresh existing. Default: OFF.",
-                        order: 200));
+                        order: 200, reloadRequired: true));
             Reg(GroupBuildings, Config.LongReachWorkCampMul,
                 NewMeta("Work Camp Radius ×",     "Multiplier on WorkCamp work radius (vanilla 60). 1.0 = no change, 1.5 = 1.5×, 2.0 = double. Default: 1.0.",         min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 201, indent: 20));
             Reg(GroupBuildings, Config.LongReachHunterMul,
@@ -320,7 +322,7 @@ namespace SovereignBoons
                 NewMeta("Civic Pride",
                         "Multiply DecorativeBuilding desirability radius/bonus. Applies to decoratives " +
                         "placed after enabling; reload save to refresh existing. Default: OFF.",
-                        order: 300));
+                        order: 300, reloadRequired: true));
             Reg(GroupBuildings, Config.CivicPrideRadiusMul,
                 NewMeta("Radius Multiplier",
                         "Multiplier on Building._strategicPlanningRadius (vanilla = 50). Default: 1.5.",
@@ -336,7 +338,7 @@ namespace SovereignBoons
             Reg(GroupBuildings, Config.EnableHallowedReliquary,
                 NewMeta("Hallowed Reliquary",
                         "Spirituality bonus multiplier + Unchain Relics from priest count. Default: OFF.",
-                        restartRequired: false, order: 400));
+                        reloadRequired: true, order: 400));
             Reg(GroupBuildings, Config.HallowedReliquaryBonusMul,
                 NewMeta("Spirituality Bonus Mul",
                         "Multiplier on ReligionManager._spiritualityBonusPerRelic (vanilla = 50). " +
@@ -356,7 +358,7 @@ namespace SovereignBoons
                 NewMeta("Hoarded Stores",
                         "Per-storage-type capacity multiplier. Applies to storage buildings placed after " +
                         "enabling; reload save to refresh existing. Default: OFF.",
-                        order: 500));
+                        order: 500, reloadRequired: true));
             // All per-type Apply default OFF; all Mul default 2.0. Capacity field = StorageBuilding._storageItemCountCapacity.
             Reg(GroupBuildings, Config.HoardedStoresRootCellarEnable,    NewMeta("Root Cellar — Apply",    "Apply capacity multiplier to Root Cellars. Default: OFF.",                              visibleWhen: () => Config.EnableHoardedStores.Value, order: 501, indent: 20));
             Reg(GroupBuildings, Config.HoardedStoresRootCellarMul,       NewMeta("Root Cellar — Mul",      "Capacity multiplier for Root Cellars. Default: 2.0.",      min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresRootCellarEnable.Value, order: 502, indent: 40));
@@ -379,7 +381,7 @@ namespace SovereignBoons
                         "Per-building +Workers / +Residents add-on for ~46 building types. " +
                         "Grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential. " +
                         "Applies to buildings placed after enabling; reload save to refresh existing. Default: OFF.",
-                        order: 600));
+                        order: 600, reloadRequired: true));
             int ghOrder = 601;
             foreach (var bp in Boons.GreaterHalls.Iterate())
             {
@@ -397,7 +399,7 @@ namespace SovereignBoons
                 NewMeta("Bountiful Fields",
                         "Per-crop tuning + farming globals. Crop data records are mutated on map load — " +
                         "reload your save after changing values for them to take effect.",
-                        order: 1000));
+                        order: 1000, reloadRequired: true));
             Reg(GroupBuildings, Config.BountifulFieldsLogVanilla,
                 NewMeta("Log Vanilla Values",
                         "Dump every crop's vanilla VegetableFieldsRecord values to MelonLoader.log on map load. " +
@@ -488,8 +490,10 @@ namespace SovereignBoons
 
             // ===== Temperate Skies (Weather) — order block 100 =====
             Reg(GroupWeather, Config.EnableTemperateSkies,
-                NewMeta("Temperate Skies", "Suppress extreme weather events. Default: OFF.",
-                        restartRequired: false, order: 100));
+                NewMeta("Temperate Skies",
+                        "Suppress extreme weather events. Blizzard/heatwave removal applies on weather " +
+                        "init (reload); drought/extreme-chance are live. Default: OFF.",
+                        reloadRequired: true, order: 100));
             Reg(GroupWeather, Config.TemperateSkiesDisableBlizzard,
                 NewMeta("Disable Blizzard",
                         "Remove Blizzard from extreme weather rolls. Default: OFF.",
