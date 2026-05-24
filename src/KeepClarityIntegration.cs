@@ -300,20 +300,20 @@ namespace SovereignBoons
                         "Per-building work-radius multipliers. Applies to buildings placed after " +
                         "enabling; reload save to refresh existing. Default: OFF.",
                         order: 200));
-            Reg(GroupBuildings, Config.LongReachWorkCampPct,
-                NewMeta("Work Camp +%",     "WorkCamp work radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",            min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 201, indent: 20));
-            Reg(GroupBuildings, Config.LongReachHunterPct,
-                NewMeta("Hunter +%",        "HunterBuilding radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",           min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 202, indent: 20));
-            Reg(GroupBuildings, Config.LongReachFishingPct,
-                NewMeta("Fishing +%",       "FishingShack radius — percent increase. Vanilla radius = 30. Default: 0 (no change).",             min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 203, indent: 20));
-            Reg(GroupBuildings, Config.LongReachArboristPct,
-                NewMeta("Arborist +%",      "ArboristBuilding radius — percent increase. Vanilla radius = 100. Default: 0 (no change).",        min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 204, indent: 20));
-            Reg(GroupBuildings, Config.LongReachMarketPct,
-                NewMeta("Market +%",        "Market planning radius — percent increase. Vanilla radius = 50. Default: 0 (no change).",          min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 205, indent: 20));
-            Reg(GroupBuildings, Config.LongReachForagerPct,
-                NewMeta("Forager Shack +%", "ForagerShack foraging radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",    min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 206, indent: 20));
-            Reg(GroupBuildings, Config.LongReachRatCatcherPct,
-                NewMeta("Rat Catcher +%",   "RatCatcherBuilding work radius — percent increase. Vanilla radius = 60. Default: 0 (no change).",  min: -50f, max: 200f, visibleWhen: () => Config.EnableLongReach.Value, order: 207, indent: 20));
+            Reg(GroupBuildings, Config.LongReachWorkCampMul,
+                NewMeta("Work Camp Radius ×",     "Multiplier on WorkCamp work radius (vanilla 60). 1.0 = no change, 1.5 = 1.5×, 2.0 = double. Default: 1.0.",         min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 201, indent: 20));
+            Reg(GroupBuildings, Config.LongReachHunterMul,
+                NewMeta("Hunter Radius ×",        "Multiplier on HunterBuilding radius (vanilla 60). 1.0 = no change. Default: 1.0.",          min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 202, indent: 20));
+            Reg(GroupBuildings, Config.LongReachFishingMul,
+                NewMeta("Fishing Radius ×",       "Multiplier on FishingShack radius (vanilla 30). 1.0 = no change. Default: 1.0.",            min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 203, indent: 20));
+            Reg(GroupBuildings, Config.LongReachArboristMul,
+                NewMeta("Arborist Radius ×",      "Multiplier on ArboristBuilding radius (vanilla 100). 1.0 = no change. Default: 1.0.",       min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 204, indent: 20));
+            Reg(GroupBuildings, Config.LongReachMarketMul,
+                NewMeta("Market Radius ×",        "Multiplier on Market strategic-planning radius (vanilla 50). 1.0 = no change. Default: 1.0.", min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 205, indent: 20));
+            Reg(GroupBuildings, Config.LongReachForagerMul,
+                NewMeta("Forager Shack Radius ×", "Multiplier on ForagerShack foraging radius (vanilla 60). 1.0 = no change. Default: 1.0.",   min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 206, indent: 20));
+            Reg(GroupBuildings, Config.LongReachRatCatcherMul,
+                NewMeta("Rat Catcher Radius ×",   "Multiplier on RatCatcherBuilding work radius (vanilla 60). 1.0 = no change. Default: 1.0.", min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 207, indent: 20));
 
             // ===== Civic Pride (Buildings) — order block 300 =====
             Reg(GroupBuildings, Config.EnableCivicPride,

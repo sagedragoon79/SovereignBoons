@@ -63,13 +63,13 @@ namespace SovereignBoons
 
         // ----- Domain Expansion (folded from VC_BuildingRadiusAdjust by VC) -----
         public static MelonPreferences_Entry<bool>  EnableLongReach          { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> LongReachWorkCampPct     { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> LongReachHunterPct       { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> LongReachFishingPct      { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> LongReachArboristPct     { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> LongReachMarketPct       { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> LongReachForagerPct      { get; private set; } = null!;
-        public static MelonPreferences_Entry<float> LongReachRatCatcherPct   { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachWorkCampMul     { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachHunterMul       { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachFishingMul      { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachArboristMul     { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachMarketMul       { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachForagerMul      { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachRatCatcherMul   { get; private set; } = null!;
 
         // ----- Civic Pride (folded from VC_DesirabilityBuildingsControl by VC) -----
         public static MelonPreferences_Entry<bool>  EnableCivicPride { get; private set; } = null!;
@@ -292,13 +292,13 @@ namespace SovereignBoons
             EnableLongReach = _root.CreateEntry("EnableLongReach", false,
                 display_name: "Domain Expansion — Enabled",
                 description: "Per-building work-radius multipliers. Folded from VC_BuildingRadiusAdjust by VC.");
-            LongReachWorkCampPct   = _root.CreateEntry("LongReachWorkCampPct",   0f, display_name: "Domain Expansion — Work Camp +%",   description: "WorkCamp work radius. 0 = no change. Range -50..200.");
-            LongReachHunterPct     = _root.CreateEntry("LongReachHunterPct",     0f, display_name: "Domain Expansion — Hunter +%",       description: "HunterBuilding radius. 0 = no change. Range -50..200.");
-            LongReachFishingPct    = _root.CreateEntry("LongReachFishingPct",    0f, display_name: "Domain Expansion — Fishing +%",      description: "FishingShack radius. 0 = no change. Range -50..200.");
-            LongReachArboristPct   = _root.CreateEntry("LongReachArboristPct",   0f, display_name: "Domain Expansion — Arborist +%",     description: "ArboristBuilding radius. 0 = no change. Range -50..200.");
-            LongReachMarketPct     = _root.CreateEntry("LongReachMarketPct",     0f, display_name: "Domain Expansion — Market +%",       description: "MarketBuilding strategic planning radius. 0 = no change. Range -50..200.");
-            LongReachForagerPct    = _root.CreateEntry("LongReachForagerPct",    0f, display_name: "Domain Expansion — Forager Shack +%",description: "ForagerShack foraging radius. 0 = no change. Range -50..200. [SB extension — source mod's pref was orphaned]");
-            LongReachRatCatcherPct = _root.CreateEntry("LongReachRatCatcherPct", 0f, display_name: "Domain Expansion — Rat Catcher +%",  description: "RatCatcherBuilding work radius. 0 = no change. Range -50..200. [SB extension]");
+            LongReachWorkCampMul   = _root.CreateEntry("LongReachWorkCampMul",   1.0f, display_name: "Domain Expansion — Work Camp Radius ×",   description: "Multiplier on WorkCamp work radius (vanilla 60). 1.0 = no change, 1.5 = 1.5×, 2.0 = double. Range 0.5..3.0.");
+            LongReachHunterMul     = _root.CreateEntry("LongReachHunterMul",     1.0f, display_name: "Domain Expansion — Hunter Radius ×",       description: "Multiplier on HunterBuilding radius (vanilla 60). 1.0 = no change. Range 0.5..3.0.");
+            LongReachFishingMul    = _root.CreateEntry("LongReachFishingMul",    1.0f, display_name: "Domain Expansion — Fishing Radius ×",      description: "Multiplier on FishingShack radius (vanilla 30). 1.0 = no change. Range 0.5..3.0.");
+            LongReachArboristMul   = _root.CreateEntry("LongReachArboristMul",   1.0f, display_name: "Domain Expansion — Arborist Radius ×",     description: "Multiplier on ArboristBuilding radius (vanilla 100). 1.0 = no change. Range 0.5..3.0.");
+            LongReachMarketMul     = _root.CreateEntry("LongReachMarketMul",     1.0f, display_name: "Domain Expansion — Market Radius ×",       description: "Multiplier on MarketBuilding strategic-planning radius (vanilla 50). 1.0 = no change. Range 0.5..3.0.");
+            LongReachForagerMul    = _root.CreateEntry("LongReachForagerMul",    1.0f, display_name: "Domain Expansion — Forager Shack Radius ×",description: "Multiplier on ForagerShack foraging radius (vanilla 60). 1.0 = no change. Range 0.5..3.0. [SB extension — source mod's pref was orphaned]");
+            LongReachRatCatcherMul = _root.CreateEntry("LongReachRatCatcherMul", 1.0f, display_name: "Domain Expansion — Rat Catcher Radius ×",  description: "Multiplier on RatCatcherBuilding work radius (vanilla 60). 1.0 = no change. Range 0.5..3.0. [SB extension]");
 
             // ===== Civic Pride =====
             EnableCivicPride = _root.CreateEntry("EnableCivicPride", false,

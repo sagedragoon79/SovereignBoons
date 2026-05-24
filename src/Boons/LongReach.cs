@@ -21,9 +21,9 @@ using MelonLoader;
 namespace SovereignBoons.Boons
 {
     /// <summary>
-    /// Percent-based radius multipliers for work-radius buildings. Each
-    /// multiplier is independent so the player can buff Hunter without
-    /// touching Fishing, etc.
+    /// Per-building radius multipliers for work-radius buildings (1.0 = vanilla,
+    /// 1.5 = 1.5× the radius). Each multiplier is independent so the player can
+    /// buff Hunter without touching Fishing, etc.
     /// </summary>
     internal static class LongReach
     {
@@ -44,8 +44,9 @@ namespace SovereignBoons.Boons
         private static readonly AccessTools.FieldRef<RatCatcherBuilding, float>? _ratCatcherRef =
             AccessTools.FieldRefAccess<RatCatcherBuilding, float>("_workRadius");
 
-        private static float Scale(float baseRadius, float pct)
-            => baseRadius * (1f + pct / 100f);
+        // Straight multiplier: 1.0 = vanilla, 1.5 = 1.5× the radius, 2.0 = double.
+        private static float Scale(float baseRadius, float mul)
+            => baseRadius * mul;
 
         [HarmonyPatch(typeof(WorkCamp), "Awake")]
         internal static class WorkCamp_Awake_Patch
@@ -55,7 +56,7 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_workCampRef == null) return;
-                try { _workCampRef(__instance) = Scale(_workCampRef(__instance), Config.LongReachWorkCampPct.Value); }
+                try { _workCampRef(__instance) = Scale(_workCampRef(__instance), Config.LongReachWorkCampMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] WorkCamp: {ex.Message}"); }
             }
         }
@@ -68,7 +69,7 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_hunterRef == null) return;
-                try { _hunterRef(__instance) = Scale(_hunterRef(__instance), Config.LongReachHunterPct.Value); }
+                try { _hunterRef(__instance) = Scale(_hunterRef(__instance), Config.LongReachHunterMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Hunter: {ex.Message}"); }
             }
         }
@@ -81,7 +82,7 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_fishingRef == null) return;
-                try { _fishingRef(__instance) = Scale(_fishingRef(__instance), Config.LongReachFishingPct.Value); }
+                try { _fishingRef(__instance) = Scale(_fishingRef(__instance), Config.LongReachFishingMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Fishing: {ex.Message}"); }
             }
         }
@@ -94,7 +95,7 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_arboristRef == null) return;
-                try { _arboristRef(__instance) = Scale(_arboristRef(__instance), Config.LongReachArboristPct.Value); }
+                try { _arboristRef(__instance) = Scale(_arboristRef(__instance), Config.LongReachArboristMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Arborist: {ex.Message}"); }
             }
         }
@@ -107,7 +108,7 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_marketRef == null) return;
-                try { _marketRef(__instance) = Scale(_marketRef(__instance), Config.LongReachMarketPct.Value); }
+                try { _marketRef(__instance) = Scale(_marketRef(__instance), Config.LongReachMarketMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Market: {ex.Message}"); }
             }
         }
@@ -120,7 +121,7 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_foragerRef == null) return;
-                try { _foragerRef(__instance) = Scale(_foragerRef(__instance), Config.LongReachForagerPct.Value); }
+                try { _foragerRef(__instance) = Scale(_foragerRef(__instance), Config.LongReachForagerMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Forager: {ex.Message}"); }
             }
         }
@@ -133,7 +134,7 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableLongReach.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
                 if (_ratCatcherRef == null) return;
-                try { _ratCatcherRef(__instance) = Scale(_ratCatcherRef(__instance), Config.LongReachRatCatcherPct.Value); }
+                try { _ratCatcherRef(__instance) = Scale(_ratCatcherRef(__instance), Config.LongReachRatCatcherMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] RatCatcher: {ex.Message}"); }
             }
         }
