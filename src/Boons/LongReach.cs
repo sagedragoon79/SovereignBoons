@@ -45,8 +45,10 @@ namespace SovereignBoons.Boons
             AccessTools.FieldRefAccess<RatCatcherBuilding, float>("_workRadius");
 
         // Straight multiplier: 1.0 = vanilla, 1.5 = 1.5× the radius, 2.0 = double.
+        // Clamped to the documented 0.5..3.0 range so a hand-edited cfg typo
+        // (e.g. 50 meant as "+50%") can't blow the radius out.
         private static float Scale(float baseRadius, float mul)
-            => baseRadius * mul;
+            => baseRadius * UnityEngine.Mathf.Clamp(mul, 0.5f, 3.0f);
 
         [HarmonyPatch(typeof(WorkCamp), "Awake")]
         internal static class WorkCamp_Awake_Patch
