@@ -33,8 +33,16 @@ namespace SovereignBoons.Boons
         private static readonly HashSet<int> _skipOccupations = new HashSet<int> { 1, 9, 21, 45 };
         private static readonly HashSet<int> _armedIds = new HashSet<int>();
 
-        private static KeyCode _armKey = KeyCode.B;
-        private static KeyCode _unarmKey = KeyCode.N;
+        // A hotkey chord: a base KeyCode plus required modifier state. Modifiers must
+        // match EXACTLY (so "A" won't fire while Ctrl is held, and "Ctrl+A" won't fire
+        // without Ctrl). Supports e.g. "B", "Ctrl+A", "Alt+Shift+M".
+        private struct Chord
+        {
+            public KeyCode Key;
+            public bool Ctrl, Alt, Shift;
+        }
+        private static Chord _armChord   = new Chord { Key = KeyCode.B };
+        private static Chord _unarmChord = new Chord { Key = KeyCode.N };
 
         // Reflected access for fields not in our compilation scope.
         private static readonly FieldInfo? _defaultIsMeleeAttackField =
@@ -65,8 +73,47 @@ namespace SovereignBoons.Boons
 
         public static void ResolveHotkeys()
         {
-            if (System.Enum.TryParse<KeyCode>(Config.LevysArmsArmKey.Value, ignoreCase: true, out var k1)) _armKey = k1;
-            if (System.Enum.TryParse<KeyCode>(Config.LevysArmsUnarmKey.Value, ignoreCase: true, out var k2)) _unarmKey = k2;
+            _armChord   = ParseChord(Config.LevysArmsArmKey.Value,   KeyCode.B);
+            _unarmChord = ParseChord(Config.LevysArmsUnarmKey.Value, KeyCode.N);
+        }
+
+        /// <summary>
+        /// Parse a hotkey string into a Chord. Accepts a bare Unity KeyCode ("B", "F4")
+        /// or a modifier chord ("Ctrl+A", "Alt+Shift+M"). Recognised modifiers:
+        /// Ctrl/Control, Alt, Shift. Falls back to <paramref name="fallback"/> (no
+        /// modifiers) if no valid base key is found.
+        /// </summary>
+        private static Chord ParseChord(string raw, KeyCode fallback)
+        {
+            var c = new Chord { Key = fallback };
+            if (string.IsNullOrWhiteSpace(raw)) return c;
+
+            bool gotKey = false;
+            foreach (var tokenRaw in raw.Split('+'))
+            {
+                var t = tokenRaw.Trim();
+                if (t.Length == 0) continue;
+                switch (t.ToLowerInvariant())
+                {
+                    case "ctrl": case "control": c.Ctrl = true; break;
+                    case "alt": c.Alt = true; break;
+                    case "shift": c.Shift = true; break;
+                    default:
+                        if (System.Enum.TryParse<KeyCode>(t, ignoreCase: true, out var k)) { c.Key = k; gotKey = true; }
+                        break;
+                }
+            }
+            if (!gotKey) { c.Key = fallback; c.Ctrl = c.Alt = c.Shift = false; }
+            return c;
+        }
+
+        private static bool ChordPressed(Chord c)
+        {
+            if (!Input.GetKeyDown(c.Key)) return false;
+            bool ctrl  = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            bool alt   = Input.GetKey(KeyCode.LeftAlt)     || Input.GetKey(KeyCode.RightAlt);
+            bool shift = Input.GetKey(KeyCode.LeftShift)   || Input.GetKey(KeyCode.RightShift);
+            return ctrl == c.Ctrl && alt == c.Alt && shift == c.Shift;
         }
 
         public static void OnUpdate()
@@ -74,12 +121,12 @@ namespace SovereignBoons.Boons
             if (!Config.EnableLevysArms.Value) return;
             if (!GameManager.gameReadyToPlay) return;
 
-            if (Input.GetKeyDown(_armKey))
+            if (ChordPressed(_armChord))
             {
                 int n = ArmAllEligible();
                 Plugin.Log.Msg($"[Emergency Militia] Armed {n} villager(s).");
             }
-            else if (Input.GetKeyDown(_unarmKey))
+            else if (ChordPressed(_unarmChord))
             {
                 int n = UnarmAll();
                 Plugin.Log.Msg($"[Emergency Militia] Unarmed {n} villager(s).");

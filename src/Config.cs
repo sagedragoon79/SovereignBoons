@@ -270,10 +270,12 @@ namespace SovereignBoons
                              "Mono re-implementation of BasicWeaponEquipment (donimuzur).");
             LevysArmsArmKey = _root.CreateEntry("LevysArmsArmKey", "B",
                 display_name: "Emergency Militia — Arm Hotkey",
-                description: "Unity KeyCode name (B, F4, etc.). Press to arm all eligible villagers.");
+                description: "Hotkey to arm all eligible villagers. Unity KeyCode name or a chord — " +
+                             "e.g. B, F4, Ctrl+A, Alt+Shift+M. Modifiers: Ctrl, Alt, Shift.");
             LevysArmsUnarmKey = _root.CreateEntry("LevysArmsUnarmKey", "N",
                 display_name: "Emergency Militia — Unarm Hotkey",
-                description: "Unity KeyCode name. Press to unarm everyone armed by this boon.");
+                description: "Hotkey to unarm everyone armed by this boon. Unity KeyCode name or a chord " +
+                             "(e.g. N, Alt+A). Modifiers: Ctrl, Alt, Shift.");
             LevysArmsStatMagnitude = _root.CreateEntry("LevysArmsStatMagnitude", 100f,
                 display_name: "Emergency Militia — Stat Magnitude",
                 description: "Applied to every ItemStats *Perc field (armor, max life, melee/ranged damage, etc.). " +

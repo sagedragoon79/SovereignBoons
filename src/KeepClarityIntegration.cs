@@ -274,12 +274,12 @@ namespace SovereignBoons
                         restartRequired: false, order: 100));
             Reg(GroupCombat, Config.LevysArmsArmKey,
                 NewMeta("Arm Hotkey",
-                        "Unity KeyCode name (B, F4, etc.). Default: B.",
+                        "KeyCode or chord — B, F4, Ctrl+A, Alt+Shift+M (modifiers: Ctrl/Alt/Shift). Default: B.",
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 101, indent: 20));
             Reg(GroupCombat, Config.LevysArmsUnarmKey,
                 NewMeta("Unarm Hotkey",
-                        "Unity KeyCode name. Default: N.",
+                        "KeyCode or chord (e.g. N, Alt+A; modifiers Ctrl/Alt/Shift). Default: N.",
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 102, indent: 20));
             Reg(GroupCombat, Config.LevysArmsStatMagnitude,
