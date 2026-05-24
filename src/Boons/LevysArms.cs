@@ -131,11 +131,17 @@ namespace SovereignBoons.Boons
             {
                 int n = ArmAllEligible();
                 Plugin.Log.Msg($"[Emergency Militia] Armed {n} villager(s).");
+                Toast.Show(n > 0
+                    ? $"⚔ Emergency Militia: armed {n} villager(s)"
+                    : "⚔ Emergency Militia: no eligible villagers to arm");
             }
             else if (ChordPressed(_unarmChord))
             {
                 int n = UnarmAll();
                 Plugin.Log.Msg($"[Emergency Militia] Unarmed {n} villager(s).");
+                Toast.Show(n > 0
+                    ? $"Emergency Militia: stood down {n} villager(s)"
+                    : "Emergency Militia: no one to stand down");
             }
         }
 

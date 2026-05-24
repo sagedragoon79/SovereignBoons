@@ -115,5 +115,11 @@ namespace SovereignBoons
             // Emergency Militia hotkey poll.
             Boons.LevysArms.OnUpdate();
         }
+
+        public override void OnGUI()
+        {
+            // Lightweight on-screen toast (e.g. Emergency Militia arm/unarm confirmation).
+            Toast.Render();
+        }
     }
 }
