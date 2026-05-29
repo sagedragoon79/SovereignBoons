@@ -43,6 +43,10 @@ namespace SovereignBoons.Boons
             AccessTools.FieldRefAccess<ForagerShack, float>("_foragingRadius");
         private static readonly AccessTools.FieldRef<RatCatcherBuilding, float>? _ratCatcherRef =
             AccessTools.FieldRefAccess<RatCatcherBuilding, float>("_workRadius");
+        // Dog/Cat DLC — Doghouse guard radius (circleRadius => guardRadius, drives the
+        // dog's defend area). Scale in Prefix so SelectionCircle.Init reads the new value.
+        private static readonly AccessTools.FieldRef<Doghouse, float>? _doghouseRef =
+            AccessTools.FieldRefAccess<Doghouse, float>("_guardRadius");
 
         // Straight multiplier: 1.0 = vanilla, 1.5 = 1.5× the radius, 2.0 = double.
         // Clamped to the documented 0.5..3.0 range so a hand-edited cfg typo
@@ -138,6 +142,19 @@ namespace SovereignBoons.Boons
                 if (_ratCatcherRef == null) return;
                 try { _ratCatcherRef(__instance) = Scale(_ratCatcherRef(__instance), Config.LongReachRatCatcherMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] RatCatcher: {ex.Message}"); }
+            }
+        }
+
+        [HarmonyPatch(typeof(Doghouse), "Awake")]
+        internal static class Doghouse_Awake_Patch
+        {
+            private static void Prefix(Doghouse __instance)
+            {
+                if (!Config.EnableLongReach.Value) return;
+                if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
+                if (_doghouseRef == null) return;
+                try { _doghouseRef(__instance) = Scale(_doghouseRef(__instance), Config.LongReachDoghouseMul.Value); }
+                catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Doghouse: {ex.Message}"); }
             }
         }
     }

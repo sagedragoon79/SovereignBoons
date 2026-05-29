@@ -13,9 +13,11 @@
 //     parked as a Phase 2.5 KC renderer extension).
 //
 // Verified targets (decompile_verification.md):
-//   - 5 direct Awake postfixes: WorkCamp / CompostYard / MarketBuilding / Pub / School
+//   - 6 direct Awake postfixes: WorkCamp / CompostYard / MarketBuilding / Pub / School /
+//     WoodCutterBuilding (Firewood Splitter; : Building, not EnterableBuilding)
 //   - 2 AssignMaxVacancyAvailable prefix dispatchers: EnterableBuilding (catches most),
-//     LivestockBuilding (Barn/ChickenCoop/GoatBarn/Stable)
+//     LivestockBuilding (Barn/ChickenCoop/GoatBarn/Stable/DogKennel/CatKennel)
+//   - Dog/Cat DLC: DogKennel & CatKennel derive Kennel : LivestockBuilding (auto-caught).
 //   - All target classes verified present.
 
 using System.Collections.Generic;
@@ -36,7 +38,8 @@ namespace SovereignBoons.Boons
             public int Min;
             public int Max;
             public string Category;
-            public BuildingInfo(string n, int min, int max, string cat) { Name = n; Min = min; Max = max; Category = cat; }
+            public string? Note;   // optional coverage note appended to the tooltip
+            public BuildingInfo(string n, int min, int max, string cat, string? note = null) { Name = n; Min = min; Max = max; Category = cat; Note = note; }
         }
 
         // Building add-on ranges. Matches source mod's ranges 1:1.
@@ -47,6 +50,8 @@ namespace SovereignBoons.Boons
             new BuildingInfo("ChickenCoop",         0, 1,  "Livestock"),
             new BuildingInfo("GoatBarn",            0, 4,  "Livestock"),
             new BuildingInfo("Stable",              0, 3,  "Livestock"),
+            new BuildingInfo("DogKennel",           0, 2,  "Livestock"),   // Dog/Cat DLC — Kennel : LivestockBuilding (caught by dispatcher)
+            new BuildingInfo("CatKennel",           0, 2,  "Livestock"),   // Dog/Cat DLC
 
             // Production
             new BuildingInfo("ApothecaryShop",      0, 2,  "Production"),
@@ -70,11 +75,12 @@ namespace SovereignBoons.Boons
             new BuildingInfo("SmokeHouse",          0, 1,  "Production"),
             new BuildingInfo("WeaverBuilding",      0, 4,  "Production"),
             new BuildingInfo("Windmill",            0, 2,  "Production"),
+            new BuildingInfo("WoodCutterBuilding",  0, 3,  "Production"),   // Firewood Splitter — Building (needs direct Awake patch below)
 
             // Resource sites
-            new BuildingInfo("ClayPitBuilding",     0, 4,  "Resource Sites"),
-            new BuildingInfo("MineralSiteMine",     0, 4,  "Resource Sites"),
-            new BuildingInfo("SandPitBuilding",     0, 4,  "Resource Sites"),
+            new BuildingInfo("ClayPitBuilding",     0, 4,  "Resource Sites", "Covers the Clay Pit — both the surface pit and its deep (infinite) version."),
+            new BuildingInfo("MineralSiteMine",     0, 4,  "Resource Sites", "One class for ALL deep-deposit mines: every Iron, Gold and Coal mine, surface and deep. Ore type is data, not a separate building, so this can't target a single ore."),
+            new BuildingInfo("SandPitBuilding",     0, 4,  "Resource Sites", "Covers the Sand Pit — both the surface pit and its deep (infinite) version."),
             new BuildingInfo("SawPitBuilding",      0, 4,  "Resource Sites"),
             new BuildingInfo("StonePitBuilding",    0, 8,  "Resource Sites"),
             new BuildingInfo("WorkCamp",            0, 3,  "Resource Sites"),
@@ -107,6 +113,7 @@ namespace SovereignBoons.Boons
             public int Min;
             public int Max;
             public string Category = "";
+            public string? Note;
             public MelonPreferences_Entry<int> Entry = null!;
         }
 
@@ -118,10 +125,12 @@ namespace SovereignBoons.Boons
         {
             foreach (var b in Buildings)
             {
+                var desc = $"Extra worker/resident slots for {b.Name}. Range {b.Min}..{b.Max}.";
+                if (!string.IsNullOrEmpty(b.Note)) desc += " " + b.Note;
                 var entry = cat.CreateEntry<int>(
                     $"GreaterHalls_{b.Name}_Addon", 0,
                     display_name: $"{b.Name} +Workers",
-                    description: $"Extra worker/resident slots for {b.Name}. Range {b.Min}..{b.Max}.");
+                    description: desc);
                 _addonByName[b.Name] = entry;
             }
         }
@@ -131,7 +140,7 @@ namespace SovereignBoons.Boons
             foreach (var b in Buildings)
             {
                 if (_addonByName.TryGetValue(b.Name, out var entry))
-                    yield return new BuildingPref { Name = b.Name, Min = b.Min, Max = b.Max, Category = b.Category, Entry = entry };
+                    yield return new BuildingPref { Name = b.Name, Min = b.Min, Max = b.Max, Category = b.Category, Note = b.Note, Entry = entry };
             }
         }
 
@@ -174,6 +183,8 @@ namespace SovereignBoons.Boons
         internal static class Pub_Awake          { private static void Postfix(Pub __instance)            { Apply(__instance); } }
         [HarmonyPatch(typeof(School),         "Awake")]
         internal static class School_Awake       { private static void Postfix(School __instance)         { Apply(__instance); } }
+        [HarmonyPatch(typeof(WoodCutterBuilding), "Awake")]
+        internal static class WoodCutter_Awake   { private static void Postfix(WoodCutterBuilding __instance) { Apply(__instance); } }
 
         private static void Apply(Resource __instance)
         {

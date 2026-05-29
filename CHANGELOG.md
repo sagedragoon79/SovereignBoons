@@ -2,6 +2,23 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.0.1 (2026-05-29)
+
+Maintenance + Dog/Cat DLC support, plus Emergency Militia polish.
+
+### Buildings
+- **Greater Halls** — added three building types (now covers 49): **Dog Kennel** and **Cat Kennel** (Dog/Cat DLC; ride the LivestockBuilding dispatcher) and the **Firewood Splitter** (`WoodCutterBuilding`, which needed its own `Awake` patch since it derives from `Building`, not `EnterableBuilding`). Added coverage notes to the MineralSiteMine / Clay Pit / Sand Pit tooltips — MineralSiteMine is one class for *all* Iron/Gold/Coal mines (surface and deep); the pit entries cover both surface and deep variants.
+- **Domain Expansion** — added **Doghouse Guard Radius ×** (Dog/Cat DLC). Scales the dog's guard/defend radius (vanilla 60) via an `Awake` prefix so the selection ring is sized correctly (no double-ring).
+
+### Combat
+- **Emergency Militia** — default hotkeys changed to **Ctrl+A** (mobilize) / **Alt+A** (stand down), replacing `B`/`N` (B was too easy to hit by accident; N is the vanilla road-placement key). Panel labels renamed Mobilize / Stand Down.
+- Toast now reads **"Mobilized N Villagers (M Armed)"** — M is a one-time count of weapons in storage (Weapon + SimpleWeapon) at trigger time, so it reflects how many militia can actually equip. No polling/scan. (All mobilized villagers fight regardless; the weapon is an upgrade.)
+
+### Notes
+- Existing configs keep their saved `B`/`N` hotkeys — change them in the KC panel (or clear the two lines from `UserData/SovereignBoons.cfg`) to pick up the new Ctrl+A / Alt+A defaults.
+
+---
+
 ## v1.0.0 (2026-05-14) — initial release
 
 Power-spike pack for Farthest Frontier. 14 boons across 6 buckets, every one OFF by default, every one curated from a community source mod with credit preserved. Soft-integrates with [Keep Clarity](https://github.com/sagedragoon79/KeepClarity)'s in-game settings panel for tooltips, sliders, grouped buckets, and nested indentation; works without KC installed too (read prefs from `UserData/SovereignBoons.cfg`).

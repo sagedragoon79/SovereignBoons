@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>SovereignBoons</AssemblyName>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.1</Version>
     <RootNamespace>SovereignBoons</RootNamespace>
     <Description>Power-spike mod collection for Farthest Frontier — cherry-picked features from community mods, unified under one toggle list, opt-in, soft-integrated with Keep Clarity.</Description>
     <Company>SageDragoon</Company>

@@ -70,6 +70,7 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<float> LongReachMarketMul       { get; private set; } = null!;
         public static MelonPreferences_Entry<float> LongReachForagerMul      { get; private set; } = null!;
         public static MelonPreferences_Entry<float> LongReachRatCatcherMul   { get; private set; } = null!;
+        public static MelonPreferences_Entry<float> LongReachDoghouseMul     { get; private set; } = null!;
 
         // ----- Civic Pride (folded from VC_DesirabilityBuildingsControl by VC) -----
         public static MelonPreferences_Entry<bool>  EnableCivicPride { get; private set; } = null!;
@@ -268,14 +269,14 @@ namespace SovereignBoons
                 description: "Hotkey-driven militia: press a key to arm every eligible " +
                              "villager (skipping Hunters, Guards, Soldiers, and Children). " +
                              "Mono re-implementation of BasicWeaponEquipment (donimuzur).");
-            LevysArmsArmKey = _root.CreateEntry("LevysArmsArmKey", "B",
-                display_name: "Emergency Militia — Arm Hotkey",
-                description: "Hotkey to arm all eligible villagers. Unity KeyCode name or a chord — " +
-                             "e.g. B, F4, Ctrl+A, Alt+Shift+M. Modifiers: Ctrl, Alt, Shift.");
-            LevysArmsUnarmKey = _root.CreateEntry("LevysArmsUnarmKey", "N",
-                display_name: "Emergency Militia — Unarm Hotkey",
-                description: "Hotkey to unarm everyone armed by this boon. Unity KeyCode name or a chord " +
-                             "(e.g. N, Alt+A). Modifiers: Ctrl, Alt, Shift.");
+            LevysArmsArmKey = _root.CreateEntry("LevysArmsArmKey", "Ctrl+A",
+                display_name: "Emergency Militia — Mobilize Hotkey",
+                description: "Hotkey to mobilize all eligible villagers. Unity KeyCode name or a chord — " +
+                             "e.g. Ctrl+A, F4, Alt+Shift+M. Modifiers: Ctrl, Alt, Shift. Default: Ctrl+A.");
+            LevysArmsUnarmKey = _root.CreateEntry("LevysArmsUnarmKey", "Alt+A",
+                display_name: "Emergency Militia — Stand Down Hotkey",
+                description: "Hotkey to stand down everyone mobilized by this boon. Unity KeyCode name or a chord " +
+                             "(e.g. Alt+A). Modifiers: Ctrl, Alt, Shift. Default: Alt+A.");
             LevysArmsStatMagnitude = _root.CreateEntry("LevysArmsStatMagnitude", 100f,
                 display_name: "Emergency Militia — Stat Magnitude",
                 description: "Applied to every ItemStats *Perc field (armor, max life, melee/ranged damage, etc.). " +
@@ -301,6 +302,7 @@ namespace SovereignBoons
             LongReachMarketMul     = _root.CreateEntry("LongReachMarketMul",     1.0f, display_name: "Domain Expansion — Market Radius ×",       description: "Multiplier on MarketBuilding strategic-planning radius (vanilla 50). 1.0 = no change. Range 0.5..3.0.");
             LongReachForagerMul    = _root.CreateEntry("LongReachForagerMul",    1.0f, display_name: "Domain Expansion — Forager Shack Radius ×",description: "Multiplier on ForagerShack foraging radius (vanilla 60). 1.0 = no change. Range 0.5..3.0. [SB extension — source mod's pref was orphaned]");
             LongReachRatCatcherMul = _root.CreateEntry("LongReachRatCatcherMul", 1.0f, display_name: "Domain Expansion — Rat Catcher Radius ×",  description: "Multiplier on RatCatcherBuilding work radius (vanilla 60). 1.0 = no change. Range 0.5..3.0. [SB extension]");
+            LongReachDoghouseMul   = _root.CreateEntry("LongReachDoghouseMul",   1.0f, display_name: "Domain Expansion — Doghouse Guard Radius ×", description: "Multiplier on Doghouse guard radius (vanilla 60). 1.0 = no change. Range 0.5..3.0. [Dog/Cat DLC]");
 
             // ===== Civic Pride =====
             EnableCivicPride = _root.CreateEntry("EnableCivicPride", false,

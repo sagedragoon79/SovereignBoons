@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", "1.0.0", "sagedragoon79")]
+[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", "1.0.1", "sagedragoon79")]
 [assembly: MelonGame("Crate Entertainment", "Farthest Frontier")]
 
 namespace SovereignBoons
@@ -39,7 +39,7 @@ namespace SovereignBoons
             // Boons that apply at init (no scene needed):
             Boons.SteadfastResolve.Apply();
 
-            LoggerInstance.Msg("Sovereign Boons 1.0.0 initialized");
+            LoggerInstance.Msg("Sovereign Boons 1.0.1 initialized");
         }
 
         private void DetectForeignMods()

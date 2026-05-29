@@ -3,8 +3,9 @@
 //                won't load on Mono build of FF. Mono re-implementation.
 // SB changes vs source design:
 //   - UI buttons (per-villager + global "arm all") replaced with two configurable
-//     hotkeys: Arm All (default B), Unarm All (default N). No UI prefab injection.
-//   - Source's debug `B` → SpawnRaidCamps keybind dropped; `B` repurposed for Arm.
+//     hotkeys: Mobilize (default Ctrl+A), Stand Down (default Alt+A). No UI prefab injection.
+//     Chorded defaults avoid accidental triggers and the vanilla N (road-placement) key.
+//   - Source's debug `B` → SpawnRaidCamps keybind dropped entirely.
 //   - Two-DLL stat preset split collapsed to one float pref `LevysArmsStatMagnitude`.
 //   - Weapon fetch IS implemented: arming sets an Upgrade melee seek group
 //     (Weapon -> SimpleWeapon) via VillagerItemRequester.SetItemCriteriaToSeek, so
@@ -47,8 +48,12 @@ namespace SovereignBoons.Boons
             public KeyCode Key;
             public bool Ctrl, Alt, Shift;
         }
-        private static Chord _armChord   = new Chord { Key = KeyCode.B };
-        private static Chord _unarmChord = new Chord { Key = KeyCode.N };
+        // Safe defaults: chorded so a stray keypress can't mobilize/stand down by accident,
+        // and avoiding N (vanilla road-placement key).
+        private static readonly Chord _armDefault   = new Chord { Key = KeyCode.A, Ctrl = true }; // Ctrl+A
+        private static readonly Chord _unarmDefault = new Chord { Key = KeyCode.A, Alt = true };  // Alt+A
+        private static Chord _armChord   = _armDefault;
+        private static Chord _unarmChord = _unarmDefault;
 
         // Reflected access for fields not in our compilation scope.
         private static readonly FieldInfo? _defaultIsMeleeAttackField =
@@ -79,21 +84,21 @@ namespace SovereignBoons.Boons
 
         public static void ResolveHotkeys()
         {
-            _armChord   = ParseChord(Config.LevysArmsArmKey.Value,   KeyCode.B);
-            _unarmChord = ParseChord(Config.LevysArmsUnarmKey.Value, KeyCode.N);
+            _armChord   = ParseChord(Config.LevysArmsArmKey.Value,   _armDefault);
+            _unarmChord = ParseChord(Config.LevysArmsUnarmKey.Value, _unarmDefault);
         }
 
         /// <summary>
         /// Parse a hotkey string into a Chord. Accepts a bare Unity KeyCode ("B", "F4")
         /// or a modifier chord ("Ctrl+A", "Alt+Shift+M"). Recognised modifiers:
-        /// Ctrl/Control, Alt, Shift. Falls back to <paramref name="fallback"/> (no
-        /// modifiers) if no valid base key is found.
+        /// Ctrl/Control, Alt, Shift. Falls back to the full <paramref name="fallback"/>
+        /// chord (modifiers included) if no valid base key is found.
         /// </summary>
-        private static Chord ParseChord(string raw, KeyCode fallback)
+        private static Chord ParseChord(string raw, Chord fallback)
         {
-            var c = new Chord { Key = fallback };
-            if (string.IsNullOrWhiteSpace(raw)) return c;
+            if (string.IsNullOrWhiteSpace(raw)) return fallback;
 
+            var c = new Chord();
             bool gotKey = false;
             foreach (var tokenRaw in raw.Split('+'))
             {
@@ -109,8 +114,10 @@ namespace SovereignBoons.Boons
                         break;
                 }
             }
-            if (!gotKey) { c.Key = fallback; c.Ctrl = c.Alt = c.Shift = false; }
-            return c;
+            // No valid base key parsed (blank/garbage entry) — fall back to the full
+            // default chord rather than a bare key, so e.g. arm/stand-down can't collapse
+            // onto the same key.
+            return gotKey ? c : fallback;
         }
 
         private static bool ChordPressed(Chord c)
@@ -130,10 +137,14 @@ namespace SovereignBoons.Boons
             if (ChordPressed(_armChord))
             {
                 int n = ArmAllEligible();
-                Plugin.Log.Msg($"[Emergency Militia] Armed {n} villager(s).");
+                // One-time count (no polling): how many mobilized villagers can actually
+                // carry a weapon = min(mobilized, weapons in storage). Each militia upgrades
+                // to ONE weapon; the rest still fight with the militia buff, just unarmed.
+                int armed = n > 0 ? System.Math.Min(n, CountAvailableWeapons()) : 0;
+                Plugin.Log.Msg($"[Emergency Militia] Mobilized {n} villager(s); {armed} weapon(s) available to equip.");
                 Toast.Show(n > 0
-                    ? $"⚔ Emergency Militia: armed {n} villager(s)"
-                    : "⚔ Emergency Militia: no eligible villagers to arm");
+                    ? $"Emergency Militia: Mobilized {n} Villagers ({armed} Armed)"
+                    : "Emergency Militia: no eligible villagers to mobilize");
             }
             else if (ChordPressed(_unarmChord))
             {
@@ -192,6 +203,38 @@ namespace SovereignBoons.Boons
                 }
             }
             return count;
+        }
+
+        /// <summary>
+        /// One-shot count of melee weapons in town storage (Weapon + SimpleWeapon),
+        /// read straight from ResourceManager's maintained item tallies — no scan/poll.
+        /// Used only to annotate the mobilize toast with how many militia can equip.
+        /// </summary>
+        private static int CountAvailableWeapons()
+        {
+            var gm = UnitySingleton<GameManager>.Instance;
+            var rm = gm?.resourceManager;
+            var wbm = gm?.workBucketManager;
+            if (rm == null || wbm == null) return 0;
+            long total = 0;
+            try
+            {
+                if (wbm.itemWeapon != null)
+                {
+                    var info = rm.GetItemInfo(wbm.itemWeapon);
+                    if (info != null) total += info.count;
+                }
+                if (wbm.itemSimpleWeapon != null)
+                {
+                    var info = rm.GetItemInfo(wbm.itemSimpleWeapon);
+                    if (info != null) total += info.count;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.Warning($"[Emergency Militia] weapon count failed: {ex.Message}");
+            }
+            return total > int.MaxValue ? int.MaxValue : (int)total;
         }
 
         private static bool IsSkippedOccupation(Villager v)

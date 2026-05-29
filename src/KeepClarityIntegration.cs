@@ -273,13 +273,13 @@ namespace SovereignBoons
                         "Default: OFF.",
                         restartRequired: false, order: 100));
             Reg(GroupCombat, Config.LevysArmsArmKey,
-                NewMeta("Arm Hotkey",
-                        "KeyCode or chord — B, F4, Ctrl+A, Alt+Shift+M (modifiers: Ctrl/Alt/Shift). Default: B.",
+                NewMeta("Mobilize Hotkey",
+                        "KeyCode or chord — Ctrl+A, F4, Alt+Shift+M (modifiers: Ctrl/Alt/Shift). Default: Ctrl+A.",
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 101, indent: 20));
             Reg(GroupCombat, Config.LevysArmsUnarmKey,
-                NewMeta("Unarm Hotkey",
-                        "KeyCode or chord (e.g. N, Alt+A; modifiers Ctrl/Alt/Shift). Default: N.",
+                NewMeta("Stand Down Hotkey",
+                        "KeyCode or chord (e.g. Alt+A; modifiers Ctrl/Alt/Shift). Default: Alt+A.",
                         visibleWhen: () => Config.EnableLevysArms.Value,
                         order: 102, indent: 20));
             Reg(GroupCombat, Config.LevysArmsStatMagnitude,
@@ -316,6 +316,8 @@ namespace SovereignBoons
                 NewMeta("Forager Shack Radius ×", "Multiplier on ForagerShack foraging radius (vanilla 60). 1.0 = no change. Default: 1.0.",   min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 206, indent: 20));
             Reg(GroupBuildings, Config.LongReachRatCatcherMul,
                 NewMeta("Rat Catcher Radius ×",   "Multiplier on RatCatcherBuilding work radius (vanilla 60). 1.0 = no change. Default: 1.0.", min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 207, indent: 20));
+            Reg(GroupBuildings, Config.LongReachDoghouseMul,
+                NewMeta("Doghouse Guard Radius ×", "Multiplier on Doghouse guard radius (vanilla 60) — the dog's defend area. 1.0 = no change. Default: 1.0. [Dog/Cat DLC]", min: 0.5f, max: 3.0f, visibleWhen: () => Config.EnableLongReach.Value, order: 208, indent: 20));
 
             // ===== Civic Pride (Buildings) — order block 300 =====
             Reg(GroupBuildings, Config.EnableCivicPride,
@@ -385,10 +387,12 @@ namespace SovereignBoons
             int ghOrder = 601;
             foreach (var bp in Boons.GreaterHalls.Iterate())
             {
+                var ghTip = $"Extra worker/resident slots added on top of vanilla maxWorkers. " +
+                            $"Category: {bp.Category}. Range: {bp.Min}..{bp.Max}. Default: 0 (no change).";
+                if (!string.IsNullOrEmpty(bp.Note)) ghTip += " " + bp.Note;
                 Reg(GroupBuildings, bp.Entry,
                     NewMeta($"{bp.Name} +Workers",
-                            $"Extra worker/resident slots added on top of vanilla maxWorkers. " +
-                            $"Category: {bp.Category}. Range: {bp.Min}..{bp.Max}. Default: 0 (no change).",
+                            ghTip,
                             min: bp.Min, max: bp.Max,
                             visibleWhen: () => Config.EnableGreaterHalls.Value,
                             order: ghOrder++, indent: 20));
