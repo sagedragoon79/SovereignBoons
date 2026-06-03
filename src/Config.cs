@@ -102,6 +102,8 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<bool>  EnableHallowedReliquary         { get; private set; } = null!;
         public static MelonPreferences_Entry<float> HallowedReliquaryBonusMul       { get; private set; } = null!;
         public static MelonPreferences_Entry<bool>  HallowedReliquaryUnchainRelics  { get; private set; } = null!;
+        public static MelonPreferences_Entry<int>   HallowedReliquaryBonusSlots     { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>  HallowedReliquaryUnlockAllRelics{ get; private set; } = null!;
 
         // ----- Bountiful Fields (folded from VC_ConfigurableCropFields by VC) -----
         public static MelonPreferences_Entry<bool>  EnableBountifulFields              { get; private set; } = null!;
@@ -339,7 +341,7 @@ namespace SovereignBoons
             // ===== Greater Halls =====
             EnableGreaterHalls = _root.CreateEntry("EnableGreaterHalls", false,
                 display_name: "Greater Halls — Enabled",
-                description: "Per-building add-on to maxWorkers / maxResidents for ~46 building types. " +
+                description: "Per-building add-on to maxWorkers / maxResidents for ~51 building types. " +
                              "Folded from VC_ModifyWorkerSlots by VC.");
             Boons.GreaterHalls.RegisterPrefs(_root);
 
@@ -356,6 +358,23 @@ namespace SovereignBoons
                 description: "When true, a single priest in the Temple activates ALL assigned " +
                              "relics. Vanilla deactivates relics if priest count is below the slot " +
                              "count — flip this off to keep vanilla behavior.");
+            HallowedReliquaryUnlockAllRelics = _root.CreateEntry("HallowedReliquaryUnlockAllRelics", false,
+                display_name: "Hallowed Reliquary — Unlock All Relics",
+                description: "Power-spike: immediately unlock every relic in ReligionManager's pool on " +
+                             "map load (calls UnlockAllRelics() once per session). Useful for filling " +
+                             "expanded slot counts. Already-unlocked relics persist in the save, so " +
+                             "toggling this off afterward keeps what you've already received. " +
+                             "Default: OFF.");
+            HallowedReliquaryBonusSlots = _root.CreateEntry("HallowedReliquaryBonusSlots", 4,
+                display_name: "Hallowed Reliquary — Bonus Relic Slots",
+                description: "Extra relic slots added to every Temple, on top of vanilla's 2. " +
+                             "Range 0..13 (max 15 total — matches VC_ModifyTemple's ceiling). " +
+                             "Default: 4 (6 total). Slot widgets are cloned from the existing " +
+                             "template and laid out in rows of up to 5 (the vanilla row stays in " +
+                             "place; extra rows stack below). Takes effect on the next save load " +
+                             "(applied in Temple.Awake). Note: FF's vanilla relic pool is around " +
+                             "8 distinct relics (plus a few from DLC), so values above ~10 just " +
+                             "give you empty drawers.");
 
             // ===== Bountiful Fields =====
             EnableBountifulFields = _root.CreateEntry("EnableBountifulFields", false,

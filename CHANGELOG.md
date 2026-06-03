@@ -2,6 +2,25 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.0.2 (2026-05-29)
+
+Hallowed Reliquary now actually adds relic slots — the original v1.0.0 design was reduced scope to avoid a UniverseLib dependency, but reviewing VC's actual code revealed UniverseLib was only needed for VC's own config window, not for the slot expansion itself. v1.0.2 ports the real slot expansion (plain `Object.Instantiate`, no dependency) and adds a couple more Greater Halls entries.
+
+### Buildings
+- **Hallowed Reliquary** — now expands the Temple's relic slot count via two new Harmony patches:
+  - `Temple.Awake` Prefix bumps `_maxRelicCount` and pre-pads `relicSlotCooldowns` (matches VC's `newMax*2` formula).
+  - `UISubWidgetTempleControls.Init` Prefix clones the existing `UIRelicSlot` GameObject and lays the extras out in rows of up to 5 (vanilla row stays; extra rows clone the row container as siblings and stack via the parent `VerticalLayoutGroup`).
+  - New config: **Bonus Relic Slots** (`HallowedReliquaryBonusSlots`, 0..13, default 4 → 6 total; max 15 total — matches VC's ceiling). Reload-required (applied in `Temple.Awake`).
+  - New power-spike config: **Unlock All Relics** (`HallowedReliquaryUnlockAllRelics`, default OFF). When on, calls `ReligionManager.UnlockAllRelics()` once per map load so expanded slot counts have relics to actually fill (FF's vanilla relic pool is ~8).
+- **Hallowed Reliquary — Unchain Relics bug fix** — the previous prefix-and-skip implementation mutated `relicSlots`/`disabledSlots` correctly but never invoked `onRelicsChanged`, so the Temple UI stayed stuck on the priest-capped view. Rewrote as a postfix that runs after vanilla balances (which fires its own events), then promotes whatever remains and fires `onRelicsChanged` once. Also added a `ResourceManager.templesRO` sweep in `OnUpdate` so the toggle takes effect on save-load or mid-session change without waiting for a priest change.
+- **Greater Halls** — added two more `Building`-derived production buildings that needed their own `Awake` postfixes: **Brickyard** (Brickmaker) and **CharcoalKiln** (Charcoal Maker). Greater Halls now covers **~51 building types**.
+
+### Notes
+- `HallowedReliquaryBonusSlots` defaults to 4 (6 total slots) — comfortable single row. Crank to ~6 (8 total) before squeezing; the multi-row UI handles up to 13 (15 total) with the slot icons compressed across stacked rows. FF's vanilla relic pool is ~8 distinct relics, so values much above that just give you empty drawers (unless you also turn on Unlock All Relics with DLC content).
+- The slot expansion does **not** require UniverseLib.
+
+---
+
 ## v1.0.1 (2026-05-29)
 
 Maintenance + Dog/Cat DLC support, plus Emergency Militia polish.

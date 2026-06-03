@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", "1.0.1", "sagedragoon79")]
+[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", "1.0.2", "sagedragoon79")]
 [assembly: MelonGame("Crate Entertainment", "Farthest Frontier")]
 
 namespace SovereignBoons
@@ -39,7 +39,7 @@ namespace SovereignBoons
             // Boons that apply at init (no scene needed):
             Boons.SteadfastResolve.Apply();
 
-            LoggerInstance.Msg("Sovereign Boons 1.0.1 initialized");
+            LoggerInstance.Msg("Sovereign Boons 1.0.2 initialized");
         }
 
         private void DetectForeignMods()
@@ -111,6 +111,11 @@ namespace SovereignBoons
             // Hallowed Reliquary captures vanilla ReligionManager bonus and applies
             // its multiplier once GameManager exists. Self-throttles via _applied flag.
             Boons.HallowedReliquary.TryApplyBonusOnce();
+            // Unchain Relics sweep — promotes every temple's relic slots when the
+            // toggle is flipped mid-game or after a save load (no-op once cleared).
+            Boons.HallowedReliquary.MaybeSweepTemples();
+            // Unlock-all-relics one-shot — fires once per map when the toggle is on.
+            Boons.HallowedReliquary.TryUnlockAllRelicsOnce();
 
             // Emergency Militia hotkey poll.
             Boons.LevysArms.OnUpdate();

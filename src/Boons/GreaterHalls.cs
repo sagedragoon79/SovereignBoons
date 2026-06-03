@@ -1,6 +1,6 @@
 // Folded from VC_ModifyWorkerSlots by VC (v1.3)
 // Original DLL: VC_ModifyWorkerSlots.dll (ships UniverseLib.Mono.dll + MelonPrefManager.Mono.dll deps)
-// Original prefs: per-building IntCfg{Addon, Min, Max} for 46 building types.
+// Original prefs: per-building IntCfg{Addon, Min, Max} for ~51 building types.
 // SB changes:
 //   - Replaced custom IntCfg type with plain MelonPreferences_Entry<int> per building
 //     (avoids a Toml-converter dependency).
@@ -13,8 +13,9 @@
 //     parked as a Phase 2.5 KC renderer extension).
 //
 // Verified targets (decompile_verification.md):
-//   - 6 direct Awake postfixes: WorkCamp / CompostYard / MarketBuilding / Pub / School /
-//     WoodCutterBuilding (Firewood Splitter; : Building, not EnterableBuilding)
+//   - 8 direct Awake postfixes: WorkCamp / CompostYard / MarketBuilding / Pub / School /
+//     WoodCutterBuilding (Firewood Splitter) / Brickyard / CharcoalKiln
+//     (all : Building, not EnterableBuilding, so the generic dispatcher doesn't catch them)
 //   - 2 AssignMaxVacancyAvailable prefix dispatchers: EnterableBuilding (catches most),
 //     LivestockBuilding (Barn/ChickenCoop/GoatBarn/Stable/DogKennel/CatKennel)
 //   - Dog/Cat DLC: DogKennel & CatKennel derive Kennel : LivestockBuilding (auto-caught).
@@ -28,7 +29,7 @@ using MelonLoader;
 namespace SovereignBoons.Boons
 {
     /// <summary>
-    /// Per-building add-on to maxWorkers / maxResidents for ~46 building types.
+    /// Per-building add-on to maxWorkers / maxResidents for ~~51 building types.
     /// </summary>
     internal static class GreaterHalls
     {
@@ -76,6 +77,8 @@ namespace SovereignBoons.Boons
             new BuildingInfo("WeaverBuilding",      0, 4,  "Production"),
             new BuildingInfo("Windmill",            0, 2,  "Production"),
             new BuildingInfo("WoodCutterBuilding",  0, 3,  "Production"),   // Firewood Splitter — Building (needs direct Awake patch below)
+            new BuildingInfo("Brickyard",           0, 3,  "Production"),   // Building — needs direct Awake patch
+            new BuildingInfo("CharcoalKiln",        0, 3,  "Production"),   // Building — needs direct Awake patch
 
             // Resource sites
             new BuildingInfo("ClayPitBuilding",     0, 4,  "Resource Sites", "Covers the Clay Pit — both the surface pit and its deep (infinite) version."),
@@ -185,6 +188,10 @@ namespace SovereignBoons.Boons
         internal static class School_Awake       { private static void Postfix(School __instance)         { Apply(__instance); } }
         [HarmonyPatch(typeof(WoodCutterBuilding), "Awake")]
         internal static class WoodCutter_Awake   { private static void Postfix(WoodCutterBuilding __instance) { Apply(__instance); } }
+        [HarmonyPatch(typeof(Brickyard),         "Awake")]
+        internal static class Brickyard_Awake    { private static void Postfix(Brickyard __instance)         { Apply(__instance); } }
+        [HarmonyPatch(typeof(CharcoalKiln),      "Awake")]
+        internal static class CharcoalKiln_Awake { private static void Postfix(CharcoalKiln __instance)      { Apply(__instance); } }
 
         private static void Apply(Resource __instance)
         {

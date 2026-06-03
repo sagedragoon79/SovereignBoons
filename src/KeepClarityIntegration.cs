@@ -354,6 +354,23 @@ namespace SovereignBoons
                         "active relics). Default: ON.",
                         visibleWhen: () => Config.EnableHallowedReliquary.Value,
                         order: 402, indent: 20));
+            Reg(GroupBuildings, Config.HallowedReliquaryUnlockAllRelics,
+                NewMeta("Unlock All Relics",
+                        "Power-spike: unlocks every relic in the game on map load. Once received, " +
+                        "they persist in the save (toggle off afterward to stop re-triggering, but " +
+                        "you keep what you've got). Default: OFF.",
+                        visibleWhen: () => Config.EnableHallowedReliquary.Value,
+                        order: 403, indent: 20, reloadRequired: true));
+            Reg(GroupBuildings, Config.HallowedReliquaryBonusSlots,
+                NewMeta("Bonus Relic Slots",
+                        "Extra relic slots added to every Temple (vanilla = 2). 0..13 → 2..15 total " +
+                        "(matches VC_ModifyTemple). Slot widgets are cloned from the existing UI " +
+                        "template and laid out in rows of up to 5. Default: 4 (6 total). FF's vanilla " +
+                        "relic pool is ~8, so anything above ~10 leaves empty slots. Takes effect on " +
+                        "next save load.",
+                        min: 0, max: 13,
+                        visibleWhen: () => Config.EnableHallowedReliquary.Value,
+                        order: 404, indent: 20, reloadRequired: true));
 
             // ===== Hoarded Stores (Buildings) — order block 500 =====
             Reg(GroupBuildings, Config.EnableHoardedStores,
@@ -377,10 +394,10 @@ namespace SovereignBoons
             Reg(GroupBuildings, Config.HoardedStoresMarketEnable,        NewMeta("Market — Apply",         "Apply capacity multiplier to Markets. Default: OFF.",                                   visibleWhen: () => Config.EnableHoardedStores.Value, order: 513, indent: 20));
             Reg(GroupBuildings, Config.HoardedStoresMarketMul,           NewMeta("Market — Mul",           "Capacity multiplier for Markets. Default: 2.0.",           min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresMarketEnable.Value, order: 514, indent: 40));
 
-            // ===== Greater Halls (Buildings) — order block 600 (1 master + ~46 buildings, ordered by iteration) =====
+            // ===== Greater Halls (Buildings) — order block 600 (1 master + ~51 buildings, ordered by iteration) =====
             Reg(GroupBuildings, Config.EnableGreaterHalls,
                 NewMeta("Greater Halls",
-                        "Per-building +Workers / +Residents add-on for ~46 building types. " +
+                        "Per-building +Workers / +Residents add-on for ~51 building types. " +
                         "Grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential. " +
                         "Applies to buildings placed after enabling; reload save to refresh existing. Default: OFF.",
                         order: 600, reloadRequired: true));
