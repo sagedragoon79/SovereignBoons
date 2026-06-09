@@ -1,6 +1,6 @@
 // Folded from VC_ModifyWorkerSlots by VC (v1.3)
 // Original DLL: VC_ModifyWorkerSlots.dll (ships UniverseLib.Mono.dll + MelonPrefManager.Mono.dll deps)
-// Original prefs: per-building IntCfg{Addon, Min, Max} for ~51 building types.
+// Original prefs: per-building IntCfg{Addon, Min, Max} for ~52 building types.
 // SB changes:
 //   - Replaced custom IntCfg type with plain MelonPreferences_Entry<int> per building
 //     (avoids a Toml-converter dependency).
@@ -13,8 +13,8 @@
 //     parked as a Phase 2.5 KC renderer extension).
 //
 // Verified targets (decompile_verification.md):
-//   - 8 direct Awake postfixes: WorkCamp / CompostYard / MarketBuilding / Pub / School /
-//     WoodCutterBuilding (Firewood Splitter) / Brickyard / CharcoalKiln
+//   - 9 direct Awake postfixes: WorkCamp / CompostYard / MarketBuilding / Pub / School /
+//     WoodCutterBuilding (Firewood Splitter) / Brickyard / CharcoalKiln / ArboristBuilding
 //     (all : Building, not EnterableBuilding, so the generic dispatcher doesn't catch them)
 //   - 2 AssignMaxVacancyAvailable prefix dispatchers: EnterableBuilding (catches most),
 //     LivestockBuilding (Barn/ChickenCoop/GoatBarn/Stable/DogKennel/CatKennel)
@@ -29,7 +29,7 @@ using MelonLoader;
 namespace SovereignBoons.Boons
 {
     /// <summary>
-    /// Per-building add-on to maxWorkers / maxResidents for ~~51 building types.
+    /// Per-building add-on to maxWorkers / maxResidents for ~~52 building types.
     /// </summary>
     internal static class GreaterHalls
     {
@@ -46,13 +46,17 @@ namespace SovereignBoons.Boons
         // Building add-on ranges. Matches source mod's ranges 1:1.
         internal static readonly BuildingInfo[] Buildings = new BuildingInfo[]
         {
+            // Within each category, entries are sorted alphabetically by class name
+            // so the KC panel scans cleanly. Display order in the panel = order of
+            // iteration here (KC registration uses `order: ghOrder++`).
+
             // Livestock
             new BuildingInfo("Barn",                0, 6,  "Livestock"),
+            new BuildingInfo("CatKennel",           0, 2,  "Livestock"),   // Dog/Cat DLC — Kennel : LivestockBuilding (caught by dispatcher)
             new BuildingInfo("ChickenCoop",         0, 1,  "Livestock"),
+            new BuildingInfo("DogKennel",           0, 2,  "Livestock"),   // Dog/Cat DLC
             new BuildingInfo("GoatBarn",            0, 4,  "Livestock"),
             new BuildingInfo("Stable",              0, 3,  "Livestock"),
-            new BuildingInfo("DogKennel",           0, 2,  "Livestock"),   // Dog/Cat DLC — Kennel : LivestockBuilding (caught by dispatcher)
-            new BuildingInfo("CatKennel",           0, 2,  "Livestock"),   // Dog/Cat DLC
 
             // Production
             new BuildingInfo("ApothecaryShop",      0, 2,  "Production"),
@@ -62,7 +66,9 @@ namespace SovereignBoons.Boons
             new BuildingInfo("BlacksmithForge",     0, 2,  "Production"),
             new BuildingInfo("BookBinder",          0, 4,  "Production"),
             new BuildingInfo("Brewery",             0, 4,  "Production"),
+            new BuildingInfo("Brickyard",           0, 3,  "Production"),   // Building — needs direct Awake patch
             new BuildingInfo("CandleShop",          0, 3,  "Production"),
+            new BuildingInfo("CharcoalKiln",        0, 3,  "Production"),   // Building — needs direct Awake patch
             new BuildingInfo("Cheesemaker",         0, 4,  "Production"),
             new BuildingInfo("CobblerShop",         0, 2,  "Production"),
             new BuildingInfo("CooperBuilding",      0, 2,  "Production"),
@@ -77,8 +83,6 @@ namespace SovereignBoons.Boons
             new BuildingInfo("WeaverBuilding",      0, 4,  "Production"),
             new BuildingInfo("Windmill",            0, 2,  "Production"),
             new BuildingInfo("WoodCutterBuilding",  0, 3,  "Production"),   // Firewood Splitter — Building (needs direct Awake patch below)
-            new BuildingInfo("Brickyard",           0, 3,  "Production"),   // Building — needs direct Awake patch
-            new BuildingInfo("CharcoalKiln",        0, 3,  "Production"),   // Building — needs direct Awake patch
 
             // Resource sites
             new BuildingInfo("ClayPitBuilding",     0, 4,  "Resource Sites", "Covers the Clay Pit — both the surface pit and its deep (infinite) version."),
@@ -89,6 +93,7 @@ namespace SovereignBoons.Boons
             new BuildingInfo("WorkCamp",            0, 3,  "Resource Sites"),
 
             // Field work
+            new BuildingInfo("ArboristBuilding",    0, 2,  "Field Work"),   // Building — needs direct Awake patch; larger 100-radius justifies slightly higher cap than other field-work entries
             new BuildingInfo("FishingShack",        0, 1,  "Field Work"),
             new BuildingInfo("ForagerShack",        0, 1,  "Field Work"),
             new BuildingInfo("HunterBuilding",      0, 1,  "Field Work"),
@@ -192,6 +197,8 @@ namespace SovereignBoons.Boons
         internal static class Brickyard_Awake    { private static void Postfix(Brickyard __instance)         { Apply(__instance); } }
         [HarmonyPatch(typeof(CharcoalKiln),      "Awake")]
         internal static class CharcoalKiln_Awake { private static void Postfix(CharcoalKiln __instance)      { Apply(__instance); } }
+        [HarmonyPatch(typeof(ArboristBuilding),  "Awake")]
+        internal static class Arborist_Awake     { private static void Postfix(ArboristBuilding __instance)  { Apply(__instance); } }
 
         private static void Apply(Resource __instance)
         {

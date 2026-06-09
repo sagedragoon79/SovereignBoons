@@ -2,6 +2,16 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.0.3 (2026-05-29)
+
+Small Greater Halls cleanup.
+
+### Buildings
+- **Greater Halls** — added **ArboristBuilding** (Field Work, 0..2). Direct `Awake` postfix (it derives `: Building`, not `: EnterableBuilding`). The 0..2 range is slightly higher than the other Field Work entries (FishingShack / ForagerShack / HunterBuilding at 0..1) because the Arborist works a much larger 100-unit harvest radius. Greater Halls now covers **~52 building types**, with 9 direct Awake postfixes.
+- **Greater Halls — alphabetical reorder.** Buildings are now sorted alphabetically **within each category** (Livestock / Production / Resource Sites / Field Work / Civic / Residential). Same buildings, same defaults — just easier to scan the KC panel. Notable shifts: DogKennel and CatKennel slot in between Barn/ChickenCoop/GoatBarn in Livestock; Brickyard and CharcoalKiln slot into the B/C run in Production; ArboristBuilding is now first under Field Work.
+
+---
+
 ## v1.0.2 (2026-05-29)
 
 Hallowed Reliquary now actually adds relic slots — the original v1.0.0 design was reduced scope to avoid a UniverseLib dependency, but reviewing VC's actual code revealed UniverseLib was only needed for VC's own config window, not for the slot expansion itself. v1.0.2 ports the real slot expansion (plain `Object.Instantiate`, no dependency) and adds a couple more Greater Halls entries.

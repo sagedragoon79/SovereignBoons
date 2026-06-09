@@ -341,7 +341,7 @@ namespace SovereignBoons
             // ===== Greater Halls =====
             EnableGreaterHalls = _root.CreateEntry("EnableGreaterHalls", false,
                 display_name: "Greater Halls — Enabled",
-                description: "Per-building add-on to maxWorkers / maxResidents for ~51 building types. " +
+                description: "Per-building add-on to maxWorkers / maxResidents for ~52 building types. " +
                              "Folded from VC_ModifyWorkerSlots by VC.");
             Boons.GreaterHalls.RegisterPrefs(_root);
 

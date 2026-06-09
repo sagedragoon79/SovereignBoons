@@ -394,10 +394,10 @@ namespace SovereignBoons
             Reg(GroupBuildings, Config.HoardedStoresMarketEnable,        NewMeta("Market — Apply",         "Apply capacity multiplier to Markets. Default: OFF.",                                   visibleWhen: () => Config.EnableHoardedStores.Value, order: 513, indent: 20));
             Reg(GroupBuildings, Config.HoardedStoresMarketMul,           NewMeta("Market — Mul",           "Capacity multiplier for Markets. Default: 2.0.",           min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresMarketEnable.Value, order: 514, indent: 40));
 
-            // ===== Greater Halls (Buildings) — order block 600 (1 master + ~51 buildings, ordered by iteration) =====
+            // ===== Greater Halls (Buildings) — order block 600 (1 master + ~52 buildings, ordered by iteration) =====
             Reg(GroupBuildings, Config.EnableGreaterHalls,
                 NewMeta("Greater Halls",
-                        "Per-building +Workers / +Residents add-on for ~51 building types. " +
+                        "Per-building +Workers / +Residents add-on for ~52 building types. " +
                         "Grouped by Livestock / Production / Resource Sites / Field Work / Civic / Residential. " +
                         "Applies to buildings placed after enabling; reload save to refresh existing. Default: OFF.",
                         order: 600, reloadRequired: true));
