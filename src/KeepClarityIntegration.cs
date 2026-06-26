@@ -79,7 +79,7 @@ namespace SovereignBoons
                 "Power-spike pack: cherry-picked features from community mods to make your settlement stronger. " +
                 "Every boon is OFF by default. Folded with credit from the original community modders — see README " +
                 "for the provenance table.",
-                /*version*/ "0.1.0",
+                /*version*/ Plugin.Version,
                 /*iconResourcePath*/ null,
                 /*accentRgb — royal purple (sovereign theme)*/ new[] { 0.45f, 0.30f, 0.65f, 1f },
                 /*order*/ 30

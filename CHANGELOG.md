@@ -2,6 +2,29 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.0.4 (2026-05-29)
+
+Adversarial-review hardening pass (19 confirmed findings fixed) plus a Domain Expansion placement-preview fix. Verified in-game before release.
+
+### Critical — save safety
+- **Hallowed Reliquary no longer bricks saves.** Vanilla `Temple.Load`/`PostRelocate` do an unguarded indexed write against the persisted `relicSlotCooldowns` count, so an expanded count made saves unloadable once Bonus Slots was reduced / the boon disabled / the mod removed. Fixed three ways: cooldowns are now sized to `max(6, slots)` (was a doubled `newMax*2`), `Temple.Save` trims them to vanilla 6 so new saves stay portable, and `Temple.Load`/`PostRelocate` grow the list to a safe ceiling so already-written saves still load. *Verified: reducing slots on a 15-slot save reloads with no crash.*
+
+### High
+- **Temple relic-slot UI** now clones widgets to match the temple's live `maxRelicCount` (idempotent, with a trailing guarantee), fixing an `IndexOutOfRange` when the data layer outran the UI (early-return shortfall or a pooled widget frozen at an old slot count).
+- **Unchain Relics** postfix now mirrors vanilla's `isLoading/isRelocating/isUpgrading/isShuttingDown` freeze guard, so it won't mutate slot lists mid-load/teardown.
+- **Greater Halls** dispatchers now clear their de-dupe sets on map teardown (`Reset()` wired into `OnSceneWasInitialized`), so loading a different save without restarting can't drop a building's worker add-on via a recycled instance ID.
+
+### Medium
+- **Wealthy Caravans** buffs each merchant wagon exactly once — the load-path re-Init no longer compounds gold/goods every reload.
+- **Bountiful Fields** global tuning (grids-per-farmer, maintenance length) is deferred to a `gameReadyToPlay` one-shot, so it applies after the AgricultureManager exists instead of silently no-op-ing at scene load.
+
+### Low / polish
+- **Hallowed Reliquary master toggle** now cascades: unchecking it zeroes its sub-options (Bonus Slots 0, Unchain/Unlock off, Bonus Mul 1.0), so re-enabling requires deliberately re-setting them.
+- **Domain Expansion placement preview** now shows the *expanded* work-area circle while placing (it read the prefab's vanilla radius before, since the prefab never runs the Awake patch).
+- KC-registered version is single-sourced from `Plugin.Version` (was a stale hardcoded `0.1.0`); Eager Hands restores vanilla age cutoffs when disabled; cached the Shelter FieldRef and removed a per-frame allocation in the temple sweep; reset `_vanillaBonusPerRelic` per map; corrected a stale header comment.
+
+---
+
 ## v1.0.3 (2026-05-29)
 
 Small Greater Halls cleanup.

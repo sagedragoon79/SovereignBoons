@@ -54,6 +54,28 @@ namespace SovereignBoons.Boons
         private static float Scale(float baseRadius, float mul)
             => baseRadius * UnityEngine.Mathf.Clamp(mul, 0.5f, 3.0f);
 
+        /// <summary>
+        /// Config multiplier for a building TYPE (used by the placement-preview patch,
+        /// which operates on the prefab Building component — the prefab never runs our
+        /// Awake patch, so its circleRadius is still vanilla). Returns 1.0 for buildings
+        /// Domain Expansion doesn't touch.
+        /// </summary>
+        private static float MulFor(Building b)
+        {
+            switch (b)
+            {
+                case WorkCamp _:           return Config.LongReachWorkCampMul.Value;
+                case HunterBuilding _:     return Config.LongReachHunterMul.Value;
+                case FishingShack _:       return Config.LongReachFishingMul.Value;
+                case ArboristBuilding _:   return Config.LongReachArboristMul.Value;
+                case MarketBuilding _:     return Config.LongReachMarketMul.Value;
+                case ForagerShack _:       return Config.LongReachForagerMul.Value;
+                case RatCatcherBuilding _: return Config.LongReachRatCatcherMul.Value;
+                case Doghouse _:           return Config.LongReachDoghouseMul.Value;
+                default:                   return 1f;
+            }
+        }
+
         [HarmonyPatch(typeof(WorkCamp), "Awake")]
         internal static class WorkCamp_Awake_Patch
         {
@@ -155,6 +177,51 @@ namespace SovereignBoons.Boons
                 if (_doghouseRef == null) return;
                 try { _doghouseRef(__instance) = Scale(_doghouseRef(__instance), Config.LongReachDoghouseMul.Value); }
                 catch (System.Exception ex) { Plugin.Log.Warning($"[Domain Expansion] Doghouse: {ex.Message}"); }
+            }
+        }
+
+        // ---------- Placement-preview circle ----------
+        //
+        // PlaceableBuilding.SetMeshFromPrefab reads `building = prefab.GetComponent<Building>()`
+        // and draws the work-area ring from `building.circleRadius`. The prefab never runs our
+        // Awake patch, so the placement ghost shows the VANILLA radius even though the built
+        // result will be scaled. This postfix resizes the preview circle to match.
+
+        private static readonly System.Reflection.FieldInfo? _pbBuildingField =
+            AccessTools.Field(typeof(PlaceableBuilding), "_building");
+        private static readonly System.Reflection.PropertyInfo? _pbSelectionCircleProp =
+            AccessTools.Property(typeof(PlaceableBuilding), "selectionCircle");
+
+        [HarmonyPatch(typeof(PlaceableBuilding), "SetMeshFromPrefab")]
+        internal static class PlaceableBuilding_SetMeshFromPrefab_Patch
+        {
+            private static void Postfix(PlaceableBuilding __instance)
+            {
+                if (!Config.EnableLongReach.Value) return;
+                if (Plugin.IsForeignModLoaded("VC_BuildingRadiusAdjust")) return;
+                if (__instance == null) return;
+                if (_pbBuildingField == null || _pbSelectionCircleProp == null) return;
+
+                try
+                {
+                    var building = _pbBuildingField.GetValue(__instance) as Building;
+                    if (building == null || !building.showCircleOnPlaceable) return;
+
+                    float mul = MulFor(building);
+                    if (mul == 1f) return; // not a Domain Expansion target (or set to vanilla)
+
+                    var sc = _pbSelectionCircleProp.GetValue(__instance) as SelectionCircle;
+                    if (sc == null) return;
+
+                    // building.circleRadius is the prefab's vanilla base (Awake never ran on
+                    // the prefab); scale it the same way Awake will scale the built instance.
+                    sc.radius = Scale(building.circleRadius, mul);
+                    sc.CreateEdgeObjects(); // rebuild the ring mesh at the new radius
+                }
+                catch (System.Exception ex)
+                {
+                    Plugin.Log.Warning($"[Domain Expansion] Placement preview resize failed: {ex.Message}");
+                }
             }
         }
     }

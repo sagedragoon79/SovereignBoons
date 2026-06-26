@@ -5,8 +5,8 @@
 //   - Folded VC's RelicAddons via two faithful Harmony patches (no UniverseLib
 //     needed — UniverseLib in VC is only used for its standalone config
 //     window; the actual slot expansion is plain Object.Instantiate). SB
-//     exposes the addon count as HallowedReliquaryBonusSlots (range 0..6 →
-//     2..8 total) and clones UI widgets from the existing AssignedRelic slot.
+//     exposes the addon count as HallowedReliquaryBonusSlots (range 0..13 →
+//     2..15 total) and clones UI widgets from the existing AssignedRelic slot.
 //   - Unchain Relics layered on top: once slots exist, this toggle promotes
 //     every disabled relic back to active so a single priest activates all
 //     installed relics (vanilla otherwise caps active = priest count).
@@ -15,13 +15,24 @@
 //
 // Verified targets:
 //   - Temple._maxRelicCount [SerializeField int] — extended in Awake Prefix.
-//   - Temple.relicSlotCooldowns (private List<int>) — vanilla Awake adds 6
-//     entries unconditionally; we pre-pad with (newMax*2 - 6) so the total
-//     stays at newMax*2 (matches VC's formula; covers active + disabled).
-//   - UISubWidgetTempleControls.relicSlots (private List<UIRelicSlot>) —
-//     extended in Init Prefix by cloning the first slot's GameObject.
+//   - Temple.relicSlotCooldowns (private List<int>) — indexed strictly by slot, so
+//     it needs exactly maxRelicCount entries. Vanilla Awake adds 6 unconditionally;
+//     we pad to max(6, newMax). (Earlier newMax*2 was a misread — the 6 is a duration
+//     const, not a per-slot pairing.)
+//   - SAVE-SAFETY (critical): vanilla Temple.Save writes relicSlotCooldowns.Count
+//     verbatim and vanilla Temple.Load / PostRelocate do an UNGUARDED indexed write
+//     (`cooldowns[n] = reader.Read<int>()`) against that count — no growth. So if we
+//     persisted an expanded count, the save would crash on Load once the boon is
+//     reduced/disabled/uninstalled. We therefore (a) trim cooldowns to vanilla 6
+//     around Save so future saves stay portable, and (b) grow the list to a safe
+//     ceiling on Load/PostRelocate so already-written (inflated) saves still load.
+//   - UISubWidgetTempleControls.relicSlots (private List<UIRelicSlot>) — extended in
+//     Init Prefix by cloning the first slot's GameObject up to temple.maxRelicCount.
 //   - Temple.AdjustRelicsBasedOnPriestCount (private void) — postfix promotes
 //     disabledSlots → relicSlots for Unchain Relics, then fires onRelicsChanged.
+//     Mirrors vanilla's own isLoading/isRelocating/isUpgrading/isShuttingDown/
+//     shouldAdjustRelicsBasedOnPriestCount freeze guard so it doesn't mutate slot
+//     lists mid-teardown/mid-load.
 //   - ReligionManager._spiritualityBonusPerRelic (private float = 50f) — BonusMul.
 //   - ResourceManager.templesRO — sweep target for toggle-mid-session.
 //
@@ -37,6 +48,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using MelonLoader;
+using UnityEngine;
 
 namespace SovereignBoons.Boons
 {
@@ -57,11 +69,13 @@ namespace SovereignBoons.Boons
         public static void Reset()
         {
             _applied = false;
+            // Re-capture the vanilla per-relic bonus baseline on the next map so a stale
+            // value can't be reused if the game/another mod ever changes it per-map.
+            _vanillaBonusPerRelic = null;
             // Map (re)load → re-sweep so a save loaded with the toggle on has its
             // temples promoted without waiting for a priest change.
             _sweepNeeded = true;
             _expandedTempleIds.Clear();
-            _expandedWidgetIds.Clear();
             _unlockedThisMap = false;
         }
 
@@ -136,12 +150,43 @@ namespace SovereignBoons.Boons
         private static readonly FieldInfo? _onRelicsChangedField =
             AccessTools.Field(typeof(Temple), "onRelicsChanged");
 
+        // ---- relicSlotCooldowns access + save-safety constants ----
+        private const int VanillaCooldownCount = 6;   // Temple.Awake always Add(0)*6
+        private const int SafeCooldownCeiling  = 32;  // covers any inflated count from older buggy builds (newMax*2 ≤ 30)
+        private static readonly FieldInfo? _cooldownsField =
+            AccessTools.Field(typeof(Temple), "relicSlotCooldowns");
+        private static List<int>? GetCooldowns(Temple t)
+        {
+            try { return _cooldownsField?.GetValue(t) as List<int>; } catch { return null; }
+        }
+
+        // ---- vanilla AdjustRelics freeze-guard members (mixed field/property, base+Temple) ----
+        private static readonly FieldInfo?    _fIsLoading    = AccessTools.Field(typeof(Temple), "isLoading");
+        private static readonly FieldInfo?    _fShouldAdjust = AccessTools.Field(typeof(Temple), "shouldAdjustRelicsBasedOnPriestCount");
+        private static readonly PropertyInfo? _pIsRelocating = AccessTools.Property(typeof(Temple), "isRelocating");
+        private static readonly PropertyInfo? _pIsUpgrading  = AccessTools.Property(typeof(Temple), "isUpgrading");
+        private static readonly PropertyInfo? _pIsShutting   = AccessTools.Property(typeof(Temple), "isShuttingDown");
+
+        /// <summary>True when vanilla AdjustRelicsBasedOnPriestCount would early-return
+        /// (load/relocate/upgrade/shutdown windows). Our Unchain postfix mirrors it so
+        /// we don't mutate slot lists while the game has them frozen.</summary>
+        private static bool TempleIsFrozen(Temple t)
+        {
+            try
+            {
+                if (_fIsLoading?.GetValue(t)    is bool l && l)  return true;
+                if (_fShouldAdjust?.GetValue(t) is bool s && !s) return true; // false = vanilla froze adjustment
+                if (_pIsRelocating?.GetValue(t) is bool r && r)  return true;
+                if (_pIsUpgrading?.GetValue(t)  is bool u && u)  return true;
+                if (_pIsShutting?.GetValue(t)   is bool d && d)  return true;
+            }
+            catch { /* if reflection fails, fall through (don't block the feature) */ }
+            return false;
+        }
+
         /// <summary>Temples we've already expanded in Awake — prevents double-extending if Awake
         /// somehow re-fires on the same instance.</summary>
         private static readonly HashSet<int> _expandedTempleIds = new HashSet<int>();
-
-        /// <summary>Temple UI sub-widgets we've already cloned slots into.</summary>
-        private static readonly HashSet<int> _expandedWidgetIds = new HashSet<int>();
 
         // Cached MethodInfo for the private ActivateRelic call.
         private static MethodInfo? _activateRelicMI;
@@ -162,6 +207,31 @@ namespace SovereignBoons.Boons
         private static bool _sweepNeeded = true;
         private static bool _lastUnchainToggle;
 
+        // ---------- Master-toggle cascade ----------
+        // Per user design decision: unchecking the master Hallowed Reliquary toggle
+        // zeroes out its sub-options, so re-enabling requires deliberately re-setting
+        // them (rather than silently re-applying old values). Polled (O(1) bool compare)
+        // from OnUpdate; fires only on the true→false edge. NOT cleared in Reset() — the
+        // master toggle lives in the panel and can change at any time, independent of maps.
+        private static bool _masterTrackInit;
+        private static bool _lastMasterState;
+
+        public static void MaybeCascadeMasterToggle()
+        {
+            bool master = Config.EnableHallowedReliquary.Value;
+            if (!_masterTrackInit) { _masterTrackInit = true; _lastMasterState = master; return; }
+            if (_lastMasterState && !master) // unchecked
+            {
+                Config.HallowedReliquaryUnchainRelics.Value   = false;
+                Config.HallowedReliquaryUnlockAllRelics.Value = false;
+                Config.HallowedReliquaryBonusSlots.Value      = 0;
+                Config.HallowedReliquaryBonusMul.Value        = 1.0f; // neutral (no spirituality bonus)
+                try { MelonPreferences.Save(); } catch { /* best-effort */ }
+                Plugin.Log.Msg("[Hallowed Reliquary] Master toggle off — sub-options reset (Bonus Slots 0, Unchain/Unlock off, Bonus Mul 1.0).");
+            }
+            _lastMasterState = master;
+        }
+
         /// <summary>
         /// Called from Plugin.OnUpdate. Idempotent: only does work when a sweep
         /// is pending (after map load or toggle change), then clears the flag.
@@ -170,11 +240,10 @@ namespace SovereignBoons.Boons
         {
             if (!GameManager.gameReadyToPlay) return;
             if (!Config.EnableHallowedReliquary.Value) return;
-            if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return;
 
             // Toggle change → schedule a sweep (covers both off→on and on→off;
             // off→on promotes, on→off lets vanilla rebalance on next AdjustRelics
-            // call we trigger).
+            // call we trigger). Cheap; keep above the early-out so toggles register.
             bool current = Config.HallowedReliquaryUnchainRelics.Value;
             if (current != _lastUnchainToggle)
             {
@@ -183,6 +252,9 @@ namespace SovereignBoons.Boons
             }
 
             if (!_sweepNeeded) return;
+            // Foreign-mod check moved below the early-out so the params[] packing it
+            // allocates doesn't run every idle frame (only when a sweep is pending).
+            if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) { _sweepNeeded = false; return; }
 
             try
             {
@@ -242,6 +314,10 @@ namespace SovereignBoons.Boons
                 if (!Config.HallowedReliquaryUnchainRelics.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return;
                 if (__instance == null) return;
+                // Mirror vanilla's own early-return: don't mutate slot lists while the
+                // game has the temple frozen for load/relocate/upgrade/shutdown. A Harmony
+                // postfix runs even after vanilla early-returned, so we must re-check.
+                if (TempleIsFrozen(__instance)) return;
                 // Preserve vanilla "unstaffed temple = inactive" — only unchain when
                 // there's at least one priest.
                 if (__instance.workersRO == null || __instance.workersRO.Count == 0) return;
@@ -286,8 +362,7 @@ namespace SovereignBoons.Boons
             //   - _maxRelicCount is already extended when vanilla pads disabledSlots
             //     with `maxRelicCount` nulls (no second pad needed).
             //   - relicSlotCooldowns can be pre-padded so vanilla's hard-coded
-            //     `Add(0) * 6` afterwards yields the right total.
-            // Matches VC_ModifyTemple's formula: cooldowns total = newMax * 2.
+            //     `Add(0) * 6` afterwards yields exactly maxRelicCount entries.
             private static void Prefix(Temple __instance)
             {
                 if (!Config.EnableHallowedReliquary.Value) return;
@@ -305,14 +380,14 @@ namespace SovereignBoons.Boons
                     int newMax = oldMax + bonus;
                     _maxRelicCountRef(__instance) = newMax;
 
-                    // Extend cooldowns to newMax*2. Vanilla Awake will add 6 more after us,
-                    // so we add (newMax*2 - 6) here. Matches VC's formula.
-                    var cdField = AccessTools.Field(typeof(Temple), "relicSlotCooldowns");
-                    if (cdField?.GetValue(__instance) is List<int> cooldowns)
+                    // Cooldowns are indexed strictly by slot, so we need exactly
+                    // max(6, newMax) entries (NOT newMax*2 — that over-padded by double
+                    // and bloated the persisted count). Vanilla Awake adds 6 AFTER this
+                    // prefix, so add only the shortfall above 6.
+                    var cooldowns = GetCooldowns(__instance);
+                    if (cooldowns != null)
                     {
-                        int targetTotal = newMax * 2;
-                        // After our adds + vanilla's 6, we want targetTotal entries.
-                        int needToAddNow = targetTotal - 6;
+                        int needToAddNow = System.Math.Max(0, newMax - VanillaCooldownCount);
                         for (int i = 0; i < needToAddNow; i++) cooldowns.Add(0);
                     }
 
@@ -325,6 +400,81 @@ namespace SovereignBoons.Boons
             }
         }
 
+        // ---------- Save-safety shims (run regardless of Config) ----------
+        //
+        // Vanilla Temple.Save writes relicSlotCooldowns.Count verbatim; vanilla
+        // Temple.Load / PostRelocate then do an UNGUARDED indexed write back into
+        // the list. If a save persisted an expanded cooldown count, lowering Bonus
+        // Slots / disabling the boon / uninstalling the mod made that save fail to
+        // load. These three patches are intentionally NOT gated on EnableHallowed-
+        // Reliquary so they protect saves written by any prior state of the toggle.
+
+        [HarmonyPatch(typeof(Temple), "Save")]
+        internal static class Temple_Save_Patch
+        {
+            // Trim cooldowns to the vanilla count for the duration of Save so the file
+            // never persists an inflated count (keeps saves portable across disable/
+            // uninstall). Postfix restores the runtime-needed size.
+            private static void Prefix(Temple __instance)
+            {
+                if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return; // VC owns its own cooldown sizing
+                try
+                {
+                    var cd = GetCooldowns(__instance);
+                    if (cd != null && cd.Count > VanillaCooldownCount)
+                        cd.RemoveRange(VanillaCooldownCount, cd.Count - VanillaCooldownCount);
+                }
+                catch (Exception ex) { Plugin.Log.Warning($"[Hallowed Reliquary] Save trim failed: {ex.Message}"); }
+            }
+
+            private static void Postfix(Temple __instance)
+            {
+                if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return;
+                try
+                {
+                    var cd = GetCooldowns(__instance);
+                    if (cd == null) return;
+                    int need = System.Math.Max(VanillaCooldownCount, __instance.maxRelicCount);
+                    while (cd.Count < need) cd.Add(0);
+                }
+                catch (Exception ex) { Plugin.Log.Warning($"[Hallowed Reliquary] Save restore failed: {ex.Message}"); }
+            }
+        }
+
+        [HarmonyPatch(typeof(Temple), "Load")]
+        internal static class Temple_Load_Patch
+        {
+            // Grow the list to a safe ceiling BEFORE vanilla's unguarded indexed read,
+            // so a save written by an older build (inflated count) still loads.
+            private static void Prefix(Temple __instance)
+            {
+                if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return;
+                try
+                {
+                    var cd = GetCooldowns(__instance);
+                    if (cd != null) while (cd.Count < SafeCooldownCeiling) cd.Add(0);
+                }
+                catch (Exception ex) { Plugin.Log.Warning($"[Hallowed Reliquary] Load pad failed: {ex.Message}"); }
+            }
+        }
+
+        [HarmonyPatch(typeof(Temple), "PostRelocate")]
+        internal static class Temple_PostRelocate_Patch
+        {
+            // Same unguarded indexed write exists in PostRelocate against the
+            // relocation data's cooldown count — pad before it runs.
+            private static void Prefix(Temple __instance)
+            {
+                if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return;
+                try
+                {
+                    var cd = GetCooldowns(__instance);
+                    if (cd != null) while (cd.Count < SafeCooldownCeiling) cd.Add(0);
+                }
+                catch (Exception ex) { Plugin.Log.Warning($"[Hallowed Reliquary] PostRelocate pad failed: {ex.Message}"); }
+            }
+        }
+
         // ---------- Slot expansion (UI layer) ----------
 
         [HarmonyPatch(typeof(UISubWidgetTempleControls), "Init")]
@@ -333,19 +483,21 @@ namespace SovereignBoons.Boons
             private static readonly FieldInfo? _widgetRelicSlotsField =
                 AccessTools.Field(typeof(UISubWidgetTempleControls), "relicSlots");
 
-            // Prefix: clone the prefab's existing UIRelicSlot widget GameObject `bonus`
-            // times into its parent layout BEFORE base.Init() runs UpdateControls.
-            // UpdateControls indexes `relicSlots[i]` up to `temple.relicSlotsRO.Count`,
-            // so we must have enough widgets in the list to cover every data slot.
-            private static void Prefix(UISubWidgetTempleControls __instance)
+            // Prefix: clone the prefab's existing UIRelicSlot widget GameObject up to the
+            // temple's live maxRelicCount BEFORE base.Init() runs UpdateControls.
+            // Vanilla UpdateControls' first loop indexes `relicSlots[i]` up to
+            // `temple.relicSlotsRO.Count` with NO bounds guard, so the UI widget list
+            // must reach maxRelicCount or it throws on every refresh.
+            //
+            // Targeting maxRelicCount (not a recomputed bonus) makes this idempotent and
+            // fixes the pooled-widget case: if a sub-widget is reused for a temple with a
+            // different slot count, each Init re-clones up to the current need rather than
+            // freezing at the first temple's count.
+            private static void Prefix(UISubWidgetTempleControls __instance, GameObject _targetGameObject)
             {
                 if (!Config.EnableHallowedReliquary.Value) return;
                 if (Plugin.IsForeignModLoaded("VC_ModifyTemple")) return;
                 if (__instance == null) return;
-                if (!_expandedWidgetIds.Add(__instance.GetInstanceID())) return;
-
-                int bonus = Config.HallowedReliquaryBonusSlots.Value;
-                if (bonus <= 0) return;
                 if (_widgetRelicSlotsField == null) return;
 
                 try
@@ -361,6 +513,13 @@ namespace SovereignBoons.Boons
                         return;
                     }
 
+                    // Match the data layer exactly: clone up to the temple's maxRelicCount.
+                    var temple = _targetGameObject != null ? _targetGameObject.GetComponent<Temple>() : null;
+                    int target = temple != null
+                        ? temple.maxRelicCount
+                        : list.Count + System.Math.Max(0, Config.HallowedReliquaryBonusSlots.Value);
+                    if (list.Count >= target) return; // already has enough widgets (idempotent / pooled reuse)
+
                     // Use the first prefab slot as the template. Its GameObject sits inside
                     // a HorizontalLayoutGroup row container; that row container itself sits in
                     // a parent that ideally has a VerticalLayoutGroup so new rows stack below.
@@ -372,13 +531,14 @@ namespace SovereignBoons.Boons
                         return;
                     }
 
+                    int needed = target - list.Count;
+
                     // Decide row layout. ROW_CAPACITY is conservative — vanilla shows 2 slots
                     // with comfortable spacing; pushing past ~5 per row starts visibly compressing.
                     const int ROW_CAPACITY = 5;
-                    int vanillaInRow1 = list.Count;
-                    int row1ClonesPossible = System.Math.Max(0, ROW_CAPACITY - vanillaInRow1);
-                    int row1Clones = System.Math.Min(bonus, row1ClonesPossible);
-                    int remaining = bonus - row1Clones;
+                    int row1ClonesPossible = System.Math.Max(0, ROW_CAPACITY - list.Count);
+                    int row1Clones = System.Math.Min(needed, row1ClonesPossible);
+                    int remaining = needed - row1Clones;
 
                     int added = 0;
                     // --- Row 1: clone into the existing row container ---
@@ -445,7 +605,20 @@ namespace SovereignBoons.Boons
                         }
                     }
 
-                    Plugin.Log.Msg($"[Hallowed Reliquary] Cloned {added} relic slot UI widget(s) (list now {list.Count}).");
+                    // Trailing safety net: guarantee no shortfall regardless of row-split
+                    // edge cases or a clone whose UIRelicSlot wasn't found, so vanilla
+                    // UpdateControls' unguarded relicSlots[i] can never overflow.
+                    int guard = 0;
+                    while (list.Count < target && guard++ < 64)
+                    {
+                        var clone = UnityEngine.Object.Instantiate(templateGO, row1);
+                        clone.name = templateGO.name + $"_sb_fill_{guard}";
+                        var slot = clone.GetComponentInChildren<UIRelicSlot>(includeInactive: true);
+                        if (slot != null) { list.Add(slot); added++; }
+                        else { UnityEngine.Object.Destroy(clone); break; }
+                    }
+
+                    Plugin.Log.Msg($"[Hallowed Reliquary] Cloned {added} relic slot UI widget(s) (list now {list.Count}, target {target}).");
                 }
                 catch (Exception ex)
                 {

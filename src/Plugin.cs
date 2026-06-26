@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", "1.0.3", "sagedragoon79")]
+[assembly: MelonInfo(typeof(SovereignBoons.Plugin), "Sovereign Boons", SovereignBoons.Plugin.Version, "sagedragoon79")]
 [assembly: MelonGame("Crate Entertainment", "Farthest Frontier")]
 
 namespace SovereignBoons
@@ -21,6 +21,11 @@ namespace SovereignBoons
     /// </summary>
     public class Plugin : MelonMod
     {
+        /// <summary>Single source of truth for the mod version — used by the MelonInfo
+        /// attribute, the init log, and the Keep Clarity registration so they can't drift.
+        /// Bump together with the .csproj &lt;Version&gt; on release.</summary>
+        public const string Version = "1.0.4";
+
         public static Plugin Instance { get; private set; } = null!;
         public static MelonLogger.Instance Log => Instance.LoggerInstance;
 
@@ -39,7 +44,7 @@ namespace SovereignBoons
             // Boons that apply at init (no scene needed):
             Boons.SteadfastResolve.Apply();
 
-            LoggerInstance.Msg("Sovereign Boons 1.0.3 initialized");
+            LoggerInstance.Msg($"Sovereign Boons {Version} initialized");
         }
 
         private void DetectForeignMods()
@@ -97,6 +102,8 @@ namespace SovereignBoons
                 Boons.HallowedReliquary.Reset();
                 Boons.CivicPride.Reset();
                 Boons.LevysArms.Reset();
+                Boons.GreaterHalls.Reset();
+                Boons.WealthyCaravans.Reset();
                 Boons.BountifulFields.ResetLogFlag();
                 return;
             }
@@ -108,6 +115,9 @@ namespace SovereignBoons
 
         public override void OnUpdate()
         {
+            // Hallowed Reliquary: cascade the master toggle (unchecking zeroes its
+            // sub-options) — cheap O(1) edge check, runs regardless of map state.
+            Boons.HallowedReliquary.MaybeCascadeMasterToggle();
             // Hallowed Reliquary captures vanilla ReligionManager bonus and applies
             // its multiplier once GameManager exists. Self-throttles via _applied flag.
             Boons.HallowedReliquary.TryApplyBonusOnce();
@@ -116,6 +126,10 @@ namespace SovereignBoons
             Boons.HallowedReliquary.MaybeSweepTemples();
             // Unlock-all-relics one-shot — fires once per map when the toggle is on.
             Boons.HallowedReliquary.TryUnlockAllRelicsOnce();
+
+            // Bountiful Fields manager-dependent globals — deferred one-shot until the
+            // AgricultureManager exists (it isn't wired at "Map" scene init).
+            Boons.BountifulFields.MaybeApplyGlobals();
 
             // Emergency Militia hotkey poll.
             Boons.LevysArms.OnUpdate();

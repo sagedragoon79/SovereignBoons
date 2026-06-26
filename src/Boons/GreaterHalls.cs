@@ -208,12 +208,30 @@ namespace SovereignBoons.Boons
             catch (System.Exception ex) { Plugin.Log.Warning($"[Greater Halls] Awake apply ({__instance?.GetType().Name}): {ex.Message}"); }
         }
 
+        // Cached once (was allocated per-Shelter inline before). FieldRef walks the
+        // inheritance chain to find EnterableBuilding._userDefinedMaxWorkers.
+        private static readonly AccessTools.FieldRef<EnterableBuilding, int>? _userDefinedMaxWorkersRef =
+            AccessTools.FieldRefAccess<EnterableBuilding, int>("_userDefinedMaxWorkers");
+
+        /// <summary>
+        /// Clear the dispatcher de-dupe sets on map teardown. The sets MUST persist
+        /// within a map (AssignMaxVacancyAvailable fires repeatedly per building, so
+        /// without de-dupe the addon would compound) but MUST be cleared between maps —
+        /// Unity recycles GetInstanceID, so a stale entry could otherwise make a new
+        /// map's building skip its add-on. Wired into Plugin.OnSceneWasInitialized.
+        /// </summary>
+        public static void Reset()
+        {
+            EnterableBuilding_Patch._seen.Clear();
+            LivestockBuilding_Patch._seen.Clear();
+        }
+
         // ----- Generic dispatchers: EnterableBuilding + LivestockBuilding -----
 
         [HarmonyPatch(typeof(EnterableBuilding), "AssignMaxVacancyAvailable")]
         internal static class EnterableBuilding_Patch
         {
-            private static readonly HashSet<int> _seen = new HashSet<int>();
+            internal static readonly HashSet<int> _seen = new HashSet<int>();
 
             private static void Prefix(EnterableBuilding __instance)
             {
@@ -227,12 +245,11 @@ namespace SovereignBoons.Boons
                     int addon = LookupAddon(__instance);
                     if (addon == 0) return;
                     ApplyAddon(__instance, addon);
-                    if (__instance is Shelter)
+                    if (__instance is Shelter && _userDefinedMaxWorkersRef != null)
                     {
                         // Shelter also needs the user-defined max bumped so the resident
                         // capacity matches the slot count.
-                        var udmRef = AccessTools.FieldRefAccess<EnterableBuilding, int>("_userDefinedMaxWorkers");
-                        udmRef(__instance) = udmRef(__instance) + addon;
+                        _userDefinedMaxWorkersRef(__instance) = _userDefinedMaxWorkersRef(__instance) + addon;
                     }
                 }
                 catch (System.Exception ex)
@@ -245,7 +262,7 @@ namespace SovereignBoons.Boons
         [HarmonyPatch(typeof(LivestockBuilding), "AssignMaxVacancyAvailable")]
         internal static class LivestockBuilding_Patch
         {
-            private static readonly HashSet<int> _seen = new HashSet<int>();
+            internal static readonly HashSet<int> _seen = new HashSet<int>();
 
             private static void Prefix(LivestockBuilding __instance)
             {

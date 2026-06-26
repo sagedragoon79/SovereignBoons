@@ -166,6 +166,12 @@ namespace SovereignBoons.Boons
                     yield return new CropPref { Crop = crop, Entries = e, Vanilla = BountifulFields.Vanilla[crop] };
         }
 
+        // Manager-dependent globals (gridsPerFarmer / maintenance length) are deferred to
+        // a gameReadyToPlay one-shot — at "Map" scene init AgricultureManager isn't wired
+        // yet, so applying there silently no-ops. Per-crop record mutation is fine at
+        // scene init (ObjectDataStore is already loaded).
+        private static bool _globalsApplied;
+
         // Called from Plugin.OnSceneWasInitialized("Map").
         public static void Apply()
         {
@@ -174,7 +180,6 @@ namespace SovereignBoons.Boons
 
             try
             {
-                ApplyGlobals();
                 CaptureVanillaIfNeeded();
                 MaybeLogVanilla();
                 MaybeLogDiseases();
@@ -184,6 +189,20 @@ namespace SovereignBoons.Boons
             {
                 Plugin.Log.Warning($"[Bountiful Fields] Apply failed: {ex.Message}");
             }
+        }
+
+        // Called every frame from Plugin.OnUpdate — applies the manager-dependent globals
+        // exactly once per map, after GameManager is ready.
+        public static void MaybeApplyGlobals()
+        {
+            if (_globalsApplied) return;
+            if (!Config.EnableBountifulFields.Value) return;
+            if (Plugin.IsForeignModLoaded("VC_ConfigurableCropFields")) return;
+            if (!GameManager.gameReadyToPlay) return;
+
+            try { ApplyGlobals(); }
+            catch (System.Exception ex) { Plugin.Log.Warning($"[Bountiful Fields] ApplyGlobals failed: {ex.Message}"); }
+            _globalsApplied = true;
         }
 
         private static void ApplyGlobals()
@@ -341,6 +360,7 @@ namespace SovereignBoons.Boons
         {
             _vanillaLogged = false;
             _diseasesLogged = false;
+            _globalsApplied = false; // re-apply manager globals on the next map
         }
 
         private static void ApplyPerCrop()

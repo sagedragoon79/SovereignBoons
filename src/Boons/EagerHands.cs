@@ -23,17 +23,38 @@ namespace SovereignBoons.Boons
     /// </summary>
     internal static class EagerHands
     {
+        // VillagerHealth age cutoffs are process-global statics that the game does NOT
+        // reset between maps. Capture the true vanilla baseline on the first call so we
+        // can restore it when the boon is later disabled (otherwise the lowered cutoffs
+        // would persist process-wide until FF restarts).
+        private static int? _vanillaChild;
+        private static int? _vanillaAdolescent;
+
         /// <summary>
         /// Called from Plugin.OnSceneWasInitialized — writes the static VillagerHealth
-        /// age cutoffs when the boon is enabled. Idempotent.
+        /// age cutoffs when the boon is enabled, and restores vanilla when it's disabled.
+        /// Idempotent.
         /// </summary>
         public static void ApplyStatics()
         {
-            if (!Config.EnableEagerHands.Value) return;
             if (Plugin.IsForeignModLoaded("ForcedChildLabor")) return;
 
             try
             {
+                // Capture vanilla once (first call, before we ever overwrite).
+                if (!_vanillaChild.HasValue)
+                {
+                    _vanillaChild      = VillagerHealth.ageCutoffChild;
+                    _vanillaAdolescent = VillagerHealth.ageCutoffAdolescent;
+                }
+
+                // Always restore vanilla first, so disabling the boon and loading another
+                // map reverts the cutoffs instead of leaving the lowered values stuck.
+                VillagerHealth.ageCutoffChild      = _vanillaChild      ?? VillagerHealth.ageCutoffChild;
+                VillagerHealth.ageCutoffAdolescent = _vanillaAdolescent ?? VillagerHealth.ageCutoffAdolescent;
+
+                if (!Config.EnableEagerHands.Value) return;
+
                 VillagerHealth.ageCutoffChild      = Config.EagerHandsChildAge.Value;
                 VillagerHealth.ageCutoffAdolescent = Config.EagerHandsAdolescentAge.Value;
                 Plugin.Log.Msg($"[Eager Hands] Age cutoffs set: child={VillagerHealth.ageCutoffChild}, " +

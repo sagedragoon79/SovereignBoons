@@ -30,6 +30,14 @@ namespace SovereignBoons.Boons
         private static readonly AccessTools.FieldRef<TradeWagon, List<string>>? _willingToBuyRef =
             AccessTools.FieldRefAccess<TradeWagon, List<string>>("itemsWillingToBuy");
 
+        // TradeWagon.Init runs again on the load path (OnGameFinishedLoading), and numGold/
+        // goods are read from LIVE storage — so re-buffing a restored, already-buffed wagon
+        // would compound the gold/goods geometrically every reload. Guard so each wagon is
+        // buffed exactly once. Cleared on map teardown.
+        private static readonly HashSet<int> _buffedWagons = new HashSet<int>();
+
+        public static void Reset() => _buffedWagons.Clear();
+
         // ---------- TradeWagon.Init postfix: buff gold + goods ----------
 
         [HarmonyPatch(typeof(TradeWagon), "Init")]
@@ -40,6 +48,8 @@ namespace SovereignBoons.Boons
                 if (!Config.EnableWealthyCaravans.Value) return;
                 if (Plugin.IsForeignModLoaded("TravelingMerchantPlusMono")) return;
                 if (__instance == null || __instance.storage == null) return;
+                // One-time per wagon — prevents the load-path re-Init from compounding.
+                if (!_buffedWagons.Add(__instance.GetInstanceID())) return;
 
                 try
                 {
