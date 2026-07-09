@@ -2,6 +2,13 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.0.5 (2026-05-29)
+
+### Fixed
+- **Achieve Cheese** now keeps the in-game achievements window usable with custom settings, not just the Steam-side unlocks. The game gates achievements two inconsistent ways: the unlock/stat paths honor `SettingsManager.allowCustomSettingsForAchievements` (which the boon set), but `UIAchievements.OnOpened` gates purely on `AreCustomGameOptionsSet(cheats:true)` and never reads that field — so with custom settings the achievements window greyed itself out even though achievements were unlocking. The boon now also patches `AreCustomGameOptionsSet` to return false for the achievement-context calls (all of which pass `allowAchievementsWithCheats: true`), uniformly neutralizing the custom-options gate across both the unlock paths and the UI window. Start-screen "Custom map" display calls (which use the `false` default) are left untouched. *Verified: window is disabled with the boon off, browsable with it on, under custom settings.*
+
+---
+
 ## v1.0.4 (2026-05-29)
 
 Adversarial-review hardening pass (19 confirmed findings fixed) plus a Domain Expansion placement-preview fix. Verified in-game before release.
