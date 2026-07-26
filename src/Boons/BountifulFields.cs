@@ -58,12 +58,24 @@ namespace SovereignBoons.Boons
                 ["Flax"]      = new CropVanilla { Fertility = 5,  PlantingDays = 10, MatureDays = 95,  WeedLevel =  0f,  FrostDiePct = 0,  HeatDiePct = 0  },
                 ["Clover"]    = new CropVanilla { Fertility = -3, PlantingDays = 10, MatureDays = 64,  WeedLevel = -8f,  FrostDiePct = 0,  HeatDiePct = 0  },
                 ["Hay"]       = new CropVanilla { Fertility = 1,  PlantingDays = 10, MatureDays = 128, WeedLevel = -5f,  FrostDiePct = 0,  HeatDiePct = 0  },
+                // ----- Bountiful Crops (SB-injected; "vanilla" = our designed baselines) -----
+                ["Pepper"]       = new CropVanilla { Fertility = 10, PlantingDays = 10, MatureDays = 70, WeedLevel = 1f, FrostDiePct = 80, HeatDiePct = 5  },
+                ["MonksComfort"] = new CropVanilla { Fertility = 8,  PlantingDays = 10, MatureDays = 65, WeedLevel = 1f, FrostDiePct = 30, HeatDiePct = 10 },
+                ["Hemp"]         = new CropVanilla { Fertility = 12, PlantingDays = 10, MatureDays = 60, WeedLevel = 1f, FrostDiePct = 25, HeatDiePct = 10 },
+                ["Soybean"]      = new CropVanilla { Fertility = 5,  PlantingDays = 10, MatureDays = 70, WeedLevel = 1f, FrostDiePct = 45, HeatDiePct = 10 },
+                ["Corn"]         = new CropVanilla { Fertility = 12, PlantingDays = 10, MatureDays = 75, WeedLevel = 1f, FrostDiePct = 70, HeatDiePct = 5  },
+                ["PurpleWillow"] = new CropVanilla { Fertility = 4,  PlantingDays = 10, MatureDays = 80, WeedLevel = 1f, FrostDiePct = 10, HeatDiePct = 30 },
+                ["Cremini"]      = new CropVanilla { Fertility = 2,  PlantingDays = 10, MatureDays = 45, WeedLevel = 1f, FrostDiePct = 20, HeatDiePct = 40 },
+                ["Herbs"]        = new CropVanilla { Fertility = -3, PlantingDays = 10, MatureDays = 60, WeedLevel = -4f, FrostDiePct = 15, HeatDiePct = 15 },
             };
 
         internal static readonly string[] Crops = new[]
         {
             "Turnip", "Carrot", "Wheat", "Buckwheat", "Rye", "Bean",
             "Pea",    "Cabbage", "Leek", "Flax",      "Clover", "Hay",
+            // Bountiful Crops — record keys follow the XField convention, so StripFieldSuffix and
+            // the Contains("Field") record scans cover them exactly like vanilla crops.
+            "Pepper", "MonksComfort", "Hemp", "Soybean", "Corn", "PurpleWillow", "Cremini", "Herbs",
         };
 
         // Per-crop entries — keyed by short crop name (e.g. "Wheat").

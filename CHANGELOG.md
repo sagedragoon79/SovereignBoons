@@ -2,6 +2,47 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.1.0 (2026-07-26)
+
+### Added — 🌾 Bountiful Crops: EIGHT new farmable crops
+The biggest content addition in SB's history: a full custom-crop engine (proven end-to-end in a
+standalone spike, then folded in under Bountiful Fields). One master toggle
+(`Bountiful Crops — 8 New Crops`, OFF by default) adds eight new crops to the crop-field planting
+picker, each with its own soil personality, climate profile, harvest chain, and hand-drawn icon
+(embedded in the DLL; a same-named `SBCrop_*.png` in Mods overrides for custom art):
+
+| Crop | Harvest | Yield | Soil | Personality |
+|---|---|---|---|---|
+| **Peppers** | Spice | 10:1 (dried & ground) | sandiest in game (0.60–0.85) | frost-doomed luxury; FF's first domestic Spice source |
+| **Monk's Comfort** | Medicinal Roots | 3:1 | clay (0.15–0.40) | hardy monastery herb; first cultivated healer supply |
+| **Hemp** | Fibers | 1:1 | clay | fast fiber via the native flax chain |
+| **Soybeans** | Nuts | 1:1 | mid (Bean companion) | gentlest crop on soil (nitrogen-fixing legume) |
+| **Corn** | Grain | 1:1 | mid (Wheat companion) | the tender late-window grain; thirstiest grain. It's got the juice! |
+| **Purple Willow** | Willow | 1:1 | clay | frost-proof wetland osier; hates drought & heat |
+| **Cremini** | Mushrooms | 1:1 | anywhere damp (wide plateau) | fastest crop (45d); wilts in heat |
+| **Herb Garden** | Herbs | 3:1 | mid (Clover companion) | **restores fertility while growing** — the cover crop that pays |
+
+- **Field ecology by design:** sandy fields rotate Flax↔Peppers, clay fields rotate Monk's
+  Comfort↔Hemp↔Willow, grain fields run Wheat/Rye early → Corn late (same soil, opposite windows,
+  no shared diseases), Cremini fills any damp gap, Herb Garden rests the soil.
+- **Full Bountiful Fields integration:** all eight appear in the per-crop tuning sliders
+  (fertility/days/weeds/frost/heat) alongside the twelve vanilla crops — twenty crops tunable.
+- **Item rename:** the Flax *item* is now displayed as **"Fibers"** everywhere (storage, trade,
+  tooltips) since both Flax and Hemp produce it. Crop names unchanged.
+- **Save-safe toggle:** turning Bountiful Crops OFF only removes the picker icons — crops already
+  planted in a save keep growing, harvesting, and loading normally.
+- ⚠️ **Uninstall note:** clear/harvest Bountiful Crops from your fields before removing Sovereign
+  Boons entirely — a save referencing the crops without the mod installed will lose those fields.
+
+### Under the hood (for fellow modders)
+Custom crops require patching three separate hardcoded walls in FF: the harvest-bucket routing
+(`PlantResource`'s six-item check), the farmer task table (`GetFarmerSearchDefs`' item-bound
+definitions), and the Hungarian matcher's first-def-wins binding (fixed via a commit-time def swap).
+Plus load-safety (`GetCropPrefab` has no null check on save-load) and a vanilla window crash
+(`OnPlantDataChanged` indexes drag prefabs by typeID unbounded). All documented in the repo.
+
+---
+
 ## v1.0.5 (2026-05-29)
 
 ### Fixed

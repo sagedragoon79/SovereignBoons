@@ -32,6 +32,13 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<bool>  WealthyCaravansBuyAnything  { get; private set; } = null!;
         public static MelonPreferences_Entry<int>   WealthyCaravansMaxStock     { get; private set; } = null!;
 
+        // ----- Merchant's Gambit (trade-arbitrage calculator / executor) -----
+        public static MelonPreferences_Entry<bool>   EnableMerchantsGambit      { get; private set; } = null!;
+        public static MelonPreferences_Entry<string> MerchantsGambitScanKey     { get; private set; } = null!;
+        public static MelonPreferences_Entry<int>    MerchantsGambitMinProfit   { get; private set; } = null!;
+        public static MelonPreferences_Entry<int>    MerchantsGambitMaxCycles   { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool>   MerchantsGambitDryRun      { get; private set; } = null!;
+
         // ===== Workforce bucket =====
 
         // ----- Swift Feet (folded from FastVillagers by Krasipeace) -----
@@ -106,6 +113,7 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<bool>  HallowedReliquaryUnlockAllRelics{ get; private set; } = null!;
 
         // ----- Bountiful Fields (folded from VC_ConfigurableCropFields by VC) -----
+        public static MelonPreferences_Entry<bool>  EnableBountifulCrops               { get; private set; } = null!;
         public static MelonPreferences_Entry<bool>  EnableBountifulFields              { get; private set; } = null!;
         public static MelonPreferences_Entry<bool>  BountifulFieldsLogVanilla          { get; private set; } = null!;
         public static MelonPreferences_Entry<bool>  BountifulFieldsLogDiseases         { get; private set; } = null!;
@@ -171,6 +179,29 @@ namespace SovereignBoons
             WealthyCaravansMaxStock = _root.CreateEntry("WealthyCaravansMaxStock", 1000,
                 display_name: "Wealthy Caravans — Trading Post Max Stock",
                 description: "TradeManager.maxTradingPostStockCount override. Vanilla = 100. Range 100..5000.");
+
+            // ===== Merchant's Gambit =====
+            EnableMerchantsGambit = _root.CreateEntry("EnableMerchantsGambit", false,
+                display_name: "Merchant's Gambit — Enabled",
+                description: "Trade-arbitrage tool: press the hotkey to scan every trading post's visiting " +
+                             "merchants, find profitable buy-low / sell-high sequences, and (unless Dry Run is " +
+                             "on) run the whole stairstep in one shot via the game's own trade methods. Default: OFF.");
+            MerchantsGambitScanKey = _root.CreateEntry("MerchantsGambitScanKey", "Ctrl+B",
+                display_name: "Merchant's Gambit — Hotkey",
+                description: "Key/chord to run the arbitrage scan (and execute, unless Dry Run). " +
+                             "Unity KeyCode or chord — e.g. Ctrl+B, F6, Alt+Shift+M. Default: Ctrl+B.");
+            MerchantsGambitDryRun = _root.CreateEntry("MerchantsGambitDryRun", true,
+                display_name: "Merchant's Gambit — Dry Run (report only)",
+                description: "When true, the hotkey only REPORTS the projected arbitrage (toast + log) and moves " +
+                             "no goods/gold — so you can verify the numbers before trusting execution. Default: TRUE.");
+            MerchantsGambitMinProfit = _root.CreateEntry("MerchantsGambitMinProfit", 1,
+                display_name: "Merchant's Gambit — Min Profit / Unit",
+                description: "Skip any arbitrage whose per-unit gold profit is below this. Prevents churning on " +
+                             "break-even trades. Default: 1. Range 1..100.");
+            MerchantsGambitMaxCycles = _root.CreateEntry("MerchantsGambitMaxCycles", 500,
+                display_name: "Merchant's Gambit — Max Cycles",
+                description: "Safety cap on the number of buy/sell steps per run (prevents runaway loops / lag). " +
+                             "Default: 500. Range 10..5000.");
 
             // ===== King's Highway =====
             EnableKingsHighway = _root.CreateEntry("EnableKingsHighway", false,
@@ -377,6 +408,16 @@ namespace SovereignBoons
                              "give you empty drawers.");
 
             // ===== Bountiful Fields =====
+            EnableBountifulCrops = _root.CreateEntry("EnableBountifulCrops", false,
+                display_name: "Bountiful Crops — Enabled",
+                description: "Adds eight new farmable crops: Peppers (→Spice), Monk's Comfort " +
+                             "(→Medicinal Roots), Hemp (→Fibers), Soybeans (→Nuts), Corn (→Grain), " +
+                             "Purple Willow (→Willow), Cremini (→Mushrooms), Herb Garden (→Herbs, " +
+                             "restores fertility). Each appears in the planting picker with its own " +
+                             "soil personality and climate profile; tune them per-crop via the " +
+                             "Bountiful Fields sliders below. SAVE-SAFE: turning this OFF only " +
+                             "removes the picker icons (no NEW plantings) — crops already in a save " +
+                             "keep growing, harvesting, and loading normally. Default: false.");
             EnableBountifulFields = _root.CreateEntry("EnableBountifulFields", false,
                 display_name: "Bountiful Fields — Enabled",
                 description: "Per-crop tuning of fertility/days/weed/frost/heat plus globals. " +

@@ -24,7 +24,7 @@ namespace SovereignBoons
         /// <summary>Single source of truth for the mod version — used by the MelonInfo
         /// attribute, the init log, and the Keep Clarity registration so they can't drift.
         /// Bump together with the .csproj &lt;Version&gt; on release.</summary>
-        public const string Version = "1.0.5";
+        public const string Version = "1.1.0";
 
         public static Plugin Instance { get; private set; } = null!;
         public static MelonLogger.Instance Log => Instance.LoggerInstance;
@@ -133,6 +133,9 @@ namespace SovereignBoons
 
             // Emergency Militia hotkey poll.
             Boons.LevysArms.OnUpdate();
+
+            // Merchant's Gambit arbitrage-scan hotkey poll.
+            Boons.MerchantsGambit.OnUpdate();
         }
 
         public override void OnGUI()

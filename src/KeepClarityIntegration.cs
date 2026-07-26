@@ -161,6 +161,36 @@ namespace SovereignBoons
                         visibleWhen: () => Config.EnableWealthyCaravans.Value,
                         order: 204, indent: 20));
 
+            // ===== Merchant's Gambit (Economy) — order block 300 =====
+            Reg(GroupEconomy, Config.EnableMerchantsGambit,
+                NewMeta("Merchant's Gambit",
+                        "Press the hotkey to scan visiting merchants for profitable buy-low/sell-high arbitrage " +
+                        "and run the whole stairstep in one shot. Starts in Dry Run (report only). Default: OFF.",
+                        order: 300));
+            Reg(GroupEconomy, Config.MerchantsGambitDryRun,
+                NewMeta("Dry Run (report only)",
+                        "Report projected profit via toast + log without moving any goods/gold. Verify the numbers, " +
+                        "then turn this OFF to enable one-click execution. Default: ON.",
+                        visibleWhen: () => Config.EnableMerchantsGambit.Value,
+                        order: 301, indent: 20));
+            Reg(GroupEconomy, Config.MerchantsGambitScanKey,
+                NewMeta("Hotkey",
+                        "KeyCode or chord — Ctrl+B, F6, Alt+Shift+M (modifiers: Ctrl/Alt/Shift). Default: Ctrl+B.",
+                        visibleWhen: () => Config.EnableMerchantsGambit.Value,
+                        order: 302, indent: 20));
+            Reg(GroupEconomy, Config.MerchantsGambitMinProfit,
+                NewMeta("Min Profit / Unit",
+                        "Skip arbitrage below this per-unit gold profit. Default: 1.",
+                        min: 1, max: 100,
+                        visibleWhen: () => Config.EnableMerchantsGambit.Value,
+                        order: 303, indent: 20));
+            Reg(GroupEconomy, Config.MerchantsGambitMaxCycles,
+                NewMeta("Max Cycles",
+                        "Safety cap on buy/sell steps per run. Default: 500.",
+                        min: 10, max: 5000,
+                        visibleWhen: () => Config.EnableMerchantsGambit.Value,
+                        order: 304, indent: 20));
+
             // ===== Swift Feet (Workforce) — order block 100 =====
             Reg(GroupWorkforce, Config.EnableSwiftFeet,
                 NewMeta("Swift Feet",
@@ -415,12 +445,21 @@ namespace SovereignBoons
                             order: ghOrder++, indent: 20));
             }
 
-            // ===== Bountiful Fields (Buildings) — order block 1000 (1 master + 3 globals + 12 crops × 7 = 84 sub-entries) =====
+            // ===== Bountiful Fields (Buildings) — order block 1000 (2 masters + 3 globals + 17 crops × 7 sub-entries) =====
             Reg(GroupBuildings, Config.EnableBountifulFields,
                 NewMeta("Bountiful Fields",
                         "Per-crop tuning + farming globals. Crop data records are mutated on map load — " +
                         "reload your save after changing values for them to take effect.",
                         order: 1000, reloadRequired: true));
+            Reg(GroupBuildings, Config.EnableBountifulCrops,
+                NewMeta("Bountiful Crops — 8 New Crops",
+                        "Adds Peppers (→Spice), Monk's Comfort (→Medicinal Roots), Hemp (→Fibers), " +
+                        "Soybeans (→Nuts), Corn (→Grain), Purple Willow (→Willow), Cremini " +
+                        "(→Mushrooms), and Herb Garden (→Herbs, restores fertility) to the planting " +
+                        "picker. Tune them per-crop with the sliders below, same as vanilla crops. " +
+                        "SAVE-SAFE: turning OFF only removes the picker icons — crops already " +
+                        "planted in a save keep working. Default: false.",
+                        order: 1005, indent: 20, reloadRequired: true));
             Reg(GroupBuildings, Config.BountifulFieldsLogVanilla,
                 NewMeta("Log Vanilla Values",
                         "Dump every crop's vanilla VegetableFieldsRecord values to MelonLoader.log on map load. " +
