@@ -613,23 +613,39 @@ namespace SovereignBoons.Boons
                             int n = CountIcons(row);
                             if (n >= 1 && n < 2) { targetRow = row; break; }
                         }
-                    // All rows full → use/create an overflow row at the bottom of the panel (rows hold
-                    // two; with 8 crops a couple can outrun the vanilla free slots).
-                    if (targetRow == null)
+                    // All rows full → use/create overflow rows at the bottom of the panel (rows hold
+                    // two). Fully automatic for future crops: each new overflow row grows the popup
+                    // background by one row height so nothing ever hangs off the panel.
+                    for (int oi = 1; targetRow == null && oi <= 16; oi++)
                     {
-                        var existing = rowsContainer.Find("SBCrops_OverflowRow");
-                        if (existing != null && CountIcons(existing) < 2) targetRow = existing;
-                        else if (existing == null)
+                        string rowName = oi == 1 ? "SBCrops_OverflowRow" : $"SBCrops_OverflowRow{oi}";
+                        var existing = rowsContainer.Find(rowName);
+                        if (existing != null)
                         {
-                            var newRow = UnityEngine.Object.Instantiate(donorRow.gameObject, rowsContainer);
-                            newRow.name = "SBCrops_OverflowRow";
-                            foreach (var ic in newRow.GetComponentsInChildren<UICropInfoScheduleBarCropIcon>(true))
-                            {
-                                ic.transform.SetParent(null); // detach so same-frame counts exclude it
-                                UnityEngine.Object.Destroy(ic.gameObject);
-                            }
-                            targetRow = newRow.transform;
+                            if (CountIcons(existing) < 2) targetRow = existing;
+                            continue; // full → try the next overflow row index
                         }
+                        var newRow = UnityEngine.Object.Instantiate(donorRow.gameObject, rowsContainer);
+                        newRow.name = rowName;
+                        foreach (var ic in newRow.GetComponentsInChildren<UICropInfoScheduleBarCropIcon>(true))
+                        {
+                            ic.transform.SetParent(null); // detach so same-frame counts exclude it
+                            UnityEngine.Object.Destroy(ic.gameObject);
+                        }
+                        // Sit ABOVE the maintenance/clover row (keep crops clustered)…
+                        if (rowsContainer.childCount >= 2)
+                            newRow.transform.SetSiblingIndex(rowsContainer.childCount - 2);
+                        // …and grow the popup background one row per created overflow row.
+                        float rowH = (donorRow is RectTransform drt ? drt.rect.height : 40f) + 6f;
+                        for (Transform t = rowsContainer; t != null; t = t.parent)
+                        {
+                            if (t.GetComponent<Image>() != null && t is RectTransform rt)
+                            {
+                                rt.sizeDelta = new Vector2(rt.sizeDelta.x, rt.sizeDelta.y + rowH);
+                                break;
+                            }
+                        }
+                        targetRow = newRow.transform;
                     }
                     if (targetRow != null && targetRow != donorRow)
                         clone.transform.SetParent(targetRow, false);

@@ -2,6 +2,17 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.1.1 (2026-07-26)
+
+### Fixed
+- **Bountiful Crops picker layout** — with all eight crops enabled, the last icons could overflow
+  past the panel edge (three icons crammed into one row, or an extra row hanging below the panel
+  background). Crop icons now fill rows two-wide, overflow into dedicated rows inserted above the
+  maintenance/clover row, and the popup background grows one row-height per added row so everything
+  stays inside the panel. Fully automatic for any future roster size.
+
+---
+
 ## v1.1.0 (2026-07-26)
 
 ### Added — 🌾 Bountiful Crops: EIGHT new farmable crops
