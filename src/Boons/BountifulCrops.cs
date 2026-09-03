@@ -328,6 +328,13 @@ namespace SovereignBoons.Boons
                 BC_Registry.InjectDisplayNames();
                 int totalCrops = ObjectDataStore.GetAllDataRecords<VegetableFieldsRecord>()?.Count ?? -1;
                 Plugin.Log.Msg($"[Bountiful Crops] {BountifulCrops.Crops.Count} crops injected ({totalCrops} total registered).");
+
+                // SCHEDULE-WIPE FIX (ordering half): apply Bountiful Fields' per-crop overrides NOW —
+                // before any save can deserialize. CropYearSchedule.Load validates each scheduled bar
+                // against the record's CURRENT day totals and WIPES the whole year on any mismatch;
+                // BF's scene-init apply can land after that validation, so bars scheduled under
+                // overridden (usually shortened) days failed against vanilla numbers on every load.
+                BountifulFields.Apply();
             }
             catch (Exception ex)
             {
@@ -906,6 +913,60 @@ namespace SovereignBoons.Boons
             {
                 return true;
             }
+        }
+    }
+
+    // SCHEDULE-WIPE FIX (protection half). CropYearSchedule.Load WIPES an entire year's rotation if
+    // ANY item fails AreScheduledDaysValid (record's planting+mature+rot no longer fits the bar's
+    // saved scheduledDays — e.g. a Bountiful Fields day-override changed after scheduling). These
+    // validity checks have exactly ONE call site (the load-time wipe decision), so forcing them
+    // valid is safe: the too-small bar is simply kept — it harvests late or rots, both of which the
+    // sim already handles — instead of destroying the whole year's rotation, valid items included.
+    // Active when Bountiful Fields or Bountiful Crops is enabled (the day-changers).
+    [HarmonyPatch(typeof(CropfieldPlantingScheduledItem), "AreScheduledDaysValid")]
+    internal static class BC_ScheduleValid_Protect
+    {
+        private static void Postfix(CropfieldPlantingScheduledItem __instance, ref bool __result)
+        {
+            try
+            {
+                if (__result) return;
+                var rec = ObjectDataStore.GetDataRecord<VegetableFieldsRecord>(__instance.recordName);
+                int total = rec != null ? rec.daysOfPlanting + rec.daysToMature + rec.daysToRot : -1;
+                var sd = AccessTools.Field(typeof(CropfieldPlantingScheduledItem), "scheduledDays")?.GetValue(__instance)
+                         ?? AccessTools.Property(typeof(CropfieldPlantingScheduledItem), "scheduledDays")?.GetValue(__instance);
+                bool protect = Config.EnableBountifulFields.Value || Config.EnableBountifulCrops.Value;
+                if (protect)
+                {
+                    __result = true;
+                    Plugin.Log.Msg($"[Bountiful Crops] schedule-wipe PROTECTED: '{__instance.recordName}' needs {total} days, " +
+                                   $"bar is {sd} — kept anyway (may harvest late). Vanilla would have wiped its whole year.");
+                }
+                else
+                {
+                    Plugin.Log.Warning($"[Bountiful Crops] SCHEDULE-WIPE: '{__instance.recordName}' needs {total} days, " +
+                                       $"bar is {sd} — vanilla is wiping this item's ENTIRE year's rotation.");
+                }
+            }
+            catch { }
+        }
+    }
+
+    [HarmonyPatch(typeof(CropfieldWorkScheduledItem), "AreScheduledDaysValid")]
+    internal static class BC_WorkScheduleValid_Protect
+    {
+        private static void Postfix(ref bool __result)
+        {
+            try
+            {
+                if (__result) return;
+                if (Config.EnableBountifulFields.Value || Config.EnableBountifulCrops.Value)
+                {
+                    __result = true;
+                    Plugin.Log.Msg("[Bountiful Crops] schedule-wipe PROTECTED: maintenance item kept (days changed after scheduling).");
+                }
+            }
+            catch { }
         }
     }
 

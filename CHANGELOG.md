@@ -2,6 +2,32 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.1.2 (2026-07-26)
+
+### Fixed — crop rotations vanishing on reload (data loss)
+- **Root cause:** vanilla validates every scheduled crop bar on load — if a crop's
+  `planting + mature + rot` day total no longer fits the bar's saved width, it **wipes the entire
+  year's rotation** (valid bars included). With Bountiful Fields day-overrides active (typically
+  *lowering* MatureDays), bars scheduled under the shortened values could be re-validated against
+  vanilla's longer totals — BF's overrides applied at scene-init, which can land *after* the
+  load-time validation — so affected years blanked on every reload. This was a latent Bountiful
+  Fields bug that predates Bountiful Crops.
+- **Fix 1 (ordering):** per-crop overrides now also apply immediately after game data loads —
+  before any save deserializes — so bars always validate against the same numbers they were
+  scheduled with.
+- **Fix 2 (wipe protection):** when Bountiful Fields or Bountiful Crops is enabled, a bar that
+  genuinely no longer fits (you changed the sliders after scheduling) is now **kept** — it simply
+  harvests late or rots, which the game already handles — instead of destroying its whole year.
+  The log notes each protected bar.
+- Rotations already blanked by the old behavior are gone from those saves (the wipe was saved);
+  re-schedule them once — they'll survive from now on.
+
+### Under the hood
+- Drover's Market (sell livestock to traders) source is included but OFF by default and not yet
+  announced — coming in a future release after testing.
+
+---
+
 ## v1.1.1 (2026-07-26)
 
 ### Fixed

@@ -161,6 +161,15 @@ namespace SovereignBoons
                         visibleWhen: () => Config.EnableWealthyCaravans.Value,
                         order: 204, indent: 20));
 
+            // ===== Drover's Market (Economy) — order block 280 =====
+            Reg(GroupEconomy, Config.EnableDroversMarket,
+                NewMeta("Drover's Market",
+                        "Sell your livestock (Cows, Horses, Goats, Chickens, Dogs, Cats) to visiting traders. " +
+                        "The trade window counts your live animals; selling removes them from their barns/" +
+                        "kennels (fullest herd first, never animals queued for slaughter) via the game's own " +
+                        "sale path. Default: OFF.",
+                        order: 280));
+
             // ===== Merchant's Gambit (Economy) — order block 300 =====
             Reg(GroupEconomy, Config.EnableMerchantsGambit,
                 NewMeta("Merchant's Gambit",

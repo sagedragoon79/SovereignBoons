@@ -33,6 +33,7 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<int>   WealthyCaravansMaxStock     { get; private set; } = null!;
 
         // ----- Merchant's Gambit (trade-arbitrage calculator / executor) -----
+        public static MelonPreferences_Entry<bool>   EnableDroversMarket        { get; private set; } = null!;
         public static MelonPreferences_Entry<bool>   EnableMerchantsGambit      { get; private set; } = null!;
         public static MelonPreferences_Entry<string> MerchantsGambitScanKey     { get; private set; } = null!;
         public static MelonPreferences_Entry<int>    MerchantsGambitMinProfit   { get; private set; } = null!;
@@ -181,6 +182,14 @@ namespace SovereignBoons
                 description: "TradeManager.maxTradingPostStockCount override. Vanilla = 100. Range 100..5000.");
 
             // ===== Merchant's Gambit =====
+            EnableDroversMarket = _root.CreateEntry("EnableDroversMarket", false,
+                display_name: "Drover's Market — Enabled",
+                description: "Sell your livestock (Cows, Horses, Goats, Chickens, Dogs, Cats) to visiting " +
+                             "traders. Vanilla shows a sell price but always counts your livestock as 0 — " +
+                             "this wires the missing sell direction: the trade window counts your live " +
+                             "animals, and selling removes them from their barns/kennels (fullest herd " +
+                             "first; animals already queued for slaughter are never sold). Gold, trade " +
+                             "stats, and the expense ledger all use the game's own sale path. Default: OFF.");
             EnableMerchantsGambit = _root.CreateEntry("EnableMerchantsGambit", false,
                 display_name: "Merchant's Gambit — Enabled",
                 description: "Trade-arbitrage tool: press the hotkey to scan every trading post's visiting " +
