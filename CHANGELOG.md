@@ -22,9 +22,22 @@ All notable changes to Sovereign Boons.
 - Rotations already blanked by the old behavior are gone from those saves (the wipe was saved);
   re-schedule them once — they'll survive from now on.
 
-### Under the hood
-- Drover's Market (sell livestock to traders) source is included but OFF by default and not yet
-  announced — coming in a future release after testing.
+### Added — 🐄 Drover's Market (new boon, Economy)
+Sell your livestock to visiting traders. Vanilla shows a sell price for Cows, Horses, Goats,
+Chickens, Dogs, and Cats but always counts your animals as 0 — the sell direction was never wired
+(the trade window only counts goods stocked at the post, and live animals can't be stocked).
+Drover's Market wires it: the trade window counts your live animals, and selling removes them from
+their barns/kennels — fullest herd first, never an animal already queued for slaughter — through
+the game's own sale path (gold, trade stats, and the expense ledger all behave normally).
+OFF by default.
+
+### Added — 💰 Merchant's Gambit (new boon, Economy)
+A trade-arbitrage tool. Press the hotkey (default Ctrl+B) to scan every trading post's visiting
+merchants for profitable buy-low/sell-high pairs and run the whole compounding stairstep
+(buy-5/sell-5 → buy-7/sell-7 as your gold grows) in one shot via the game's own trade methods.
+Starts in **Dry Run** (reports projected profit via toast + log without moving anything) so you can
+verify the numbers before letting it trade for real. Also flags latent opportunities ("arbitrage
+exists but you lack the gold to prime the deal"). OFF by default.
 
 ---
 
