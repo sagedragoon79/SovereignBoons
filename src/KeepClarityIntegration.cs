@@ -433,6 +433,21 @@ namespace SovereignBoons
             Reg(GroupBuildings, Config.HoardedStoresMarketEnable,        NewMeta("Market — Apply",         "Apply capacity multiplier to Markets. Default: OFF.",                                   visibleWhen: () => Config.EnableHoardedStores.Value, order: 513, indent: 20));
             Reg(GroupBuildings, Config.HoardedStoresMarketMul,           NewMeta("Market — Mul",           "Capacity multiplier for Markets. Default: 2.0.",           min: 1f, max: 50f,            visibleWhen: () => Config.EnableHoardedStores.Value && Config.HoardedStoresMarketEnable.Value, order: 514, indent: 40));
 
+            // ===== Royal Charter (Buildings) — order block 550 =====
+            Reg(GroupBuildings, Config.EnableRoyalCharter,
+                NewMeta("Royal Charter",
+                        "Removes the build limit on buildings vanilla caps at one (or a few) per settlement, " +
+                        "such as monuments. The list of uncapped buildings is written to MelonLoader's " +
+                        "Latest.log on map load. Reload your save after changing this. Default: OFF.",
+                        order: 550, reloadRequired: true));
+            Reg(GroupBuildings, Config.RoyalCharterUnlockMonumentDecor,
+                NewMeta("Unlock Monument Decor",
+                        "Build the extravagant decor items without finishing a monument first. Other " +
+                        "requirements, such as tech, still apply. Unlocked items are listed in Latest.log " +
+                        "on map load. Default: ON.",
+                        visibleWhen: () => Config.EnableRoyalCharter.Value,
+                        order: 551, indent: 20, reloadRequired: true));
+
             // ===== Greater Halls (Buildings) — order block 600 (1 master + ~52 buildings, ordered by iteration) =====
             Reg(GroupBuildings, Config.EnableGreaterHalls,
                 NewMeta("Greater Halls",

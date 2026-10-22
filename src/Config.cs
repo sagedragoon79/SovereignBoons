@@ -102,6 +102,10 @@ namespace SovereignBoons
         public static MelonPreferences_Entry<bool>  HoardedStoresMarketEnable       { get; private set; } = null!;
         public static MelonPreferences_Entry<float> HoardedStoresMarketMul          { get; private set; } = null!;
 
+        // ----- Royal Charter (original SB feature) -----
+        public static MelonPreferences_Entry<bool> EnableRoyalCharter { get; private set; } = null!;
+        public static MelonPreferences_Entry<bool> RoyalCharterUnlockMonumentDecor { get; private set; } = null!;
+
         // ----- Greater Halls (folded from VC_ModifyWorkerSlots by VC) -----
         public static MelonPreferences_Entry<bool> EnableGreaterHalls { get; private set; } = null!;
         // Per-building add-on entries created dynamically in Boons.GreaterHalls.RegisterPrefs.
@@ -377,6 +381,16 @@ namespace SovereignBoons
             HoardedStoresTreasuryMul        = _root.CreateEntry("HoardedStoresTreasuryMul", 2.0f,         display_name: "Hoarded Stores — Treasury Mul",          description: "Capacity multiplier for Treasuries. Range 1..50.");
             HoardedStoresMarketEnable       = _root.CreateEntry("HoardedStoresMarketEnable", false,       display_name: "Hoarded Stores — Market Apply",          description: "Apply capacity multiplier to Markets.");
             HoardedStoresMarketMul          = _root.CreateEntry("HoardedStoresMarketMul", 2.0f,           display_name: "Hoarded Stores — Market Mul",            description: "Capacity multiplier for Markets. Range 1..50.");
+
+            // ===== Royal Charter =====
+            EnableRoyalCharter = _root.CreateEntry("EnableRoyalCharter", false,
+                display_name: "Royal Charter — Enabled",
+                description: "Removes the build limit on buildings vanilla caps at one (or a few) per " +
+                             "settlement, such as monuments. Reload your save after changing this. Default: OFF.");
+            RoyalCharterUnlockMonumentDecor = _root.CreateEntry("RoyalCharterUnlockMonumentDecor", true,
+                display_name: "Royal Charter — Unlock Monument Decor",
+                description: "Lets you build the extravagant decor items without finishing a monument first. " +
+                             "Other requirements still apply. Reload your save after changing this. Default: ON.");
 
             // ===== Greater Halls =====
             EnableGreaterHalls = _root.CreateEntry("EnableGreaterHalls", false,

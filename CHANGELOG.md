@@ -2,6 +2,20 @@
 
 All notable changes to Sovereign Boons.
 
+## v1.2.0 (2026-10-21)
+
+### Added — 👑 Royal Charter (new boon, Buildings)
+Removes the build limit on buildings vanilla caps at one (or a few) per settlement, such as
+monuments. It switches off the same limit check that the game's own Free Buildings custom setting
+skips, so the toolbar button stays active and placement stays sticky past the old cap. Building
+prerequisites still apply. The list of uncapped buildings is written to `Latest.log` on map load.
+Turning the boon off restores every original limit on the next load. OFF by default; reload your
+save after changing it.
+
+- **Unlock Monument Decor** (sub-option, ON when Royal Charter is on): lets you build the
+  extravagant decor items without finishing a monument first. Only the monument requirement is
+  lifted; tech requirements still apply. Demolishing a monument doesn't lock the decor again.
+
 ## v1.1.2 (2026-07-26)
 
 ### Fixed — crop rotations vanishing on reload (data loss)

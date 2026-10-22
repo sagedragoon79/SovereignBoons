@@ -24,7 +24,7 @@ namespace SovereignBoons
         /// <summary>Single source of truth for the mod version — used by the MelonInfo
         /// attribute, the init log, and the Keep Clarity registration so they can't drift.
         /// Bump together with the .csproj &lt;Version&gt; on release.</summary>
-        public const string Version = "1.1.2";
+        public const string Version = "1.2.0";
 
         public static Plugin Instance { get; private set; } = null!;
         public static MelonLogger.Instance Log => Instance.LoggerInstance;
@@ -103,6 +103,7 @@ namespace SovereignBoons
                 Boons.CivicPride.Reset();
                 Boons.LevysArms.Reset();
                 Boons.GreaterHalls.Reset();
+                Boons.RoyalCharter.Reset();
                 Boons.WealthyCaravans.Reset();
                 Boons.BountifulFields.ResetLogFlag();
                 return;
